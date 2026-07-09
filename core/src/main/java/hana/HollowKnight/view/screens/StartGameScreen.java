@@ -86,12 +86,12 @@ public class StartGameScreen extends BaseScreen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     audioManager.clickMenuSound();
-                    if (controller.hasSave(slot)) {
-                        controller.loadGame(slot);
-                    } else {
+//                    if (controller.hasSave(slot)) {
+//                        controller.loadGame(slot);
+//                    } else {
                         AudioManager.getInstance().playCityOfTearsSound();
                         controller.startNewGame(slot);
-                    }
+//                    }
                 }
             });
 
