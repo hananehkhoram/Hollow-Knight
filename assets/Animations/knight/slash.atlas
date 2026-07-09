@@ -1,0 +1,41 @@
+
+slash.png
+size: 1024, 512
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+SlashAlt
+  rotate: false
+  xy: 2, 190
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 0
+SlashAlt
+  rotate: false
+  xy: 2, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 1
+SlashAlt
+  rotate: false
+  xy: 353, 190
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 2
+SlashAlt
+  rotate: false
+  xy: 353, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 3
+SlashAlt
+  rotate: false
+  xy: 353, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 4

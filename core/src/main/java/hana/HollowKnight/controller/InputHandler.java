@@ -3,11 +3,20 @@ package hana.HollowKnight.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.view.audio.AudioManager;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 public class InputHandler {
+    private static InputHandler instance;
+
+    public static InputHandler getInstance() {
+        if (instance == null) {
+            instance = new InputHandler();
+        }
+        return instance;
+    }
 
     public enum PlayerAction {
         MOVE_LEFT("Move Left"),
@@ -29,7 +38,7 @@ public class InputHandler {
 
     private boolean jumpWasDown = false;
 
-    public InputHandler() {
+    private InputHandler() {
         keyBindings.put(PlayerAction.MOVE_LEFT, Input.Keys.LEFT);
         keyBindings.put(PlayerAction.MOVE_RIGHT, Input.Keys.RIGHT);
 
@@ -57,12 +66,21 @@ public class InputHandler {
 
         if (isJustPressed(PlayerAction.JUMP)) {
             player.jump();
+            AudioManager.getInstance().playJumpSound();
         }
         if (isJustPressed(PlayerAction.DASH)) {
             player.dash();
+            if (player.isDashing()) {
+            AudioManager.getInstance().playHeroDashSound();}
+
         }
         if (isJustPressed(PlayerAction.ATTACK)) {
             player.attack();
+        }
+
+        if (isJustPressed(PlayerAction.FOCUS_SOUL)) {
+            boolean focusDown = isDown(PlayerAction.FOCUS_SOUL);
+            player.focus();
         }
 
         boolean jumpDown = isDown(PlayerAction.JUMP);
@@ -72,17 +90,12 @@ public class InputHandler {
         jumpWasDown = jumpDown;
     }
 
-    private boolean isDown(PlayerAction action) {
+    public boolean isDown(PlayerAction action) {
         return Gdx.input.isKeyPressed(keyBindings.get(action));
     }
 
-    private boolean isJustPressed(PlayerAction action) {
+    public boolean isJustPressed(PlayerAction action) {
         return Gdx.input.isKeyJustPressed(keyBindings.get(action));
-    }
-
-
-    public int getKeyFor(PlayerAction action) {
-        return keyBindings.get(action);
     }
 
     public String getKeyNameFor(PlayerAction action) {

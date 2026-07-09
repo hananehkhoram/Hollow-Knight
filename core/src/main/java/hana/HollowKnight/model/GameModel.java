@@ -41,7 +41,7 @@ public class GameModel {
         if (data == null) return false;
 
         currentRoomId = data.roomId;
-        player.setPosition(data.playerX, data.playerY);
+        player.setPosition(0, 0);
         player.setHealth(data.playerHealth);
         player.setMaxHealth(data.playerMaxHealth);
         player.setSoul(data.playerSoul);
@@ -62,7 +62,11 @@ public class GameModel {
     public PlayerModel getPlayer() { return player; }
     public GameStats getStats() { return gameStats; }
 
-    public hana.HollowKnight.model.map.RoomModel getCurrentRoom() {
-        return null;
+    public String getRoomPath() {
+        return currentRoomId;
+    }
+
+    public void setRoomPath(String roomPath) {
+        this.currentRoomId = roomPath;
     }
 }

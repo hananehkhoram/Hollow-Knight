@@ -56,8 +56,8 @@ public class RoomLoader {
                 String name = object.getName();
                 MapProperties prop = object.getProperties();
                 float x = prop.get("x", Float.class);
-//                float y = height * 8 - prop.get("y", Float.class);
-                float y = prop.get("y", Float.class);
+                float y = height * 8 - prop.get("y", Float.class);
+//                float y = prop.get("y", Float.class);
 
                 if (name == null) continue;
                 if ("knight".equals(name)) {

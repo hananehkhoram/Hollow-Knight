@@ -1,0 +1,69 @@
+
+idle.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Idle
+  rotate: false
+  xy: 2, 754
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 0
+Idle
+  rotate: false
+  xy: 2, 566
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 1
+Idle
+  rotate: false
+  xy: 353, 754
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 2
+Idle
+  rotate: false
+  xy: 2, 378
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 3
+Idle
+  rotate: false
+  xy: 353, 566
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 4
+Idle
+  rotate: false
+  xy: 2, 190
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 5
+Idle
+  rotate: false
+  xy: 353, 378
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 6
+Idle
+  rotate: false
+  xy: 2, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 7
+Idle
+  rotate: false
+  xy: 353, 190
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 8

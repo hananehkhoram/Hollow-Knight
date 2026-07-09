@@ -8,6 +8,8 @@ public abstract class Entity {
     protected float width, height;
     protected float velocityX, velocityY;
 
+    protected float prevX, prevY;
+
     protected boolean facingRight = true;
     protected boolean onGround = false;
     protected boolean alive = true;
@@ -15,6 +17,8 @@ public abstract class Entity {
     protected Entity(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
+        this.prevX = x;
+        this.prevY = y;
         this.width = width;
         this.height = height;
     }
@@ -25,6 +29,13 @@ public abstract class Entity {
 
     public void update(float delta) {
         // زیرکلاس‌ها این متد را override و منطق حرکت/AI خودشان را اضافه می‌کنند
+        // زیرکلاس‌ها باید در همان ابتدای بدنه‌ی override‌شده‌ی این متد،
+        // قبل از هر تغییری در x/y، این متد را صدا بزنند: savePrevPosition()
+    }
+
+    public void savePrevPosition() {
+        this.prevX = this.x;
+        this.prevY = this.y;
     }
 
     // --- Getters / Setters ---
@@ -32,7 +43,14 @@ public abstract class Entity {
     public float getY() { return y; }
     public void setX(float x) { this.x = x; }
     public void setY(float y) { this.y = y; }
-    public void setPosition(float x, float y) { this.x = x; this.y = y;  this.velocityX = 0; this.velocityY = 0; }
+    public void setPosition(float x, float y) {
+        this.x = x; this.y = y;
+        this.prevX = x; this.prevY = y;
+        this.velocityX = 0; this.velocityY = 0;
+    }
+
+    public float getPrevX() { return prevX; }
+    public float getPrevY() { return prevY; }
 
     public float getWidth() { return width; }
     public float getHeight() { return height; }

@@ -10,17 +10,17 @@ import java.util.Set;
 
 public class PlayerModel extends Entity {
 
-    public static final float DEFAULT_WIDTH = 32f;
-    public static final float DEFAULT_HEIGHT = 48f;
+    public static final float DEFAULT_WIDTH = 90;
+    public static final float DEFAULT_HEIGHT = 140;
 
-    public static final float MOVE_SPEED = 220f;
-    public static final float GRAVITY = -1400f;
-    public static final float JUMP_VELOCITY = 620f;
-    public static final float DOUBLE_JUMP_VELOCITY = 560f;
+    public static final float MOVE_SPEED = 500;
+    public static final float GRAVITY = -1400;
+    public static final float JUMP_VELOCITY = 900;
+    public static final float DOUBLE_JUMP_VELOCITY = 500;
 
-    private static final float DASH_SPEED = 700f;
-    private static final float DASH_DURATION = 0.18f;
-    private static final float DASH_COOLDOWN = 0.55f;
+    private static final float DASH_SPEED = 1000f;
+    private static final float DASH_DURATION = 0.8f;
+    private static final float DASH_COOLDOWN = 5f;
 
     private static final float ATTACK_DURATION = 0.22f;
     private static final float ATTACK_COOLDOWN = 0.28f;
@@ -67,6 +67,10 @@ public class PlayerModel extends Entity {
         this.soul = 0;
     }
 
+    public void focus () {
+
+    }
+
     public void moveLeft() {
         if (dashing || isBeingKnockedBack) return;
         velocityX = -MOVE_SPEED;
@@ -101,6 +105,10 @@ public class PlayerModel extends Entity {
         }
     }
 
+    public boolean isDoubleJumpUsed() {
+        return doubleJumpUsed;
+    }
+
     public void dash() {
         if (dashing || dashCooldownTimer > 0f) return;
         dashing = true;
@@ -123,6 +131,10 @@ public class PlayerModel extends Entity {
         this.velocityX = facingRight ? -knockbackForceX : knockbackForceX;
         this.velocityY = knockbackForceY;
         this.onGround = false;
+    }
+
+    public void setJumping(boolean jumping) {
+        this.jumping = jumping;
     }
 
     public Rectangle getBounds() {
@@ -211,6 +223,7 @@ public class PlayerModel extends Entity {
 
     @Override
     public void update(float delta) {
+
         if (isBeingKnockedBack) {
             knockbackTimer -= delta;
             if (knockbackTimer <= 0) {
@@ -218,13 +231,6 @@ public class PlayerModel extends Entity {
                 velocityX = 0f;
             }
         }
-
-        if (!dashing) {
-            velocityY += GRAVITY * delta;
-        }
-
-        x += velocityX * delta;
-        y += velocityY * delta;
 
         if (dashing) {
             dashTimer += delta;
@@ -283,6 +289,4 @@ public class PlayerModel extends Entity {
         if (names == null) return;
         for (String n : names) equippedCharms.add(CharmType.valueOf(n));
     }
-
-
 }

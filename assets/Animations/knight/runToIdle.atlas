@@ -1,0 +1,48 @@
+
+runToIdle.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Run To Idle
+  rotate: false
+  xy: 2, 566
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 0
+Run To Idle
+  rotate: false
+  xy: 2, 378
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 1
+Run To Idle
+  rotate: false
+  xy: 353, 566
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 2
+Run To Idle
+  rotate: false
+  xy: 2, 190
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 3
+Run To Idle
+  rotate: false
+  xy: 353, 378
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 4
+Run To Idle
+  rotate: false
+  xy: 2, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 5

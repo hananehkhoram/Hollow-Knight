@@ -12,7 +12,6 @@ public class GameController {
     public static float brightness = 1.0f;
     private final Game game;
     private final SpriteBatch batch;
-    private final InputHandler inputHandler = new InputHandler();
     private GameModel model;
 
     public GameController(Game game, SpriteBatch batch) {
@@ -22,12 +21,13 @@ public class GameController {
     }
 
     public void updateGameplay(float delta) {
-        inputHandler.update(model.getPlayer());
+        InputHandler.getInstance().update(model.getPlayer());
+
         model.getPlayer().update(delta);
     }
 
     public InputHandler getInputHandler() {
-        return inputHandler;
+        return InputHandler.getInstance();
     }
 
     public void goToMainMenu() {

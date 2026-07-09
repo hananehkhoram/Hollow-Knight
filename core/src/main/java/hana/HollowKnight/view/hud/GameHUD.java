@@ -104,8 +104,8 @@ public class GameHUD {
             }
         }
 
-        TextureRegion hudRegion = healthBarAn != null ? healthBarAn.getKeyFrame(stateTime) : null;
-        TextureRegion hpRegion = hpAn != null ? hpAn.getKeyFrame(stateTime) : null;
+        TextureRegion hudRegion  = healthBarAn.getKeyFrame(stateTime);
+        TextureRegion hpRegion = hpAn.getKeyFrame(stateTime);
 
         TextureRegion waterSoulRegion = null;
         if (soulState.equals("GROW") && waterSoulGrowAn != null) {
