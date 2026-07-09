@@ -7,10 +7,12 @@ import hana.HollowKnight.model.entities.PlayerModel;
 public class CollisionController {
     private Array<Rectangle> hazards;
     private PlayerModel player;
-    public CollisionController(PlayerModel playerModel,  Array<Rectangle> hazards){
+
+    public CollisionController(PlayerModel playerModel, Array<Rectangle> hazards) {
         this.player = playerModel;
         this.hazards = hazards;
     }
+
     public boolean checkHazardCollisions() {
         if (player.isInvincible()) {
             return false;
@@ -21,11 +23,13 @@ public class CollisionController {
             if (playerBounds.overlaps(hazard)) {
 
                 player.takeDamage(1);
-                player.startInvincibility();
-                player.applyKnockback();
+                player.takeDamage(1);
 
                 return true;
             }
         }
+        return false;
     }
 }
+
+

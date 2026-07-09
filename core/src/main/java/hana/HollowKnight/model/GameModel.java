@@ -3,7 +3,6 @@ package hana.HollowKnight.model;
 import hana.HollowKnight.model.data.GameData;
 import hana.HollowKnight.model.data.SaveManager;
 import hana.HollowKnight.model.entities.PlayerModel;
-import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.model.stats.GameStats;
 
 public class GameModel {
@@ -63,7 +62,7 @@ public class GameModel {
     public PlayerModel getPlayer() { return player; }
     public GameStats getStats() { return gameStats; }
 
-    public RoomModel getCurrentRoom() {
+    public hana.HollowKnight.model.room.RoomModel getCurrentRoom() {
         return null;
     }
 }

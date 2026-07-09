@@ -27,6 +27,7 @@ public class PlayerModel extends Entity {
     private static final float ATTACK_RANGE = 40f;
 
     private static final float INVULNERABILITY_DURATION = 0.9f;
+    private static final float KNOCKBACK_DURATION = 0.15f;
 
     public static final int DEFAULT_MAX_HEALTH = 5;
     public static final int DEFAULT_MAX_SOUL = 100;
@@ -42,29 +43,14 @@ public class PlayerModel extends Entity {
     private boolean doubleJumpUsed;
     private boolean dashing;
     private boolean attacking;
+    private boolean isBeingKnockedBack = false;
 
     private float dashTimer;
     private float dashCooldownTimer;
     private float attackTimer;
     private float attackCooldownTimer;
     private float invulnerabilityTimer;
-
-    private boolean isInvincible = false;
-    private float invincibilityTimer = 0f;
-    private final float INVINCIBILITY_DURATION = 1.5f;
-
-    public boolean isInvincible() {
-        return isInvincible;
-    }
-
-    public void setInvincible(boolean invincible) {
-        this.isInvincible = invincible;
-    }
-
-    public void startInvincibility() {
-        this.isInvincible = true;
-        this.invincibilityTimer = INVINCIBILITY_DURATION;
-    }
+    private float knockbackTimer;
 
     private final Set<CharmType> unlockedCharms = EnumSet.noneOf(CharmType.class);
     private final Set<CharmType> equippedCharms = EnumSet.noneOf(CharmType.class);
@@ -82,19 +68,19 @@ public class PlayerModel extends Entity {
     }
 
     public void moveLeft() {
-        if (dashing) return;
+        if (dashing || isBeingKnockedBack) return;
         velocityX = -MOVE_SPEED;
         facingRight = false;
     }
 
     public void moveRight() {
-        if (dashing) return;
+        if (dashing || isBeingKnockedBack) return;
         velocityX = MOVE_SPEED;
         facingRight = true;
     }
 
     public void stopMoving() {
-        if (!dashing) velocityX = 0f;
+        if (!dashing && !isBeingKnockedBack) velocityX = 0f;
     }
 
     public void jump() {
@@ -129,6 +115,20 @@ public class PlayerModel extends Entity {
         attackTimer = 0f;
     }
 
+    public void applyKnockBack() {
+        this.isBeingKnockedBack = true;
+        this.knockbackTimer = KNOCKBACK_DURATION;
+        float knockbackForceX = 350f;
+        float knockbackForceY = 300f;
+        this.velocityX = facingRight ? -knockbackForceX : knockbackForceX;
+        this.velocityY = knockbackForceY;
+        this.onGround = false;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
+    }
+
     public Rectangle getAttackHitbox() {
         float hitboxX = facingRight ? (x + width) : (x - ATTACK_RANGE);
         return new Rectangle(hitboxX, y, ATTACK_RANGE, height);
@@ -137,6 +137,8 @@ public class PlayerModel extends Entity {
     public boolean isAttacking() { return attacking; }
     public boolean isDashing() { return dashing; }
     public boolean isJumping() { return jumping; }
+    public boolean isInvincible() { return invulnerabilityTimer > 0f; }
+    public float getInvulnerabilityTimer() { return invulnerabilityTimer; }
 
     public void takeDamage(int amount) {
         if (invulnerabilityTimer > 0f || !alive) return;
@@ -207,9 +209,16 @@ public class PlayerModel extends Entity {
         return unlockedCharms;
     }
 
-
     @Override
     public void update(float delta) {
+        if (isBeingKnockedBack) {
+            knockbackTimer -= delta;
+            if (knockbackTimer <= 0) {
+                isBeingKnockedBack = false;
+                velocityX = 0f;
+            }
+        }
+
         if (!dashing) {
             velocityY += GRAVITY * delta;
         }
@@ -237,19 +246,7 @@ public class PlayerModel extends Entity {
         if (attackCooldownTimer > 0f) attackCooldownTimer -= delta;
 
         if (invulnerabilityTimer > 0f) invulnerabilityTimer -= delta;
-
-        if (isInvincible) {
-            invincibilityTimer -= delta;
-            if (invincibilityTimer <= 0) {
-                isInvincible = false;
-                invincibilityTimer = 0f;
-            }
-        }
     }
-
-    public void applyKnockBack(){
-    }
-
 
     public int getHealth() { return health; }
     public void setHealth(int health) { this.health = health; }

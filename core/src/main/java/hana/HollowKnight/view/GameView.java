@@ -2,28 +2,25 @@ package hana.HollowKnight.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.controller.CollisionController;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.view.hud.GameHUD;
 import hana.HollowKnight.view.screens.BaseScreen;
+import hana.HollowKnight.controller.RoomLoader;
+import hana.HollowKnight.model.room.RoomModel;
 
 public class GameView extends BaseScreen {
 
     private GameHUD hud;
     private PlayerModel player = controller.getModel().getPlayer();
     private CollisionController collision;
+    private RoomModel currentRoom;
 
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
@@ -34,18 +31,22 @@ public class GameView extends BaseScreen {
 
     @Override
     public void show() {
-        Skin hudSkin = new Skin(Gdx.files.internal("ui/uiskin.json"));
         hud = new GameHUD();
-
-        map = new TmxMapLoader().load("maps/City of Tears-20260707T215923Z-3-001/cityOfTears1.tmx");
-        collision = new CollisionController(player, loadHazards(map));
-        mapRenderer = new OrthogonalTiledMapRenderer(map, 1);
+        loadRoom("maps/City of Tears-20260707T215923Z-3-001/cityOfTears1.tmx");
 
         camera.position.set(0, 0, 0);
         camera.zoom = 2f;
         camera.update();
+    }
 
+    private void loadRoom(String mapPath) {
+        if (map != null) map.dispose();
+        if (mapRenderer != null) mapRenderer.dispose();
 
+        map = new TmxMapLoader().load(mapPath);
+        currentRoom = RoomLoader.load(map, mapPath);
+        collision = new CollisionController(player, currentRoom.getHazards());
+        mapRenderer = new OrthogonalTiledMapRenderer(map, 1);
     }
 
     @Override
@@ -55,7 +56,8 @@ public class GameView extends BaseScreen {
 
         controller.updateGameplay(delta);
 
-        clampCamera(0,0,5744, 3200);
+        clampCamera(currentRoom.getMinX(), currentRoom.getMinY(),
+            currentRoom.getMaxX(), currentRoom.getMaxY());
         camera.update();
 
         AnimatedTiledMapTile.updateAnimationBaseTime();
@@ -63,9 +65,13 @@ public class GameView extends BaseScreen {
         mapRenderer.render();
 
         batch.setProjectionMatrix(camera.combined);
-        
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
+
+        if (collision.checkHazardCollisions()) {
+            // اینجا فقط باید یه متد رو مدل صدا بزنی، نه گرافیک مستقیم
+            // مثلاً: player.takeDamage(hazardDamage);
+        }
     }
 
     @Override
@@ -91,24 +97,5 @@ public class GameView extends BaseScreen {
         float camY = MathUtils.clamp(1144, roomMinY + halfViewportHeight, roomMaxY - halfViewportHeight);
 
         camera.position.set(camX, camY, 0);
-        if (collision.checkHazardCollisions()){
-
-        }
-    }
-
-    public Array<Rectangle> loadHazards(TiledMap map) {
-        Array<Rectangle> hazardRects = new Array<>();
-
-        MapLayer hazardLayer = map.getLayers().get("hazards");
-
-        if (hazardLayer != null) {
-            for (MapObject object : hazardLayer.getObjects()) {
-                if (object instanceof RectangleMapObject) {
-                    Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                    hazardRects.add(rect);
-                }
-            }
-        }
-        return hazardRects;
     }
 }
