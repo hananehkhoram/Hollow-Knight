@@ -22,8 +22,6 @@ public class GameController {
 
     public void updateGameplay(float delta) {
         InputHandler.getInstance().update(model.getPlayer());
-
-        model.getPlayer().update(delta);
     }
 
     public InputHandler getInputHandler() {

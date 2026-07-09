@@ -6,9 +6,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
-import hana.HollowKnight.model.map.BreakableWallModel;
-import hana.HollowKnight.model.map.PortalModel;
-import hana.HollowKnight.model.map.RoomModel;
+import hana.HollowKnight.model.map.*;
 
 public class RoomLoader {
 
@@ -29,14 +27,13 @@ public class RoomLoader {
             for (MapObject object : collisionLayer.getObjects()) {
                 if (object instanceof RectangleMapObject) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-                    MapProperties collisionProps = object.getProperties();
+                    MapProperties props = object.getProperties();
                     String name = object.getName();
 
-                    if ("portal".equals(name) || collisionProps.containsKey("targetMap")) {
-                        String targetMap = collisionProps.get("targetMap", String.class);
+                    if ("portal".equals(name) || props.containsKey("targetMap")) {
+                        String targetMap = props.get("targetMap", String.class);
                         room.setPortal(new PortalModel(rect, targetMap));
-                    } else if ("breakable".equals(name) || collisionProps.containsKey("breakable")) {
+                    } else if ("breakable".equals(name) || props.containsKey("breakable")) {
                         room.setBreakableWall(new BreakableWallModel(rect));
                     } else {
                         room.getSolidTiles().add(rect);
@@ -59,13 +56,11 @@ public class RoomLoader {
                 String name = object.getName();
                 MapProperties prop = object.getProperties();
                 float x = prop.get("x", Float.class);
-//                float y = 400 * 8 - prop.get("y", Float.class);
                 float y = prop.get("y", Float.class);
 
                 if (name == null) continue;
                 if ("knight".equals(name)) {
-                    room.setKnightSpawn(x, y);
-                }
+                    room.setKnightSpawn(x, y);}
 //                } else{
 //                    room.getEnemySpawns().add(new SpawnPointModel(name, x,y));
 //                }

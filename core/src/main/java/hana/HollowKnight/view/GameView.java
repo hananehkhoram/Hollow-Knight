@@ -59,17 +59,21 @@ public class GameView extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        PortalModel triggeredPortal = collision.checkPortalCollision();
+        if (triggeredPortal != null) {
+            loadRoom(triggeredPortal.getTargetMapPath());
+            player.setPosition(triggeredPortal.getX(), triggeredPortal.getY());
+            camera.position.set(player.getX(), player.getY(), 0);
+        }
+
         Gdx.gl.glClearColor(0.2f, 0.4f, 0.6f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         controller.updateGameplay(delta);
-        System.out.println("X1 " + player.getX() + " Y1 " + player.getY() + " | ");
-
 
         player.savePrevPosition();
 
         collision.updateMovement(delta, currentRoom.getSolidTiles());
-
 
         player.update(delta);
         collision.checkHazardCollisions(HAZARD_DAMAGE);
@@ -97,10 +101,8 @@ public class GameView extends BaseScreen {
         debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
-
-        System.out.println("X " + player.getX() + " Y " + player.getY());
-
     }
+
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);

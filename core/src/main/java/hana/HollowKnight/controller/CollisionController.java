@@ -9,6 +9,7 @@ import hana.HollowKnight.model.map.PortalModel;
 public class CollisionController {
 
     private static final float EDGE_EPSILON = 2f;
+    private static final float MAX_DELTA = 1f / 30f; // جلوگیری از جهش بزرگ فیزیک در فریم‌های کند (مثلاً بعد از لود نقشه)
 
     private final PlayerModel player;
     private final Array<Rectangle> hazards;
@@ -52,8 +53,9 @@ public class CollisionController {
         if (portal == null) return null;
         return player.getBounds().overlaps(portal.getBounds()) ? portal : null;
     }
-
     public void updateMovement(float delta, Array<Rectangle> solidTiles) {
+        delta = Math.min(delta, MAX_DELTA);
+
         if (!player.isDashing()) {
             player.setVelocityY(player.getVelocityY() + PlayerModel.GRAVITY * delta);
         }
@@ -71,11 +73,11 @@ public class CollisionController {
             if (playerBounds.overlaps(tile)) {
                 if (player.getVelocityX() > 0) {
                     player.setX(tile.x - player.getWidth());
-                    player.setVelocityX(0f);
-                } else if (player.getVelocityX() < 0) {
-                    player.setX(tile.x + tile.width);
-                    player.setVelocityX(0f);
                 }
+                else if (player.getVelocityX() < 0) {
+                    player.setX(tile.x + tile.width);
+                }
+                player.setVelocityX(0f);
                 playerBounds = player.getBounds();
             }
         }
@@ -91,7 +93,8 @@ public class CollisionController {
                     player.setY(tile.y + tile.height);
                     player.setVelocityY(0f);
                     player.setOnGround(true);
-                } else if (player.getVelocityY() > 0) {
+                }
+                else if (player.getVelocityY() > 0) {
                     player.setY(tile.y - player.getHeight());
                     player.setVelocityY(0f);
                 }
@@ -102,6 +105,7 @@ public class CollisionController {
 
     public void resolveGroundCollisions(Array<Rectangle> solidTiles) {
         player.setOnGround(false);
+
         Rectangle playerBounds = player.getBounds();
 
         for (Rectangle tile : solidTiles) {
@@ -110,10 +114,13 @@ public class CollisionController {
                     player.setY(tile.y + tile.height);
                     player.setVelocityY(0f);
                     player.setOnGround(true);
-                } else if (player.getVelocityY() > 0 && (player.getPrevY() + player.getHeight() <= tile.y + EDGE_EPSILON)) {
+                }
+
+                else if (player.getVelocityY() > 0 && (player.getPrevY() + player.getHeight() <= tile.y + EDGE_EPSILON)) {
                     player.setY(tile.y - player.getHeight());
                     player.setVelocityY(0f);
-                } else {
+                }
+                else {
                     if (player.getVelocityX() > 0) {
                         player.setX(tile.x - player.getWidth());
                     } else if (player.getVelocityX() < 0) {
@@ -124,4 +131,5 @@ public class CollisionController {
             }
         }
     }
+
 }
