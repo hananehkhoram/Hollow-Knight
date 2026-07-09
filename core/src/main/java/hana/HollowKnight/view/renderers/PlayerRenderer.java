@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.view.audio.AudioManager;
 
 public class PlayerRenderer {
     private final String baseDir = "Animations/knight/";

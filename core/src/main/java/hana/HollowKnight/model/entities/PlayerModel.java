@@ -1,5 +1,6 @@
 package hana.HollowKnight.model.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.items.CharmType;
@@ -29,20 +30,22 @@ public class PlayerModel extends Entity {
     private static final float ATTACK_RANGE = 40f;
 
     private static final float INVULNERABILITY_DURATION = 0.9f;
-    private static final float KNOCKBACK_DURATION = 0.15f;
+    private static final float KNOCKBACK_DURATION = 1f;
 
     public static final float FOCUS_DURATION = 1.5f;
     private float actionTimer = 0f;
-    private float soulUsed = 0;
     public static final int DEFAULT_MAX_HEALTH = 5;
     public static final int DEFAULT_MAX_SOUL = 100;
     public static final int SOUL_PER_HIT = 11;
     public static final int MAX_NOTCHES = 3;
+    public static final float FOOTSTEP_INTERVAL = 3;
+    private float footstepTimer = 0;
 
     private int health;
     private int maxHealth;
     private int soul;
     private int maxSoul;
+    private float soulAccumulator = 0f;
 
     private boolean jumping;
     private boolean doubleJumpUsed;
@@ -76,35 +79,45 @@ public class PlayerModel extends Entity {
         this.soul = 0;
     }
 
-    public void focus (float delta) {
+    public void focus(float delta) {
         if (InputHandler.getInstance().isDown(InputHandler.PlayerAction.FOCUS_SOUL) && soul > 0) {
 
-            if (InputHandler.getInstance().isJustPressed(InputHandler.PlayerAction.FOCUS_SOUL)) {
+            if (InputHandler.getInstance().isJustPressed(InputHandler.PlayerAction.FOCUS_SOUL) || !isFocusing) {
                 setFocusing(true);
                 actionTimer = 0f;
+                soulAccumulator = 0f;
             }
+
+            velocityX = 0f;
 
             actionTimer += delta;
 
             float soulPerSecond = 11f / FOCUS_DURATION;
-            soul = soul - (int) (soulPerSecond * delta);
+            soulAccumulator += soulPerSecond * delta;
+
+            if (soulAccumulator >= 1f) {
+                int soulToDeduct = (int) soulAccumulator;
+                soul = Math.max(0, soul - soulToDeduct);
+                soulAccumulator -= soulToDeduct;
+            }
 
             if (actionTimer >= FOCUS_DURATION) {
-                setHealth(health + 1);
+                setHealth(Math.min(maxHealth, health + 1));
                 AudioManager.getInstance().playFocusHealSound();
-                setFocusing(false);
+
                 actionTimer = 0f;
+                soulAccumulator = 0f;
             }
 
         } else {
             if (isFocusing()) {
                 setFocusing(false);
                 actionTimer = 0f;
+                soulAccumulator = 0f;
+                AudioManager.getInstance().stopFocusSound();
             }
         }
     }
-
-
     public void moveLeft() {
         if (dashing || isBeingKnockedBack) return;
         velocityX = -MOVE_SPEED;
@@ -193,6 +206,7 @@ public class PlayerModel extends Entity {
         invulnerabilityTimer = INVULNERABILITY_DURATION;
         if (health <= 0) {
             alive = false;
+            AudioManager.getInstance().playHeroDeathSound();
         }
     }
 
@@ -287,6 +301,19 @@ public class PlayerModel extends Entity {
         if (attackCooldownTimer > 0f) attackCooldownTimer -= delta;
 
         if (invulnerabilityTimer > 0f) invulnerabilityTimer -= delta;
+
+        if (footstepTimer > 0) {
+            footstepTimer -= Gdx.graphics.getDeltaTime();
+        }
+
+        if (this.isOnGround() && Math.abs(this.getVelocityX()) > 0.1f && !this.isDashing() && !this.isFocusing()) {
+            if (footstepTimer <= 0) {
+                AudioManager.getInstance().playMovingSound();
+                footstepTimer = FOOTSTEP_INTERVAL;
+            }
+        } else {
+            footstepTimer = 0f;
+        }
     }
 
     public int getHealth() { return health; }

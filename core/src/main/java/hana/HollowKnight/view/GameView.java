@@ -2,22 +2,23 @@ package hana.HollowKnight.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import hana.HollowKnight.controller.AIController;
 import hana.HollowKnight.controller.CollisionController;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.controller.RoomLoader;
+import hana.HollowKnight.model.entities.MosscreepModel;
 import hana.HollowKnight.model.entities.PlayerModel;
-import hana.HollowKnight.model.map.BreakableWallModel;
 import hana.HollowKnight.model.map.PortalModel;
 import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.hud.GameHUD;
 import hana.HollowKnight.view.renderers.CollisionDebugRenderer;
+import hana.HollowKnight.view.renderers.MosscreepRenderer;
 import hana.HollowKnight.view.renderers.MapRenderer;
 import hana.HollowKnight.view.renderers.PlayerRenderer;
-import hana.HollowKnight.view.renderers.RainManager;
 import hana.HollowKnight.view.screens.BaseScreen;
+
+import java.util.ArrayList;
 
 public class GameView extends BaseScreen {
 
@@ -29,6 +30,10 @@ public class GameView extends BaseScreen {
     private RoomModel currentRoom;
     private PlayerRenderer playerRenderer;
     private CollisionDebugRenderer debugRenderer;
+
+    private final AIController aiController = new AIController();
+    private final MosscreepRenderer crawlerRenderer = new MosscreepRenderer();
+    private ArrayList<MosscreepModel> crawlers;
 
     public GameView(GameController controller) {
         super(controller);
@@ -59,6 +64,8 @@ public class GameView extends BaseScreen {
         currentRoom = RoomLoader.load(mapRenderer.getMap(), mapPath);
         collision = new CollisionController(player, currentRoom.getHazards(),
             currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer);
+        crawlers = RoomLoader.spawnCrawlers(currentRoom);
+        currentRoom.setCrawlers(crawlers);
     }
 
     @Override
@@ -83,6 +90,10 @@ public class GameView extends BaseScreen {
         collision.checkHazardCollisions(HAZARD_DAMAGE);
         collision.checkAttackOnBreakable();
 
+        for (MosscreepModel crawler : crawlers) {
+            aiController.updateCrawler(crawler, delta, currentRoom.getSolidTiles(), player);
+        }
+
         camera.position.set(player.getX(), player.getY() + 200, 0);
         camera.update();
 
@@ -99,12 +110,15 @@ public class GameView extends BaseScreen {
         } else {
             playerRenderer.render(batch, player);
         }
+        for (MosscreepModel crawler : crawlers) {
+            crawlerRenderer.render(batch, crawler);
+        }
         batch.end();
 
         mapRenderer.renderLayer(camera, "for");
         mapRenderer.renderLayer(camera, "secret room");
 
-        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards());
+        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(), crawlers);
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
     }
@@ -122,6 +136,7 @@ public class GameView extends BaseScreen {
         if (hud != null) hud.dispose();
         mapRenderer.dispose();
         playerRenderer.dispose();
+        crawlerRenderer.dispose();
     }
 
 }

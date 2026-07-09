@@ -60,6 +60,7 @@ public class InputHandler {
             player.moveLeft();
         } else if (right && !left) {
             player.moveRight();
+
         } else {
             player.stopMoving();
         }
@@ -78,8 +79,9 @@ public class InputHandler {
             player.attack();
         }
 
+        player.focus(Gdx.graphics.getDeltaTime());
+
         if (isJustPressed(PlayerAction.FOCUS_SOUL)) {
-            player.focus(Gdx.graphics.getDeltaTime());
             if (player.isFocusing()) {
                 AudioManager.getInstance().playFocusSound();
             }
@@ -90,6 +92,7 @@ public class InputHandler {
             player.cutJumpShort();
         }
         jumpWasDown = jumpDown;
+
     }
 
     public boolean isDown(PlayerAction action) {

@@ -6,7 +6,10 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import hana.HollowKnight.model.entities.MosscreepModel;
 import hana.HollowKnight.model.map.*;
+
+import java.util.ArrayList;
 
 public class RoomLoader {
 
@@ -60,13 +63,23 @@ public class RoomLoader {
 
                 if (name == null) continue;
                 if ("knight".equals(name)) {
-                    room.setKnightSpawn(x, y);}
-//                } else{
-//                    room.getEnemySpawns().add(new SpawnPointModel(name, x,y));
-//                }
+                    room.setKnightSpawn(x, y);
+                } else {
+                    room.getEnemySpawns().add(new SpawnPointModel(name, x, y));
+                }
             }
         }
 
         return room;
     }
+    public static ArrayList<MosscreepModel> spawnCrawlers(RoomModel currentRoom) {
+        ArrayList<MosscreepModel> crawlers = new ArrayList<>();
+        for (SpawnPointModel spawn : currentRoom.getEnemySpawns()) {
+            if ("mosscreep".equals(spawn.getName())) {
+                crawlers.add(new MosscreepModel(spawn.getX(), spawn.getY()));
+            }
+        }
+        return crawlers;
+    }
+
 }

@@ -13,6 +13,7 @@ public class AudioManager {
     private final Music cityOfTearsSound;
     private final Sound heroDamage;
     private final Sound heroDash;
+    private final Sound heroDeath;
     private final Sound jump;
     private final Sound getDamage;
     private final Sound focusHealthHeal;
@@ -20,6 +21,7 @@ public class AudioManager {
     private final Sound breakWall1;
     private final Sound breakWall2;
     private final Sound breakWall3;
+    private final Sound moving;
 
     private float sfxVolume = 1f;
     private float bgmVolume = 0.75f;
@@ -35,11 +37,16 @@ public class AudioManager {
         jump = Gdx.audio.newSound(Gdx.files.internal("hero_jump.wav"));
         getDamage = Gdx.audio.newSound(Gdx.files.internal("hero_damage.wav"));
         focusHealthHeal = Gdx.audio.newSound(Gdx.files.internal("focus_health_heal.wav"));
-        focus = Gdx.audio.newSound(Gdx.files.internal("focus_ready.wav"));
+        focus = Gdx.audio.newSound(Gdx.files.internal("focus_health_charging.wav"));
         breakWall1 = Gdx.audio.newSound(Gdx.files.internal("breakable_wall_hit_1.wav"));
         breakWall2 = Gdx.audio.newSound(Gdx.files.internal("breakable_wall_hit_2.wav"));
         breakWall3 = Gdx.audio.newSound(Gdx.files.internal("breakable_wall_death.wav"));
+        heroDeath = Gdx.audio.newSound(Gdx.files.internal("hero_death_extra_details.wav"));
+        moving = Gdx.audio.newSound(Gdx.files.internal("hero_run_footsteps_stone.wav"));
+    }
 
+    public void playHeroDeathSound() {
+        heroDeath.play(sfxVolume);
     }
 
     public static AudioManager getInstance() {
@@ -51,6 +58,14 @@ public class AudioManager {
 
     public void playFocusSound() {
         focus.play(sfxVolume);
+    }
+
+    public void stopFocusSound() {
+        focus.stop();
+    }
+
+    public void playMovingSound() {
+        moving.play(sfxVolume);
     }
 
     public void playBreakWall1 (){breakWall1.play(sfxVolume);}

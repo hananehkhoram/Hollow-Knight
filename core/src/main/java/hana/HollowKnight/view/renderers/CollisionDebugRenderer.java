@@ -6,7 +6,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import hana.HollowKnight.model.entities.MosscreepModel;
 import hana.HollowKnight.model.entities.PlayerModel;
+
+import java.util.ArrayList;
 
 public class CollisionDebugRenderer {
 
@@ -16,11 +19,17 @@ public class CollisionDebugRenderer {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards) {
+    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards, ArrayList<MosscreepModel> crawls) {
         shapeRenderer.setProjectionMatrix(camera.combined);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         Gdx.gl.glLineWidth(3f);
+
+        shapeRenderer.setColor(Color.RED);
+        for (MosscreepModel mosscreepModel : crawls) {
+            Rectangle rectangle = mosscreepModel.getBounds();
+                shapeRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        }
 
         shapeRenderer.setColor(Color.GREEN);
         for (Rectangle tile : solidTiles) {

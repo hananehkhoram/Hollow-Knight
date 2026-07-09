@@ -1,0 +1,27 @@
+
+walk.png
+size: 512, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Walk
+  rotate: false
+  xy: 2, 2
+  size: 157, 123
+  orig: 157, 123
+  offset: 0, 0
+  index: 0
+Walk
+  rotate: false
+  xy: 161, 2
+  size: 157, 123
+  orig: 157, 123
+  offset: 0, 0
+  index: 1
+Walk
+  rotate: false
+  xy: 320, 2
+  size: 157, 123
+  orig: 157, 123
+  offset: 0, 0
+  index: 2
