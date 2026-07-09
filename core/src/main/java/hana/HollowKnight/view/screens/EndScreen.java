@@ -24,7 +24,6 @@ public class EndScreen extends BaseScreen {
     @Override
     public void show() {
         if (playerWon) {
-            // بعداً: AudioManager.playMusic("victory_theme");
         }
     }
 
@@ -35,11 +34,6 @@ public class EndScreen extends BaseScreen {
 
         handleInput();
 
-        // بعداً با BitmapFont رندر کن:
-        // "You Win!" / "You Died"
-        // "Deaths: " + stats.getDeathCount()
-        // "Enemies Killed: " + stats.getEnemiesKilled()
-        // "Time: " + formatTime(stats.getElapsedTime())
     }
 
     private void handleInput() {

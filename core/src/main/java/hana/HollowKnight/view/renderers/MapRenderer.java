@@ -2,11 +2,15 @@ package hana.HollowKnight.view.renderers;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 
 public class MapRenderer {
 
@@ -71,4 +75,10 @@ public class MapRenderer {
         renderer = null;
         map = null;
     }
-}
+
+    public void setLayerVisibility(String layerName, boolean visible) {
+        MapLayer layer = map.getLayers().get(layerName);
+        layer.setVisible(visible);
+        }
+
+   }

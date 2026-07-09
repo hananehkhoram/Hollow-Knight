@@ -43,8 +43,7 @@ public class RoomModel {
         return portal;
     }
 
-    public void
-    setPortal(PortalModel portal) {
+    public void setPortal(PortalModel portal) {
         this.portal = portal;
     }
 

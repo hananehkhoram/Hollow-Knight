@@ -30,7 +30,6 @@ public class SaveManager {
     private final String dbUrl;
 
     public SaveManager() {
-        // مطمئن می‌شویم پوشه‌ی saves وجود دارد، بعد آدرس فایل دیتابیس را می‌سازیم
         Gdx.files.local("saves/").file().mkdirs();
         this.dbUrl = "jdbc:sqlite:" + Gdx.files.local("saves/hollowknight.db").file().getAbsolutePath();
         initDatabase();
@@ -38,7 +37,6 @@ public class SaveManager {
 
     private Connection getConnection() throws SQLException {
         Connection conn = DriverManager.getConnection(dbUrl);
-        // برای فعال بودن ON DELETE CASCADE باید این pragma روی هر کانکشن ست بشه
         try (Statement st = conn.createStatement()) {
             st.execute("PRAGMA foreign_keys = ON");
         }

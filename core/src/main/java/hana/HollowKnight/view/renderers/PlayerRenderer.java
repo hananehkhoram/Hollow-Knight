@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import hana.HollowKnight.model.entities.PlayerModel;
-import hana.HollowKnight.view.audio.AudioManager;
 
 public class PlayerRenderer {
     private final String baseDir = "Animations/knight/";
@@ -29,6 +28,8 @@ public class PlayerRenderer {
     private final Animation<TextureAtlas.AtlasRegion> attackAnimation;
     private final TextureAtlas fallTexture;
     private final Animation<TextureAtlas.AtlasRegion> fallAnimation;
+    private final TextureAtlas focuTexture;
+    private final Animation<TextureAtlas.AtlasRegion> focusAnimation;
 
     private final float SPRITE_WIDTH = 349f;
     private final float SPRITE_HEIGHT = 186f;
@@ -65,6 +66,9 @@ public class PlayerRenderer {
 
         fallTexture = new TextureAtlas(Gdx.files.internal(baseDir + "fall.atlas"));
         fallAnimation = new Animation<>(0.1f, fallTexture.findRegions("Fall"), Animation.PlayMode.LOOP);
+
+        focuTexture = new  TextureAtlas(Gdx.files.internal(baseDir + "focus.atlas"));
+        focusAnimation = new Animation<>(0.1f, focuTexture.findRegions("Focus"), Animation.PlayMode.NORMAL);
     }
 
     public void render(SpriteBatch batch, PlayerModel player) {
@@ -83,7 +87,10 @@ public class PlayerRenderer {
         } else if (player.isAttacking()) {
             nextStatus = "ATTACK";
             region = attackAnimation.getKeyFrame(stateTime);
-        } else if (!player.isOnGround()) {
+        }else if (player.isFocusing()){
+            nextStatus = "FOCUS";
+            region = focusAnimation.getKeyFrame(stateTime);
+    }else if (!player.isOnGround()) {
             if (player.getVelocityY() > 0) {
                 if (!player.isDoubleJumpUsed()) {
                     nextStatus = "JUMP";

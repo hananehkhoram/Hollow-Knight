@@ -14,7 +14,12 @@ public class AudioManager {
     private final Sound heroDamage;
     private final Sound heroDash;
     private final Sound jump;
-    private final Sound move;
+    private final Sound getDamage;
+    private final Sound focusHealthHeal;
+    private final Sound focus;
+    private final Sound breakWall1;
+    private final Sound breakWall2;
+    private final Sound breakWall3;
 
     private float sfxVolume = 1f;
     private float bgmVolume = 0.75f;
@@ -28,7 +33,13 @@ public class AudioManager {
         heroDamage = Gdx.audio.newSound(Gdx.files.internal("hero_damage.wav"));
         heroDash = Gdx.audio.newSound(Gdx.files.internal("hero_dash.wav"));
         jump = Gdx.audio.newSound(Gdx.files.internal("hero_jump.wav"));
-        move = Gdx.audio.newSound(Gdx.files.internal("grass_move_6.wav"));
+        getDamage = Gdx.audio.newSound(Gdx.files.internal("hero_damage.wav"));
+        focusHealthHeal = Gdx.audio.newSound(Gdx.files.internal("focus_health_heal.wav"));
+        focus = Gdx.audio.newSound(Gdx.files.internal("focus_ready.wav"));
+        breakWall1 = Gdx.audio.newSound(Gdx.files.internal("breakable_wall_hit_1.wav"));
+        breakWall2 = Gdx.audio.newSound(Gdx.files.internal("breakable_wall_hit_2.wav"));
+        breakWall3 = Gdx.audio.newSound(Gdx.files.internal("breakable_wall_death.wav"));
+
     }
 
     public static AudioManager getInstance() {
@@ -38,11 +49,24 @@ public class AudioManager {
         return instance;
     }
 
+    public void playFocusSound() {
+        focus.play(sfxVolume);
+    }
+
+    public void playBreakWall1 (){breakWall1.play(sfxVolume);}
+    public void playBreakWall2 (){breakWall2.play(sfxVolume);}
+    public void playBreakWall3 (){breakWall3.play(sfxVolume);}
+
+
+    public void playFocusHealSound() {
+        focusHealthHeal.play(sfxVolume);
+    }
+
     public void playJumpSound() {
         jump.play(sfxVolume);
     }
-    public void playMoveSound() {
-        move.play(sfxVolume);
+    public void playGetDamageSound() {
+        getDamage.play(sfxVolume);
     }
 
     public void playHeroDashSound() {

@@ -79,8 +79,10 @@ public class InputHandler {
         }
 
         if (isJustPressed(PlayerAction.FOCUS_SOUL)) {
-            boolean focusDown = isDown(PlayerAction.FOCUS_SOUL);
-            player.focus();
+            player.focus(Gdx.graphics.getDeltaTime());
+            if (player.isFocusing()) {
+                AudioManager.getInstance().playFocusSound();
+            }
         }
 
         boolean jumpDown = isDown(PlayerAction.JUMP);

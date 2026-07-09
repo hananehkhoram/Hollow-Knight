@@ -28,9 +28,7 @@ public abstract class Entity {
     }
 
     public void update(float delta) {
-        // زیرکلاس‌ها این متد را override و منطق حرکت/AI خودشان را اضافه می‌کنند
-        // زیرکلاس‌ها باید در همان ابتدای بدنه‌ی override‌شده‌ی این متد،
-        // قبل از هر تغییری در x/y، این متد را صدا بزنند: savePrevPosition()
+
     }
 
     public void savePrevPosition() {

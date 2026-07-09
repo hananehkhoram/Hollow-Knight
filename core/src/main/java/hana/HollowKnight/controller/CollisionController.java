@@ -5,25 +5,29 @@ import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.map.BreakableWallModel;
 import hana.HollowKnight.model.map.PortalModel;
+import hana.HollowKnight.view.renderers.MapRenderer;
 
 public class CollisionController {
 
-    private static final float EDGE_EPSILON = 2f;
-    private static final float MAX_DELTA = 1f / 30f; // جلوگیری از جهش بزرگ فیزیک در فریم‌های کند (مثلاً بعد از لود نقشه)
+    private static final float MAX_DELTA = 1f / 30f;
+    private boolean wallDamagedThisAttack = false;
 
     private final PlayerModel player;
     private final Array<Rectangle> hazards;
     private final BreakableWallModel breakableWall;
     private final PortalModel portal;
+    private final MapRenderer mapRenderer;
 
     public CollisionController(PlayerModel player,
                                Array<Rectangle> hazards,
                                BreakableWallModel breakableWall,
-                               PortalModel portal) {
+                               PortalModel portal,
+                               MapRenderer mapRenderer) {
         this.player = player;
         this.hazards = hazards;
         this.breakableWall = breakableWall;
         this.portal = portal;
+        this.mapRenderer = mapRenderer;
     }
 
     public void checkHazardCollisions(int damageAmount) {
@@ -32,15 +36,26 @@ public class CollisionController {
             if (playerBounds.overlaps(hazard)) {
                 player.takeDamage(damageAmount);
                 player.applyKnockBack();
+                player.setPosition(player.getLastSafeX(), player.getLastSafeY());
                 return;
             }
         }
     }
 
     public void checkAttackOnBreakable() {
-        if (breakableWall == null || breakableWall.isBroken() || !player.isAttacking()) return;
-        if (player.getAttackHitbox().overlaps(breakableWall.getBounds())) {
-            breakableWall.breakWall();
+        if (breakableWall == null || breakableWall.isBroken()) return;
+
+        if (player.isAttacking()) {
+            if (!wallDamagedThisAttack && player.getAttackHitbox().overlaps(breakableWall.getBounds())) {
+                breakableWall.breakWall();
+                wallDamagedThisAttack = true;
+                if (breakableWall.isBroken()) {
+                    mapRenderer.setLayerVisibility("wall", false);
+                    mapRenderer.setLayerVisibility("secret_room_back", true);
+                }
+            }
+        } else {
+            wallDamagedThisAttack = false;
         }
     }
 
@@ -53,6 +68,7 @@ public class CollisionController {
         if (portal == null) return null;
         return player.getBounds().overlaps(portal.getBounds()) ? portal : null;
     }
+
     public void updateMovement(float delta, Array<Rectangle> solidTiles) {
         delta = Math.min(delta, MAX_DELTA);
 
@@ -69,16 +85,28 @@ public class CollisionController {
 
     public void resolveHorizontalCollisions(Array<Rectangle> solidTiles) {
         Rectangle playerBounds = player.getBounds();
+
         for (Rectangle tile : solidTiles) {
             if (playerBounds.overlaps(tile)) {
                 if (player.getVelocityX() > 0) {
                     player.setX(tile.x - player.getWidth());
-                }
-                else if (player.getVelocityX() < 0) {
+                } else if (player.getVelocityX() < 0) {
                     player.setX(tile.x + tile.width);
                 }
                 player.setVelocityX(0f);
                 playerBounds = player.getBounds();
+            }
+        }
+
+        if (breakableWall != null && !breakableWall.isBroken()) {
+            Rectangle wallBounds = breakableWall.getBounds();
+            if (playerBounds.overlaps(wallBounds)) {
+                if (player.getVelocityX() > 0) {
+                    player.setX(wallBounds.x - player.getWidth());
+                } else if (player.getVelocityX() < 0) {
+                    player.setX(wallBounds.x + wallBounds.width);
+                }
+                player.setVelocityX(0f);
             }
         }
     }
@@ -93,8 +121,9 @@ public class CollisionController {
                     player.setY(tile.y + tile.height);
                     player.setVelocityY(0f);
                     player.setOnGround(true);
-                }
-                else if (player.getVelocityY() > 0) {
+                    player.setLastSafeX(player.getX());
+                    player.setLastSafeY(player.getY());
+                } else if (player.getVelocityY() > 0) {
                     player.setY(tile.y - player.getHeight());
                     player.setVelocityY(0f);
                 }
@@ -102,34 +131,4 @@ public class CollisionController {
             }
         }
     }
-
-    public void resolveGroundCollisions(Array<Rectangle> solidTiles) {
-        player.setOnGround(false);
-
-        Rectangle playerBounds = player.getBounds();
-
-        for (Rectangle tile : solidTiles) {
-            if (playerBounds.overlaps(tile)) {
-                if (player.getVelocityY() <= 0 && (player.getPrevY() >= tile.y + tile.height - EDGE_EPSILON)) {
-                    player.setY(tile.y + tile.height);
-                    player.setVelocityY(0f);
-                    player.setOnGround(true);
-                }
-
-                else if (player.getVelocityY() > 0 && (player.getPrevY() + player.getHeight() <= tile.y + EDGE_EPSILON)) {
-                    player.setY(tile.y - player.getHeight());
-                    player.setVelocityY(0f);
-                }
-                else {
-                    if (player.getVelocityX() > 0) {
-                        player.setX(tile.x - player.getWidth());
-                    } else if (player.getVelocityX() < 0) {
-                        player.setX(tile.x + tile.width);
-                    }
-                    player.setVelocityX(0f);
-                }
-            }
-        }
-    }
-
 }

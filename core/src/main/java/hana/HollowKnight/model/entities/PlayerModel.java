@@ -1,7 +1,9 @@
 package hana.HollowKnight.model.entities;
 
 import com.badlogic.gdx.math.Rectangle;
+import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.items.CharmType;
+import hana.HollowKnight.view.audio.AudioManager;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -29,6 +31,9 @@ public class PlayerModel extends Entity {
     private static final float INVULNERABILITY_DURATION = 0.9f;
     private static final float KNOCKBACK_DURATION = 0.15f;
 
+    public static final float FOCUS_DURATION = 1.5f;
+    private float actionTimer = 0f;
+    private float soulUsed = 0;
     public static final int DEFAULT_MAX_HEALTH = 5;
     public static final int DEFAULT_MAX_SOUL = 100;
     public static final int SOUL_PER_HIT = 11;
@@ -44,6 +49,7 @@ public class PlayerModel extends Entity {
     private boolean dashing;
     private boolean attacking;
     private boolean isBeingKnockedBack = false;
+    private boolean isFocusing = false;
 
     private float dashTimer;
     private float dashCooldownTimer;
@@ -51,6 +57,9 @@ public class PlayerModel extends Entity {
     private float attackCooldownTimer;
     private float invulnerabilityTimer;
     private float knockbackTimer;
+
+    private float lastSafeX;
+    private float lastSafeY;
 
     private final Set<CharmType> unlockedCharms = EnumSet.noneOf(CharmType.class);
     private final Set<CharmType> equippedCharms = EnumSet.noneOf(CharmType.class);
@@ -67,9 +76,34 @@ public class PlayerModel extends Entity {
         this.soul = 0;
     }
 
-    public void focus () {
+    public void focus (float delta) {
+        if (InputHandler.getInstance().isDown(InputHandler.PlayerAction.FOCUS_SOUL) && soul > 0) {
 
+            if (InputHandler.getInstance().isJustPressed(InputHandler.PlayerAction.FOCUS_SOUL)) {
+                setFocusing(true);
+                actionTimer = 0f;
+            }
+
+            actionTimer += delta;
+
+            float soulPerSecond = 11f / FOCUS_DURATION;
+            soul = soul - (int) (soulPerSecond * delta);
+
+            if (actionTimer >= FOCUS_DURATION) {
+                setHealth(health + 1);
+                AudioManager.getInstance().playFocusHealSound();
+                setFocusing(false);
+                actionTimer = 0f;
+            }
+
+        } else {
+            if (isFocusing()) {
+                setFocusing(false);
+                actionTimer = 0f;
+            }
+        }
     }
+
 
     public void moveLeft() {
         if (dashing || isBeingKnockedBack) return;
@@ -155,6 +189,7 @@ public class PlayerModel extends Entity {
     public void takeDamage(int amount) {
         if (invulnerabilityTimer > 0f || !alive) return;
         health = Math.max(0, health - amount);
+        AudioManager.getInstance().playGetDamageSound();
         invulnerabilityTimer = INVULNERABILITY_DURATION;
         if (health <= 0) {
             alive = false;
@@ -288,5 +323,29 @@ public class PlayerModel extends Entity {
         equippedCharms.clear();
         if (names == null) return;
         for (String n : names) equippedCharms.add(CharmType.valueOf(n));
+    }
+
+    public boolean isFocusing() {
+        return isFocusing;
+    }
+
+    public void setFocusing(boolean focusing) {
+        isFocusing = focusing;
+    }
+
+    public float getLastSafeY() {
+        return lastSafeY;
+    }
+
+    public void setLastSafeY(float lastSafeY) {
+        this.lastSafeY = lastSafeY;
+    }
+
+    public float getLastSafeX() {
+        return lastSafeX;
+    }
+
+    public void setLastSafeX(float lastSafeX) {
+        this.lastSafeX = lastSafeX;
     }
 }

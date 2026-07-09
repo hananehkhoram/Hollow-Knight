@@ -2,17 +2,21 @@ package hana.HollowKnight.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import hana.HollowKnight.controller.CollisionController;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.controller.RoomLoader;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.map.BreakableWallModel;
 import hana.HollowKnight.model.map.PortalModel;
 import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.hud.GameHUD;
 import hana.HollowKnight.view.renderers.CollisionDebugRenderer;
 import hana.HollowKnight.view.renderers.MapRenderer;
 import hana.HollowKnight.view.renderers.PlayerRenderer;
+import hana.HollowKnight.view.renderers.RainManager;
 import hana.HollowKnight.view.screens.BaseScreen;
 
 public class GameView extends BaseScreen {
@@ -46,7 +50,7 @@ public class GameView extends BaseScreen {
 
         player.savePrevPosition();
         camera.position.set(player.getX(), player.getY() , 0);
-        camera.zoom = 2f;
+        camera.zoom = 1.8f;
         camera.update();
     }
 
@@ -54,7 +58,7 @@ public class GameView extends BaseScreen {
         mapRenderer.load(mapPath);
         currentRoom = RoomLoader.load(mapRenderer.getMap(), mapPath);
         collision = new CollisionController(player, currentRoom.getHazards(),
-            currentRoom.getBreakableWall(), currentRoom.getPortal());
+            currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer);
     }
 
     @Override
@@ -79,10 +83,11 @@ public class GameView extends BaseScreen {
         collision.checkHazardCollisions(HAZARD_DAMAGE);
         collision.checkAttackOnBreakable();
 
-        camera.position.set(player.getX(), player.getY(), 0);
+        camera.position.set(player.getX(), player.getY() + 200, 0);
         camera.update();
 
         mapRenderer.renderAllExcept(camera, "for");
+        mapRenderer.renderAllExcept(camera, "secret room");
 
         batch.setProjectionMatrix(camera.combined);
 
@@ -97,6 +102,7 @@ public class GameView extends BaseScreen {
         batch.end();
 
         mapRenderer.renderLayer(camera, "for");
+        mapRenderer.renderLayer(camera, "secret room");
 
         debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
@@ -117,4 +123,5 @@ public class GameView extends BaseScreen {
         mapRenderer.dispose();
         playerRenderer.dispose();
     }
+
 }

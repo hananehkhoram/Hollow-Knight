@@ -18,12 +18,12 @@ public class CharmModel {
     public boolean isUnlocked() { return unlocked; }
     public void setUnlocked(boolean unlocked) {
         this.unlocked = unlocked;
-        if (!unlocked) equipped = false; // چارم قفل‌شده نمی‌تواند سوار باشد
+        if (!unlocked) equipped = false;
     }
 
     public boolean isEquipped() { return equipped; }
     public void setEquipped(boolean equipped) {
-        if (equipped && !unlocked) return; // نمی‌شود چارم قفل را سوار کرد
+        if (equipped && !unlocked) return;
         this.equipped = equipped;
     }
 

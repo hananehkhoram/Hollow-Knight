@@ -48,8 +48,6 @@ public class GameStats {
     private final Set<Achievement> unlockedAchievements = EnumSet.noneOf(Achievement.class);
     private final List<AchievementListener> listeners = new ArrayList<>();
 
-    // ==================== ثبت‌نام برای پاپ‌آپ ====================
-
     public void addListener(AchievementListener listener) {
         listeners.add(listener);
     }
