@@ -284,5 +284,5 @@ public class PlayerModel extends Entity {
         for (String n : names) equippedCharms.add(CharmType.valueOf(n));
     }
 
-  
+
 }

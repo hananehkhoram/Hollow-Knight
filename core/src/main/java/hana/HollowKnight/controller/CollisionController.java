@@ -52,17 +52,37 @@ public class CollisionController {
     }
 
     public void resolveGroundCollisions(Array<Rectangle> solidTiles) {
-        Rectangle playerBounds = player.getBounds();
         boolean grounded = false;
 
         for (Rectangle tile : solidTiles) {
+            Rectangle playerBounds = player.getBounds();
             if (!playerBounds.overlaps(tile)) continue;
-            if (player.getVelocityY() <= 0 && playerBounds.y < tile.y + tile.height) {
-                player.landOn(tile.y + tile.height);
-                grounded = true;
-            }
-            else if (player.getVelocityY() > 0 && playerBounds.y + playerBounds.height > tile.y) {
-                player.hitCeiling(tile.y);
+
+            // میزان تداخل (overlap) در هر جهت را حساب می‌کنیم
+            float overlapLeft = (playerBounds.x + playerBounds.width) - tile.x;
+            float overlapRight = (tile.x + tile.width) - playerBounds.x;
+            float overlapTop = (tile.y + tile.height) - playerBounds.y;
+            float overlapBottom = (playerBounds.y + playerBounds.height) - tile.y;
+
+            float minOverlapX = Math.min(overlapLeft, overlapRight);
+            float minOverlapY = Math.min(overlapTop, overlapBottom);
+
+            if (minOverlapX < minOverlapY) {
+                // برخورد افقی -> این یک دیوار است، نه زمین
+                if (overlapLeft < overlapRight) {
+                    player.setX(tile.x - player.getWidth());
+                } else {
+                    player.setX(tile.x + tile.width);
+                }
+                player.setVelocityX(0f);
+            } else {
+                // برخورد عمودی -> زمین یا سقف
+                if (overlapTop < overlapBottom) {
+                    player.landOn(tile.y + tile.height);
+                    grounded = true;
+                } else {
+                    player.hitCeiling(tile.y);
+                }
             }
         }
 
