@@ -1,0 +1,4 @@
+package hana.HollowKnight.model.map;
+
+public class RoomModel {
+}

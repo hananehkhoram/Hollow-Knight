@@ -1,0 +1,76 @@
+
+fire.png
+size: 1024, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+blacksmith_fire0000
+  rotate: false
+  xy: 2, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0001
+  rotate: false
+  xy: 85, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0002
+  rotate: false
+  xy: 168, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0003
+  rotate: false
+  xy: 251, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0004
+  rotate: false
+  xy: 334, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0005
+  rotate: false
+  xy: 417, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0006
+  rotate: false
+  xy: 500, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0007
+  rotate: false
+  xy: 583, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0008
+  rotate: false
+  xy: 666, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1
+blacksmith_fire0009
+  rotate: false
+  xy: 749, 2
+  size: 81, 76
+  orig: 81, 76
+  offset: 0, 0
+  index: -1

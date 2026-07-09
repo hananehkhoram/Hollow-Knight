@@ -1,0 +1,55 @@
+
+breakHealth.png
+size: 1024, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+BreakHealth
+  rotate: false
+  xy: 2, 2
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: 0
+BreakHealth
+  rotate: false
+  xy: 130, 2
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: 1
+BreakHealth
+  rotate: false
+  xy: 258, 2
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: 2
+BreakHealth
+  rotate: false
+  xy: 386, 2
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: 3
+BreakHealth
+  rotate: false
+  xy: 514, 2
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: 4
+BreakHealth
+  rotate: false
+  xy: 642, 2
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: 5
+EmptyHealth
+  rotate: false
+  xy: 770, 2
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,34 @@
+
+halfSoul.png
+size: 512, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+HUD Cln
+  rotate: false
+  xy: 2, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 245
+HUD Cln
+  rotate: false
+  xy: 73, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 246
+HUD Cln
+  rotate: false
+  xy: 144, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 247
+HUD Cln
+  rotate: false
+  xy: 215, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 248

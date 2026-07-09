@@ -1,0 +1,220 @@
+{
+"com.badlogic.gdx.graphics.g2d.BitmapFont": {
+	"Cinzel-Black": {
+		"file": "Cinzel-Black.fnt",
+		"scaledSize": -1,
+		"markupEnabled": false,
+		"flip": false
+	},
+	"Cinzel-ExtraBold1": {
+		"file": "Cinzel-ExtraBold(1).fnt",
+		"scaledSize": -1,
+		"markupEnabled": false,
+		"flip": false
+	},
+	"Cinzel-Medium": {
+		"file": "Cinzel-Medium.fnt",
+		"scaledSize": -1,
+		"markupEnabled": false,
+		"flip": false
+	},
+	"options": {
+		"file": "Cinzel-Bold(1).fnt",
+		"scaledSize": -1,
+		"markupEnabled": false,
+		"flip": false
+	}
+},
+"com.badlogic.gdx.graphics.Color": {
+	"gold": {
+		"r": 0.94509804,
+		"g": 0.8862745,
+		"b": 0.7921569,
+		"a": 1
+	},
+	"HighAge": {
+		"r": 0.22745098,
+		"g": 0.25490198,
+		"b": 0.27450982,
+		"a": 1
+	},
+	"Hover": {
+		"r": 0.92156863,
+		"g": 0.9490196,
+		"b": 0.96862745,
+		"a": 1
+	},
+	"Idle": {
+		"r": 0.94509804,
+		"g": 0.96862745,
+		"b": 0.98039216,
+		"a": 1
+	},
+	"RGBA_255_255_255_255": {
+		"r": 1,
+		"g": 1,
+		"b": 1,
+		"a": 1
+	},
+	"Spawn": {
+		"r": 0.63529414,
+		"g": 0.70980394,
+		"b": 0.76862746,
+		"a": 1
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable": {
+	"main_menu_pointer_anim0001": {
+		"name": "main_menu_pointer_anim0009",
+		"color": "gold"
+	},
+	"d8": {
+		"name": "main_menu_pointer_anim0009",
+		"color": "Hover"
+	},
+	"completeNo": {
+		"name": "achievement__0000_100_complete",
+		"color": "HighAge"
+	},
+	"speedrunN": {
+		"name": "achievement_ultra_fast_finish",
+		"color": "HighAge"
+	},
+	"TruehunterN": {
+		"name": "achievement_Hunter_Marks",
+		"color": "HighAge"
+	},
+	"falseknightN": {
+		"name": "achievement_false_knight",
+		"color": "HighAge"
+	},
+	"mineacN": {
+		"name": "achievement__0004_ending_C",
+		"color": "HighAge"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
+	"increaseVol": {
+		"up": "main_menu_pointer_anim0001",
+		"down": "main_menu_pointer_anim0009",
+		"over": "d8"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle": {
+	"default": {
+		"font": "options",
+		"fontColor": "gold",
+		"downFontColor": "Spawn",
+		"overFontColor": "RGBA_255_255_255_255"
+	},
+	"setting": {
+		"imageOver": "main_menu_pointer_anim0005",
+		"font": "Cinzel-Black",
+		"fontColor": "gold",
+		"downFontColor": "RGBA_255_255_255_255",
+		"overFontColor": "Hover"
+	},
+	"mute": {
+		"font": "Cinzel-Medium",
+		"fontColor": "gold",
+		"downFontColor": "Spawn",
+		"overFontColor": "Idle"
+	},
+	"CompleteA": {
+		"imageUp": "achievement__0000_100_complete",
+		"imageDown": "achievement__0000_100_complete",
+		"imageOver": "achievement__0000_100_complete",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"CompleteN": {
+		"imageUp": "completeNo",
+		"imageDown": "completeNo",
+		"imageOver": "completeNo",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"SpeedrunA": {
+		"imageUp": "achievement_ultra_fast_finish",
+		"imageDown": "achievement_ultra_fast_finish",
+		"imageOver": "achievement_ultra_fast_finish",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"SpeedrunN": {
+		"imageUp": "speedrunN",
+		"imageDown": "speedrunN",
+		"imageOver": "speedrunN",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"TruehunterA": {
+		"imageUp": "achievement_Hunter_Marks",
+		"imageDown": "achievement_Hunter_Marks",
+		"imageOver": "achievement_Hunter_Marks",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"TruehunterN": {
+		"imageUp": "TruehunterN",
+		"imageDown": "TruehunterN",
+		"imageOver": "TruehunterN",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"DefeatfalseA": {
+		"imageUp": "achievement_false_knight",
+		"imageDown": "achievement_false_knight",
+		"imageOver": "achievement_false_knight",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"DefeatfalseN": {
+		"imageUp": "falseknightN",
+		"imageDown": "falseknightN",
+		"imageOver": "falseknightN",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"mineacA": {
+		"imageUp": "achievement__0004_ending_C",
+		"imageDown": "achievement__0004_ending_C",
+		"imageOver": "achievement__0004_ending_C",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"mineacN": {
+		"imageUp": "mineacN",
+		"imageDown": "mineacN",
+		"imageOver": "mineacN",
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+	"default": {
+		"font": "Cinzel-ExtraBold1",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"settingmenu": {
+		"font": "Cinzel-Medium",
+		"fontColor": "RGBA_255_255_255_255"
+	},
+	"Guide": {
+		"font": "options",
+		"fontColor": "RGBA_255_255_255_255"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+	"default": {
+		"font": "options",
+		"downFontColor": "Spawn",
+		"overFontColor": "RGBA_255_255_255_255"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle": {
+	"default": {
+		"label": "default"
+	}
+}
+}

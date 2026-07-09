@@ -1,0 +1,118 @@
+
+uiskin.png
+size: 2048, 2048
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Cinzel-Black
+  rotate: false
+  xy: 1541, 1573
+  size: 506, 244
+  orig: 506, 244
+  offset: 0, 0
+  index: -1
+Cinzel-Black
+  rotate: false
+  xy: 1541, 1573
+  size: 506, 244
+  orig: 506, 244
+  offset: 0, 0
+  index: -1
+Cinzel-Bold(1)
+  rotate: false
+  xy: 1541, 1819
+  size: 506, 226
+  orig: 506, 226
+  offset: 0, 0
+  index: -1
+Cinzel-Bold(1)
+  rotate: false
+  xy: 1541, 1819
+  size: 506, 226
+  orig: 506, 226
+  offset: 0, 0
+  index: -1
+Cinzel-Medium
+  rotate: false
+  xy: 1541, 1355
+  size: 506, 216
+  orig: 506, 216
+  offset: 0, 0
+  index: -1
+Cinzel-Medium
+  rotate: false
+  xy: 1541, 1355
+  size: 506, 216
+  orig: 506, 216
+  offset: 0, 0
+  index: -1
+controller_prompt_bg
+  rotate: false
+  xy: 1, 1472
+  size: 1024, 573
+  orig: 1024, 573
+  offset: 0, 0
+  index: -1
+achievement_Hunter_Marks
+  rotate: false
+  xy: 1, 532
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+achievement__0000_100_complete
+  rotate: false
+  xy: 271, 876
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+achievement__0004_ending_C
+  rotate: false
+  xy: 271, 794
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+achievement_false_knight
+  rotate: false
+  xy: 1, 688
+  size: 268, 268
+  orig: 268, 268
+  offset: 0, 0
+  index: -1
+achievement_ultra_fast_finish
+  rotate: false
+  xy: 515, 1316
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+Cinzel-ExtraBold(1)_0
+  rotate: false
+  xy: 1, 958
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+Cinzel-ExtraBold(1)_1
+  rotate: false
+  xy: 1027, 1533
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+main_menu_pointer_anim0005
+  rotate: false
+  xy: 1, 614
+  size: 99, 72
+  orig: 99, 72
+  offset: 0, 0
+  index: -1
+main_menu_pointer_anim0009
+  rotate: false
+  xy: 515, 1398
+  size: 99, 72
+  orig: 99, 72
+  offset: 0, 0
+  index: -1

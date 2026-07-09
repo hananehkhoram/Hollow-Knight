@@ -1,0 +1,41 @@
+
+emptySoul.png
+size: 512, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+HUD Cln
+  rotate: false
+  xy: 2, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 239
+HUD Cln
+  rotate: false
+  xy: 73, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 240
+HUD Cln
+  rotate: false
+  xy: 144, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 241
+HUD Cln
+  rotate: false
+  xy: 215, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 242
+HUD Cln
+  rotate: false
+  xy: 286, 2
+  size: 69, 75
+  orig: 69, 75
+  offset: 0, 0
+  index: 243
