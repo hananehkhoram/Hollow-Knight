@@ -2,28 +2,25 @@ package hana.HollowKnight.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
-import com.badlogic.gdx.math.MathUtils;
 import hana.HollowKnight.controller.CollisionController;
 import hana.HollowKnight.controller.GameController;
-import hana.HollowKnight.model.entities.PlayerModel;
-import hana.HollowKnight.view.hud.GameHUD;
-import hana.HollowKnight.view.screens.BaseScreen;
 import hana.HollowKnight.controller.RoomLoader;
-import hana.HollowKnight.model.room.RoomModel;
+import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.map.PortalModel;
+import hana.HollowKnight.model.map.RoomModel;
+import hana.HollowKnight.view.hud.GameHUD;
+import hana.HollowKnight.view.renderers.MapRenderer;
+import hana.HollowKnight.view.screens.BaseScreen;
 
 public class GameView extends BaseScreen {
+
+    private static final int HAZARD_DAMAGE = 1;
 
     private GameHUD hud;
     private PlayerModel player = controller.getModel().getPlayer();
     private CollisionController collision;
     private RoomModel currentRoom;
-
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer mapRenderer;
+    private final MapRenderer mapRenderer = new MapRenderer();
 
     public GameView(GameController controller) {
         super(controller);
@@ -40,13 +37,10 @@ public class GameView extends BaseScreen {
     }
 
     private void loadRoom(String mapPath) {
-        if (map != null) map.dispose();
-        if (mapRenderer != null) mapRenderer.dispose();
-
-        map = new TmxMapLoader().load(mapPath);
-        currentRoom = RoomLoader.load(map, mapPath);
-        collision = new CollisionController(player, currentRoom.getHazards());
-        mapRenderer = new OrthogonalTiledMapRenderer(map, 1);
+        mapRenderer.load(mapPath);
+        currentRoom = RoomLoader.load(mapRenderer.getMap(), mapPath);
+        collision = new CollisionController(player, currentRoom.getHazards(),
+            currentRoom.getBreakableWall(), currentRoom.getPortal());
     }
 
     @Override
@@ -56,22 +50,24 @@ public class GameView extends BaseScreen {
 
         controller.updateGameplay(delta);
 
-        clampCamera(currentRoom.getMinX(), currentRoom.getMinY(),
-            currentRoom.getMaxX(), currentRoom.getMaxY());
+        collision.checkHazardCollisions(HAZARD_DAMAGE);
+        collision.checkAttackOnBreakable();
+
+        PortalModel triggeredPortal = collision.checkPortalCollision();
+        if (triggeredPortal != null) {
+            loadRoom(triggeredPortal.getTargetMapPath());
+            player.setPosition(triggeredPortal.getX(), triggeredPortal.getY());
+        }
+
+        mapRenderer.clampCamera(camera, currentRoom.getMinX(), currentRoom.getMinY(),
+            currentRoom.getMaxX(), currentRoom.getMaxY(), player.getX(), player.getY());
         camera.update();
 
-        AnimatedTiledMapTile.updateAnimationBaseTime();
-        mapRenderer.setView(camera);
-        mapRenderer.render();
+        mapRenderer.render(camera);
 
         batch.setProjectionMatrix(camera.combined);
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
-
-        if (collision.checkHazardCollisions()) {
-            // اینجا فقط باید یه متد رو مدل صدا بزنی، نه گرافیک مستقیم
-            // مثلاً: player.takeDamage(hazardDamage);
-        }
     }
 
     @Override
@@ -85,17 +81,6 @@ public class GameView extends BaseScreen {
     public void dispose() {
         super.dispose();
         if (hud != null) hud.dispose();
-        if (map != null) map.dispose();
-        if (mapRenderer != null) mapRenderer.dispose();
-    }
-
-    private void clampCamera(float roomMinX, float roomMinY, float roomMaxX, float roomMaxY) {
-        float halfViewportWidth = camera.viewportWidth * camera.zoom / 2f;
-        float halfViewportHeight = camera.viewportHeight * camera.zoom / 2f;
-
-        float camX = MathUtils.clamp(2592, roomMinX + halfViewportWidth, roomMaxX - halfViewportWidth);
-        float camY = MathUtils.clamp(1144, roomMinY + halfViewportHeight, roomMaxY - halfViewportHeight);
-
-        camera.position.set(camX, camY, 0);
+        mapRenderer.dispose();
     }
 }

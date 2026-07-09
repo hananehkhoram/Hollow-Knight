@@ -6,7 +6,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
-import hana.HollowKnight.model.room.RoomModel;
+import hana.HollowKnight.model.map.*;
 
 public class RoomLoader {
 
@@ -27,10 +27,13 @@ public class RoomLoader {
             for (MapObject object : collisionLayer.getObjects()) {
                 if (object instanceof RectangleMapObject) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                    if ("breakable".equals(object.getName()) || object.getProperties().containsKey("breakable")) {
-                        room.setBreakableWall(rect);
-                    } else if ("portable".equals(object.getName()) || object.getProperties().containsKey("portable")) {
-                        room.getPortablePlatforms().add(rect);
+                    MapProperties props = object.getProperties();
+
+                    if ("portal".equals(object.getName()) || props.containsKey("targetMap")) {
+                        String targetMap = props.get("targetMap", String.class);
+                        room.setPortal(new PortalModel(rect, targetMap));
+                    } else if ("breakable".equals(object.getName()) || props.containsKey("breakable")) {
+                        room.setBreakableWall(new BreakableWallModel(rect));
                     }
                 }
             }

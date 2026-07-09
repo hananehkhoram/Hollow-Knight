@@ -62,7 +62,7 @@ public class GameModel {
     public PlayerModel getPlayer() { return player; }
     public GameStats getStats() { return gameStats; }
 
-    public hana.HollowKnight.model.room.RoomModel getCurrentRoom() {
+    public hana.HollowKnight.model.map.RoomModel getCurrentRoom() {
         return null;
     }
 }

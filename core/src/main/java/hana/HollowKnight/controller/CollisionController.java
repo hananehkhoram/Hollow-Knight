@@ -3,33 +3,51 @@ package hana.HollowKnight.controller;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.map.BreakableWallModel;
+import hana.HollowKnight.model.map.PortalModel;
 
 public class CollisionController {
-    private Array<Rectangle> hazards;
-    private PlayerModel player;
 
-    public CollisionController(PlayerModel playerModel, Array<Rectangle> hazards) {
-        this.player = playerModel;
+    private final PlayerModel player;
+    private final Array<Rectangle> hazards;
+    private final BreakableWallModel breakableWall;
+    private final PortalModel portal;
+
+    public CollisionController(PlayerModel player,
+                               Array<Rectangle> hazards,
+                               BreakableWallModel breakableWall,
+                               PortalModel portal) {
+        this.player = player;
         this.hazards = hazards;
+        this.breakableWall = breakableWall;
+        this.portal = portal;
     }
 
-    public boolean checkHazardCollisions() {
-        if (player.isInvincible()) {
-            return false;
-        }
-
+    public void checkHazardCollisions(int damageAmount) {
         Rectangle playerBounds = player.getBounds();
         for (Rectangle hazard : hazards) {
             if (playerBounds.overlaps(hazard)) {
-
-                player.takeDamage(1);
-                player.takeDamage(1);
-
-                return true;
+                player.takeDamage(damageAmount);
+                player.applyKnockBack();
+                return;
             }
         }
-        return false;
+    }
+
+    public void checkAttackOnBreakable() {
+        if (breakableWall == null || breakableWall.isBroken() || !player.isAttacking()) return;
+        if (player.getAttackHitbox().overlaps(breakableWall.getBounds())) {
+            breakableWall.breakWall();
+        }
+    }
+
+    public boolean isBlockedByBreakable(Rectangle nextBounds) {
+        if (breakableWall == null || breakableWall.isBroken()) return false;
+        return nextBounds.overlaps(breakableWall.getBounds());
+    }
+
+    public PortalModel checkPortalCollision() {
+        if (portal == null) return null;
+        return player.getBounds().overlaps(portal.getBounds()) ? portal : null;
     }
 }
-
-

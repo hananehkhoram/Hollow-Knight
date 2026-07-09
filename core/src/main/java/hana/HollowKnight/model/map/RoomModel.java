@@ -1,14 +1,15 @@
-package hana.HollowKnight.model.room;
+package hana.HollowKnight.model.map;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+
 
 public class RoomModel {
 
     private final String mapPath;
     private final Array<Rectangle> hazards = new Array<>();
-    private Rectangle breakableWall;
-    private final Array<Rectangle> portablePlatforms = new Array<>();
+    private BreakableWallModel breakableWall;
+    private PortalModel portal;
 
     private float minX, minY, maxX, maxY;
 
@@ -20,10 +21,11 @@ public class RoomModel {
 
     public Array<Rectangle> getHazards() { return hazards; }
 
-    public Rectangle getBreakableWall() { return breakableWall; }
-    public void setBreakableWall(Rectangle r) { this.breakableWall = r; }
+    public BreakableWallModel getBreakableWall() { return breakableWall; }
+    public void setBreakableWall(BreakableWallModel wall) { this.breakableWall = wall; }
 
-    public Array<Rectangle> getPortablePlatforms() { return portablePlatforms; }
+    public PortalModel getPortal() { return portal; }
+    public void setPortal(PortalModel portal) { this.portal = portal; }
 
     public void setBounds(float minX, float minY, float maxX, float maxY) {
         this.minX = minX; this.minY = minY;
