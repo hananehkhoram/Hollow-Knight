@@ -2,6 +2,7 @@ package hana.HollowKnight.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector2;
 import hana.HollowKnight.controller.CollisionController;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.controller.RoomLoader;
@@ -15,12 +16,11 @@ import hana.HollowKnight.view.screens.BaseScreen;
 public class GameView extends BaseScreen {
 
     private static final int HAZARD_DAMAGE = 1;
-
+    private final MapRenderer mapRenderer = new MapRenderer();
     private GameHUD hud;
     private PlayerModel player = controller.getModel().getPlayer();
     private CollisionController collision;
     private RoomModel currentRoom;
-    private final MapRenderer mapRenderer = new MapRenderer();
 
     public GameView(GameController controller) {
         super(controller);
@@ -31,7 +31,10 @@ public class GameView extends BaseScreen {
         hud = new GameHUD();
         loadRoom("maps/City of Tears-20260707T215923Z-3-001/cityOfTears1.tmx");
 
-        camera.position.set(0, 0, 0);
+        Vector2 spawn = currentRoom.getKnightSpawn();
+        player.setPosition(spawn.x, spawn.y);
+        camera.position.set(player.getX(), player.getY() , 0);
+        System.out.println("Knight spawn: " + player.getX() + ", " + player.getY());
         camera.zoom = 2f;
         camera.update();
     }
@@ -50,6 +53,8 @@ public class GameView extends BaseScreen {
 
         controller.updateGameplay(delta);
 
+
+        collision.resolveGroundCollisions(currentRoom.getSolidTiles());
         collision.checkHazardCollisions(HAZARD_DAMAGE);
         collision.checkAttackOnBreakable();
 

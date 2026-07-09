@@ -24,7 +24,7 @@ public class MapRenderer {
         float halfViewportHeight = camera.viewportHeight * camera.zoom / 2f;
 
         float camX = MathUtils.clamp(targetX, roomMinX + halfViewportWidth, roomMaxX - halfViewportWidth);
-        float camY = MathUtils.clamp(targetY, roomMinY + halfViewportHeight, roomMaxY - halfViewportHeight);
+        float camY = MathUtils.clamp(targetY + 1200, roomMinY + halfViewportHeight, roomMaxY - halfViewportHeight);
 
         camera.position.set(camX, camY, 0);
     }

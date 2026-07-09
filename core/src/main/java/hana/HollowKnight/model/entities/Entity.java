@@ -32,7 +32,7 @@ public abstract class Entity {
     public float getY() { return y; }
     public void setX(float x) { this.x = x; }
     public void setY(float y) { this.y = y; }
-    public void setPosition(float x, float y) { this.x = x; this.y = y; }
+    public void setPosition(float x, float y) { this.x = x; this.y = y;  this.velocityX = 0; this.velocityY = 0; }
 
     public float getWidth() { return width; }
     public float getHeight() { return height; }
@@ -50,4 +50,19 @@ public abstract class Entity {
 
     public boolean isAlive() { return alive; }
     public void setAlive(boolean alive) { this.alive = alive; }
+
+    public void landOn(float surfaceY) {
+        this.y = surfaceY;
+        this.velocityY = 0f;
+        this.onGround = true;
+    }
+
+    public void hitCeiling(float surfaceY) {
+        this.y = surfaceY - height;
+        this.velocityY = 0f;
+    }
+
+    public void setGrounded(boolean grounded) {
+        this.onGround = grounded;
+    }
 }

@@ -28,12 +28,15 @@ public class RoomLoader {
                 if (object instanceof RectangleMapObject) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
                     MapProperties props = object.getProperties();
+                    String name = object.getName();
 
-                    if ("portal".equals(object.getName()) || props.containsKey("targetMap")) {
+                    if ("portal".equals(name) || props.containsKey("targetMap")) {
                         String targetMap = props.get("targetMap", String.class);
                         room.setPortal(new PortalModel(rect, targetMap));
-                    } else if ("breakable".equals(object.getName()) || props.containsKey("breakable")) {
+                    } else if ("breakable".equals(name) || props.containsKey("breakable")) {
                         room.setBreakableWall(new BreakableWallModel(rect));
+                    } else {
+                        room.getSolidTiles().add(rect);
                     }
                 }
             }
@@ -45,6 +48,25 @@ public class RoomLoader {
         int tileW = props.get("tilewidth", Integer.class);
         int tileH = props.get("tileheight", Integer.class);
         room.setBounds(0, 0, width * tileW, height * tileH);
+
+
+        MapLayer spawnLayer = map.getLayers().get("spawn_points");
+        if (spawnLayer != null) {
+            for (MapObject object : spawnLayer.getObjects()) {
+                String name = object.getName();
+                MapProperties prop = object.getProperties();
+                float x = prop.get("x", Float.class);
+//                float y = height * 8 - prop.get("y", Float.class);
+                float y = prop.get("y", Float.class);
+
+                if (name == null) continue;
+                if ("knight".equals(name)) {
+                    room.setKnightSpawn(x, y);}
+//                } else{
+//                    room.getEnemySpawns().add(new SpawnPointModel(name, x,y));
+//                }
+            }
+        }
 
         return room;
     }
