@@ -2,17 +2,16 @@ package hana.HollowKnight.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Vector2;
-import hana.HollowKnight.controller.AIController;
-import hana.HollowKnight.controller.CollisionController;
+import com.badlogic.gdx.math.MathUtils;
 import hana.HollowKnight.controller.GameController;
-import hana.HollowKnight.controller.RoomLoader;
+import hana.HollowKnight.model.entities.BossModel;
 import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
-import hana.HollowKnight.model.map.PortalModel;
+import hana.HollowKnight.model.map.BossArena;
 import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.hud.GameHUD;
+import hana.HollowKnight.view.renderers.BossRenderer;
 import hana.HollowKnight.view.renderers.CollisionDebugRenderer;
 import hana.HollowKnight.view.renderers.CrawlerRenderer;
 import hana.HollowKnight.view.renderers.FlyRenderer;
@@ -20,127 +19,141 @@ import hana.HollowKnight.view.renderers.MapRenderer;
 import hana.HollowKnight.view.renderers.PlayerRenderer;
 import hana.HollowKnight.view.screens.BaseScreen;
 
-import java.util.ArrayList;
-
 public class GameView extends BaseScreen {
 
-    private static final int HAZARD_DAMAGE = 1;
     private final MapRenderer mapRenderer = new MapRenderer();
     private GameHUD hud;
-    private PlayerModel player = controller.getModel().getPlayer();
-    private CollisionController collision;
-    private RoomModel currentRoom;
+    private final PlayerModel player = controller.getModel().getPlayer();
     private PlayerRenderer playerRenderer;
     private CollisionDebugRenderer debugRenderer;
 
-    private final AIController aiController = new AIController();
     private final CrawlerRenderer mosscreepRenderer = new CrawlerRenderer("mosscreep");
+    private final CrawlerRenderer tiktikRenderer = new CrawlerRenderer("tiktik");
     private final FlyRenderer flyRenderer = new FlyRenderer();
-    private ArrayList<CrawlerModel> crawlers;
-    private ArrayList<FlyModel> flies;
+    private final BossRenderer bossRenderer = new BossRenderer();
 
     public GameView(GameController controller) {
         super(controller);
-        playerRenderer = new PlayerRenderer();}
+        playerRenderer = new PlayerRenderer();
+    }
 
     @Override
     public void show() {
         debugRenderer = new CollisionDebugRenderer();
         hud = new GameHUD();
-
-        String targetMap = (controller.getModel().getRoomPath() != null) ?
-            controller.getModel().getRoomPath() : "maps/City of Tears-20260707T215923Z-3-001/cityOfTears1.tmx";
-        loadRoom(targetMap);
-
         playerRenderer = new PlayerRenderer();
 
-        Vector2 spawn = currentRoom.getKnightSpawn();
-        player.setPosition(spawn.x, spawn.y);
+        String targetMap = (controller.getModel().getRoomPath() != null)
+            ? controller.getModel().getRoomPath()
+            : "maps/City of Tears-20260707T215923Z-3-001/cityOfTears1.tmx";
 
-        player.savePrevPosition();
-        camera.position.set(player.getX(), player.getY() , 0);
-        camera.zoom = 1.8f;
+        loadNewRoom(targetMap);
+
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.zoom = 1.6f;
         camera.update();
     }
 
-    private void loadRoom(String mapPath) {
+    private void loadNewRoom(String mapPath) {
         mapRenderer.load(mapPath);
-        currentRoom = RoomLoader.load(mapRenderer.getMap(), mapPath);
-        collision = new CollisionController(player, currentRoom.getHazards(),
-            currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer);
-        crawlers = RoomLoader.spawnCrawlers(currentRoom);
-        currentRoom.setCrawlers(crawlers);
-        flies = RoomLoader.spawnFlies(currentRoom, player);
+        controller.initRoom(mapPath, mapRenderer.getMap(), mapRenderer);
     }
 
     @Override
     public void render(float delta) {
-        PortalModel triggeredPortal = collision.checkPortalCollision();
-        if (triggeredPortal != null) {
-            loadRoom(triggeredPortal.getTargetMapPath());
-            player.setPosition(triggeredPortal.getX(), triggeredPortal.getY());
+        if (controller.hasPendingRoomChange()) {
+            String nextMap = controller.consumePendingMapPath();
+            loadNewRoom(nextMap);
             camera.position.set(player.getX(), player.getY(), 0);
+        } else {
+            controller.updateGameplay(delta);
         }
 
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        controller.updateGameplay(delta);
-
-        player.savePrevPosition();
-
-        collision.updateMovement(delta, currentRoom.getSolidTiles());
-
-        player.update(delta);
-        collision.checkHazardCollisions(HAZARD_DAMAGE);
-        collision.checkAttackOnBreakable();
-
-        for (CrawlerModel crawler : crawlers) {
-            aiController.updateCrawler(crawler, delta, currentRoom.getSolidTiles(), player);
-        }
-        for (FlyModel fly : flies) {
-            aiController.updateFly(fly, delta, currentRoom.getSolidTiles(), player);
-        }
-
-        for (FlyModel fly : flies) {
-            fly.update(delta);
-        }
-
-        camera.position.set(player.getX(), player.getY() + 200, 0);
-        camera.update();
+        RoomModel currentRoom = controller.getCurrentRoom();
+        updateCamera(delta, currentRoom);
 
         mapRenderer.renderAllExcept(camera, "for");
         mapRenderer.renderAllExcept(camera, "secret room");
 
         batch.setProjectionMatrix(camera.combined);
-
         batch.begin();
-        for (CrawlerModel crawler : crawlers) {
+
+        for (CrawlerModel crawler : controller.getMosscreeps()) {
             mosscreepRenderer.render(batch, crawler);
         }
-        for (FlyModel fly : flies) {
+        for (CrawlerModel crawler : controller.getTiktiks()) {
+            tiktikRenderer.render(batch, crawler);
+        }
+        for (FlyModel fly : controller.getFlies()) {
             flyRenderer.render(batch, fly);
         }
-        if (player.isInvincible()) {
-            if (com.badlogic.gdx.math.MathUtils.sin(player.getInvulnerabilityTimer() * 25f) > 0) {
-                playerRenderer.render(batch, player);
-            }
-        } else {
-            playerRenderer.render(batch, player);
+        for (BossModel boss : controller.getBosses()) {
+            bossRenderer.render(batch, boss);
         }
+        renderPlayer();
 
         batch.end();
 
         mapRenderer.renderLayer(camera, "for");
         mapRenderer.renderLayer(camera, "secret room");
 
-        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(), crawlers, flies);
+        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
+            controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
-        if (player.isJustDead()) {
-            player.setHealth(player.getMaxHealth());
-            show();
+    }
+
+    private void renderPlayer() {
+        if (player.isInvincible()) {
+            if (MathUtils.sin(player.getInvulnerabilityTimer() * 25f) > 0) {
+                playerRenderer.render(batch, player);
+            }
+        } else {
+            playerRenderer.render(batch, player);
         }
+    }
+
+    private void updateCamera(float delta, RoomModel currentRoom) {
+        float targetX = player.getX();
+        float targetY = player.getY() + 200;
+        float lerp = Math.min(1f, 6f * delta);
+
+        camera.position.x += (targetX - camera.position.x) * lerp;
+        camera.position.y += (targetY - camera.position.y) * lerp;
+
+        BossArena arena = currentRoom.getBossArena();
+        float minX, minY, maxX, maxY;
+        if (arena != null && arena.isLocked() && arena.getBounds() != null) {
+            minX = arena.getBounds().x;
+            minY = arena.getBounds().y;
+            maxX = arena.getBounds().x + arena.getBounds().width;
+            maxY = arena.getBounds().y + arena.getBounds().height;
+        } else {
+            minX = currentRoom.getMinX();
+            minY = currentRoom.getMinY();
+            maxX = currentRoom.getMaxX();
+            maxY = currentRoom.getMaxY();
+        }
+
+        float halfWidth = camera.viewportWidth * camera.zoom / 2f;
+        float halfHeight = camera.viewportHeight * camera.zoom / 2f;
+
+        if (maxX - minX > halfWidth * 2f) {
+            camera.position.x = Math.max(minX + halfWidth, Math.min(camera.position.x, maxX - halfWidth));
+        } else {
+            camera.position.x = (minX + maxX) / 2f;
+        }
+
+        if (maxY - minY > halfHeight * 2f) {
+            camera.position.y = Math.max(minY + halfHeight, Math.min(camera.position.y, maxY - halfHeight));
+        } else {
+            camera.position.y = (minY + maxY) / 2f;
+        }
+
+        camera.update();
     }
 
     @Override
@@ -158,5 +171,6 @@ public class GameView extends BaseScreen {
         playerRenderer.dispose();
         mosscreepRenderer.dispose();
         flyRenderer.dispose();
+        bossRenderer.dispose();
     }
 }

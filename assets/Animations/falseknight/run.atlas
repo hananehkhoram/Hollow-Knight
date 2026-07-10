@@ -1,0 +1,41 @@
+
+run.png
+size: 4096, 2048
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Run
+  rotate: false
+  xy: 2, 1278
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 0
+Run
+  rotate: false
+  xy: 2, 640
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 1
+Run
+  rotate: false
+  xy: 1099, 1278
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 2
+Run
+  rotate: false
+  xy: 2, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 3
+Run
+  rotate: false
+  xy: 1099, 640
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 4

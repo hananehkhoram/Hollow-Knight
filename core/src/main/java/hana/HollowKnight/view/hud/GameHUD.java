@@ -25,25 +25,16 @@ public class GameHUD {
     private final Animation<TextureAtlas.AtlasRegion> waterSoulShrinkAn;
     private final Animation<TextureAtlas.AtlasRegion> hpBreakAn;
     private final Animation<TextureAtlas.AtlasRegion> hpRefillAn;
-    private float stateTime;
     private final Viewport hudViewport;
     private final ShapeRenderer shapeRenderer;
-
+    public String soulState = "IDLE";
+    private float stateTime;
     private float breakTime = 0;
     private float refillTime = 0;
     private boolean isBreaking = false;
     private boolean isRefilling = true;
     private int lastHp = -1;
-
-    public String soulState = "IDLE";
-
-    public void triggerGrow() {
-        this.soulState = "GROW";
-    }
-
-    public void triggerShrink() {
-        this.soulState = "SHRINK";
-    }
+    private float prevSoul = 0;
 
     public GameHUD() {
         hudViewport = new StretchViewport(1280, 720);
@@ -94,6 +85,16 @@ public class GameHUD {
         }
         lastHp = currentHp;
 
+        if (prevSoul > soul) {
+            soulState = "GROW";
+        } else if (prevSoul < soul) {
+            soulState = "SHRINK";
+        } else {
+            soulState = "IDLE";
+        }
+
+        prevSoul = soul;
+
         if (soulState.equals("GROW")) {
             if (waterSoulGrowAn != null && waterSoulGrowAn.isAnimationFinished(stateTime)) {
                 soulState = "IDLE";
@@ -104,7 +105,7 @@ public class GameHUD {
             }
         }
 
-        TextureRegion hudRegion  = healthBarAn.getKeyFrame(stateTime);
+        TextureRegion hudRegion = healthBarAn.getKeyFrame(stateTime);
         TextureRegion hpRegion = hpAn.getKeyFrame(stateTime);
 
         TextureRegion waterSoulRegion = null;

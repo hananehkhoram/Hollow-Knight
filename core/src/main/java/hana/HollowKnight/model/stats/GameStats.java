@@ -1,52 +1,17 @@
 package hana.HollowKnight.model.stats;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-/**
- * آمار یک بازی (playtime، تعداد کشته‌ها) و مدیریت دستاوردها (Achievements).
- * برای پاپ‌آپ دستاورد از الگوی Observer استفاده شده: هر شنونده (مثلا HUD) با
- * addListener ثبت‌نام می‌کند و به‌محض قفل بازشدن یک دستاورد باخبر می‌شود.
- */
+
 public class GameStats {
 
-    public enum Achievement {
-        COMPLETION("Completion", "Finish the game."),
-        SPEEDRUN("Speedrun", "Finish the game within the target time."),
-        TRUE_HUNTER("True Hunter", "Kill every enemy type in the game."),
-        DEFEAT_FALSE_KNIGHT("Defeat False Knight", "Defeat the False Knight boss."),
-        NOOB ("The Noob", "Start the first game.");
-
-        private final String title;
-        private final String description;
-
-        Achievement(String title, String description) {
-            this.title = title;
-            this.description = description;
-        }
-
-        public String getTitle() { return title; }
-        public String getDescription() { return description; }
-    }
-
-    /** برای پاپ‌آپ آنی دستاورد؛ View (مثلا HUDRenderer) این را پیاده و ثبت می‌کند. */
-    public interface AchievementListener {
-        void onAchievementUnlocked(Achievement achievement);
-    }
-
-    private static final float SPEEDRUN_TARGET_SECONDS = 15 * 60f; // ۱۵ دقیقه؛ خودت می‌تونی عوض کنی
-
+    private static final float SPEEDRUN_TARGET_SECONDS = 15 * 60f;
+    private final Set<String> killedEnemyTypes = new LinkedHashSet<>();
+    private final Set<Achievement> unlockedAchievements = EnumSet.noneOf(Achievement.class);
+    private final List<AchievementListener> listeners = new ArrayList<>();
     private float playtimeSeconds;
     private int enemiesKilled;
     private int deaths;
-
-    private final Set<String> killedEnemyTypes = new LinkedHashSet<>();
-
-    private final Set<Achievement> unlockedAchievements = EnumSet.noneOf(Achievement.class);
-    private final List<AchievementListener> listeners = new ArrayList<>();
 
     public void addListener(AchievementListener listener) {
         listeners.add(listener);
@@ -63,7 +28,6 @@ public class GameStats {
             }
         }
     }
-
 
     public void update(float delta) {
         playtimeSeconds += delta;
@@ -84,7 +48,7 @@ public class GameStats {
         }
     }
 
-    public void defeatedBoss (){
+    public void defeatedBoss() {
         unlock(Achievement.DEFEAT_FALSE_KNIGHT);
     }
 
@@ -103,23 +67,39 @@ public class GameStats {
         return unlockedAchievements;
     }
 
-    public float getPlaytimeSeconds() { return playtimeSeconds; }
-    public void setPlaytimeSeconds(float playtimeSeconds) { this.playtimeSeconds = playtimeSeconds; }
+    public float getPlaytimeSeconds() {
+        return playtimeSeconds;
+    }
 
-    public int getEnemiesKilled() { return enemiesKilled; }
-    public void setEnemiesKilled(int enemiesKilled) { this.enemiesKilled = enemiesKilled; }
+    public void setPlaytimeSeconds(float playtimeSeconds) {
+        this.playtimeSeconds = playtimeSeconds;
+    }
 
-    public int getDeaths() { return deaths; }
-    public void setDeaths(int deaths) { this.deaths = deaths; }
+    public int getEnemiesKilled() {
+        return enemiesKilled;
+    }
 
-    public Set<String> getKilledEnemyTypes() { return killedEnemyTypes; }
+    public void setEnemiesKilled(int enemiesKilled) {
+        this.enemiesKilled = enemiesKilled;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public Set<String> getKilledEnemyTypes() {
+        return killedEnemyTypes;
+    }
+
     public void setKilledEnemyTypes(Set<String> types) {
         killedEnemyTypes.clear();
         if (types != null) killedEnemyTypes.addAll(types);
     }
 
-
-    /** برای GameData: تبدیل enum ها به رشته جهت سریالایز با Json. */
     public List<String> getUnlockedAchievementIds() {
         List<String> ids = new ArrayList<>();
         for (Achievement a : unlockedAchievements) ids.add(a.name());
@@ -130,5 +110,34 @@ public class GameStats {
         unlockedAchievements.clear();
         if (ids == null) return;
         for (String id : ids) unlockedAchievements.add(Achievement.valueOf(id));
+    }
+
+
+    public enum Achievement {
+        COMPLETION("Completion", "Finish the game."),
+        SPEEDRUN("Speedrun", "Finish the game within the target time."),
+        TRUE_HUNTER("True Hunter", "Kill every enemy type in the game."),
+        DEFEAT_FALSE_KNIGHT("Defeat False Knight", "Defeat the False Knight boss."),
+        NOOB("The Noob", "Start the first game.");
+
+        private final String title;
+        private final String description;
+
+        Achievement(String title, String description) {
+            this.title = title;
+            this.description = description;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
+    public interface AchievementListener {
+        void onAchievementUnlocked(Achievement achievement);
     }
 }

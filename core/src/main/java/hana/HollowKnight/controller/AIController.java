@@ -40,16 +40,20 @@ public class AIController {
 
         fly.savePrevPosition();
 
+        if (fly.isBeingKnockedBack()) {
+            fly.setVelocityY(fly.getVelocityY() + GRAVITY * delta);
+        }
+
         fly.setX(fly.getX() + fly.getVelocityX() * delta);
         Rectangle bounds = fly.getBounds();
         for (Rectangle tile : solidTiles) {
             if (bounds.overlaps(tile)) {
                 if (fly.getVelocityX() > 0) {
                     fly.setX(tile.x - fly.getWidth());
-                    fly.setFacingRight(false);
+                    if (!fly.isBeingKnockedBack()) fly.setFacingRight(false);
                 } else if (fly.getVelocityX() < 0) {
                     fly.setX(tile.x + tile.width);
-                    fly.setFacingRight(true);
+                    if (!fly.isBeingKnockedBack()) fly.setFacingRight(true);
                 }
                 break;
             }
@@ -70,7 +74,6 @@ public class AIController {
         }
 
         checkPlayerInteraction(fly, player, 1);
-
         fly.update(delta);
     }
 
@@ -78,6 +81,13 @@ public class AIController {
         delta = Math.min(delta, MAX_DELTA);
 
         if (crawler.isDead()) {
+            crawler.setVelocityY(crawler.getVelocityY() + GRAVITY * delta);
+            crawler.setY(crawler.getY() + crawler.getVelocityY() * delta);
+            resolveVerticalCollisions(crawler, solidTiles);
+
+            crawler.setX(crawler.getX() + crawler.getVelocityX() * delta);
+            resolveHorizontalCollisions(crawler, solidTiles);
+
             crawler.update(delta);
             return;
         }
@@ -92,10 +102,11 @@ public class AIController {
         crawler.setX(crawler.getX() + crawler.getVelocityX() * delta);
         boolean hitWall = resolveHorizontalCollisions(crawler, solidTiles);
 
-        boolean atLedge = crawler.isOnGround() && !hitWall && isAtLedge(crawler, solidTiles);
-
-        if (hitWall || atLedge) {
-            crawler.turn();
+        if (!crawler.isBeingKnockedBack()) {
+            boolean atLedge = crawler.isOnGround() && !hitWall && isAtLedge(crawler, solidTiles);
+            if (hitWall || atLedge) {
+                crawler.turn();
+            }
         }
 
         crawler.update(delta);
@@ -130,6 +141,9 @@ public class AIController {
                 } else if (crawler.getVelocityX() < 0) {
                     crawler.setX(tile.x + tile.width);
                 }
+                if (!crawler.isBeingKnockedBack()) {
+                    crawler.setVelocityX(0f);
+                }
                 return true;
             }
         }
@@ -157,9 +171,13 @@ public class AIController {
 
         if (player.isAttacking()) {
             if (!enemy.wasHitByCurrentAttack() && player.getAttackHitbox().overlaps(enemy.getBounds())) {
-                enemy.takeDamage(attackDamage);
+                enemy.takeDamage(attackDamage, player.isFacingRight());
                 enemy.markHitByCurrentAttack();
                 player.gainSoulOnHit();
+
+                if (enemy.isDead()) {
+                    player.addPlayerKillsCount();
+                }
             }
         } else {
             enemy.resetAttackHitFlag();
@@ -169,5 +187,4 @@ public class AIController {
             player.takeDamage(enemy.getContactDamage());
             player.applyKnockBack();
         }
-    }
-}
+    }}

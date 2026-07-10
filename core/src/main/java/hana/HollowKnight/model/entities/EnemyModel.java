@@ -1,13 +1,9 @@
 package hana.HollowKnight.model.entities;
 
-/**
- * Common base for every enemy type (Crawler/Mosscreep, Hornhead, Spitter, Zote, ...).
- * Holds shared combat state (health, contact damage, death handling) on top of
- * the physics/position state already provided by Entity.
- */
 public abstract class EnemyModel extends Entity {
 
     private static final float DEFAULT_DEATH_DURATION = 0.6f;
+    protected static final float KNOCKBACK_DURATION = 0.2f;
 
     protected int health;
     protected int maxHealth;
@@ -18,6 +14,11 @@ public abstract class EnemyModel extends Entity {
     protected float deathDuration = DEFAULT_DEATH_DURATION;
     private boolean hitByCurrentAttack = false;
 
+    protected boolean isBeingKnockedBack = false;
+    protected float knockbackTimer = 0f;
+
+    protected float animationTimer = 0f;
+
     protected EnemyModel(float x, float y, float width, float height, int maxHealth, int contactDamage) {
         super(x, y, width, height);
         this.maxHealth = maxHealth;
@@ -25,10 +26,11 @@ public abstract class EnemyModel extends Entity {
         this.contactDamage = contactDamage;
     }
 
-    public void takeDamage(int amount) {
+    public void takeDamage(int amount, boolean playerFacingRight) {
         if (dead) return;
 
         health -= amount;
+        applyKnockBack(playerFacingRight);
         if (health <= 0) {
             health = 0;
             die();
@@ -37,7 +39,16 @@ public abstract class EnemyModel extends Entity {
         }
     }
 
-    /** Hook for subclasses that want a hurt reaction (flash, brief stagger, etc). */
+    public void applyKnockBack(boolean playerFacingRight) {
+        this.isBeingKnockedBack = true;
+        this.knockbackTimer = KNOCKBACK_DURATION;
+        float knockbackForceX = 400f;
+        float knockbackForceY = 250f;
+        this.velocityX = playerFacingRight ? knockbackForceX : -knockbackForceX;
+        this.velocityY = knockbackForceY;
+        this.onGround = false;
+    }
+
     protected void onHurt() {
     }
 
@@ -67,7 +78,6 @@ public abstract class EnemyModel extends Entity {
         return contactDamage;
     }
 
-    /** True once this enemy has already been hit by the player's current attack swing. */
     public boolean wasHitByCurrentAttack() {
         return hitByCurrentAttack;
     }
@@ -80,10 +90,32 @@ public abstract class EnemyModel extends Entity {
         hitByCurrentAttack = false;
     }
 
+    public boolean isBeingKnockedBack() {
+        return isBeingKnockedBack;
+    }
+
+    public float getAnimationTimer() {
+        return animationTimer;
+    }
+
+    public void resetAnimationTimer() {
+        this.animationTimer = 0f;
+    }
+
     @Override
     public void update(float delta) {
+        animationTimer += delta;
+
         if (dead) {
             deathTimer += delta;
+        }
+
+        if (isBeingKnockedBack) {
+            knockbackTimer -= delta;
+            if (knockbackTimer <= 0) {
+                isBeingKnockedBack = false;
+                velocityX = 0f;
+            }
         }
     }
 }

@@ -3,16 +3,49 @@ package hana.HollowKnight.controller;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Vector2;
 import hana.HollowKnight.model.GameModel;
 import hana.HollowKnight.model.data.GameData;
+import hana.HollowKnight.model.entities.BossModel;
+import hana.HollowKnight.model.entities.CrawlerModel;
+import hana.HollowKnight.model.entities.FlyModel;
+import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.map.BossArena;
+import hana.HollowKnight.model.map.PortalModel;
+import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.GameView;
+import hana.HollowKnight.view.renderers.MapRenderer;
 import hana.HollowKnight.view.screens.*;
 
+import java.util.ArrayList;
+
 public class GameController {
+
+    private static final int HAZARD_DAMAGE = 1;
+
     public static float brightness = 1.0f;
+
     private final Game game;
     private final SpriteBatch batch;
     private GameModel model;
+    private GameView activeGameView;
+
+    // ---------------- Gameplay / room state (moved out of GameView) ----------------
+    private final AIController aiController = new AIController();
+    private final BossAIController bossAIController = new BossAIController();
+
+    private RoomModel currentRoom;
+    private CollisionController collision;
+    private ArrayList<CrawlerModel> mosscreeps = new ArrayList<>();
+    private ArrayList<CrawlerModel> tiktiks = new ArrayList<>();
+    private ArrayList<FlyModel> flies = new ArrayList<>();
+    private ArrayList<BossModel> bosses = new ArrayList<>();
+
+    private String currentMapPath;
+    private String pendingMapPath;
+    private float pendingSpawnX, pendingSpawnY;
+    private boolean pendingUseRoomSpawn = true;
 
     public GameController(Game game, SpriteBatch batch) {
         this.game = game;
@@ -20,9 +53,140 @@ public class GameController {
         this.model = new GameModel();
     }
 
+    // ==================== Room lifecycle ====================
+    public void initRoom(String mapPath, TiledMap map, MapRenderer mapRenderer) {
+        PlayerModel player = model.getPlayer();
+
+        currentRoom = RoomLoader.load(map, mapPath);
+        collision = new CollisionController(player, currentRoom.getHazards(),
+            currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer);
+
+        mosscreeps = RoomLoader.spawnCrawlers(currentRoom, "mosscreep");
+        tiktiks = RoomLoader.spawnCrawlers(currentRoom, "tiktik");
+        currentRoom.setCrawlers(mosscreeps);
+        flies = RoomLoader.spawnFlies(currentRoom, player);
+        bosses = RoomLoader.spawnBoss(currentRoom);
+
+        currentMapPath = mapPath;
+
+        if (pendingUseRoomSpawn) {
+            Vector2 spawn = currentRoom.getKnightSpawn();
+            player.setPosition(spawn.x, spawn.y);
+        } else {
+            player.setPosition(pendingSpawnX, pendingSpawnY);
+        }
+        player.savePrevPosition();
+
+        pendingMapPath = null;
+        pendingUseRoomSpawn = true;
+    }
+
+    public boolean hasPendingRoomChange() {
+        return pendingMapPath != null;
+    }
+
+    public String consumePendingMapPath() {
+        return pendingMapPath;
+    }
+
+    private void requestRoomChange(String mapPath, float x, float y) {
+        pendingMapPath = mapPath;
+        pendingSpawnX = x;
+        pendingSpawnY = y;
+        pendingUseRoomSpawn = false;
+    }
+
+    private void requestRoomChange(String mapPath) {
+        pendingMapPath = mapPath;
+        pendingUseRoomSpawn = true;
+    }
+
+
     public void updateGameplay(float delta) {
         InputHandler.getInstance().update(model.getPlayer());
+        if (InputHandler.getInstance().paused) game.setScreen(new EndScreen(this, model.getPlayer()));
+
+        if (collision == null || currentRoom == null) return; // room not loaded yet
+
+        PortalModel triggeredPortal = collision.checkPortalCollision();
+        if (triggeredPortal != null) {
+            requestRoomChange(triggeredPortal.getTargetMapPath(),
+                triggeredPortal.getX(), triggeredPortal.getY());
+            return; // let GameView reload the map on the next frame before resuming updates
+        }
+
+        PlayerModel player = model.getPlayer();
+        player.savePrevPosition();
+
+        collision.updateMovement(delta, currentRoom.getSolidTiles(), currentRoom.getWalls());
+        player.update(delta);
+        collision.checkHazardCollisions(HAZARD_DAMAGE);
+        collision.checkAttackOnBreakable();
+
+        for (CrawlerModel crawler : mosscreeps) {
+            aiController.updateCrawler(crawler, delta, currentRoom.getSolidTiles(), player);
+        }
+        for (CrawlerModel crawler : tiktiks) {
+            aiController.updateCrawler(crawler, delta, currentRoom.getSolidTiles(), player);
+        }
+        for (FlyModel fly : flies) {
+            aiController.updateFly(fly, delta, currentRoom.getSolidTiles(), player);
+            fly.update(delta);
+        }
+        for (BossModel boss : bosses) {
+            bossAIController.updateBoss(boss, delta, player, currentRoom.getSolidTiles());
+            aiController.checkPlayerInteraction(boss, player, 1);
+        }
+
+        updateBossArena();
+
+        if (player.isJustDead()) {
+            player.setHealth(player.getMaxHealth());
+            requestRoomChange(currentMapPath); // respawn in the same room at the knight spawn
+        }
     }
+
+    private void updateBossArena() {
+        BossArena arena = currentRoom.getBossArena();
+        if (arena == null) return;
+
+        if (!arena.isLocked() && arena.getTrigger() != null
+            && arena.getTrigger().overlaps(model.getPlayer().getBounds()) && !bosses.isEmpty()) {
+            arena.setLocked(true);
+            currentRoom.getSolidTiles().addAll(arena.getGates());
+        }
+
+        if (arena.isLocked() && allBossesDead()) {
+            arena.setLocked(false);
+            currentRoom.getSolidTiles().removeAll(arena.getGates(), true);
+        }
+    }
+
+    private boolean allBossesDead() {
+        for (BossModel boss : bosses) {
+            if (!boss.isDead()) return false;
+        }
+        return true;
+    }
+
+
+    public RoomModel getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public ArrayList<CrawlerModel> getMosscreeps() {
+        return mosscreeps;
+    }
+
+    public ArrayList<FlyModel> getFlies() {
+        return flies;
+    }
+
+    public ArrayList<BossModel> getBosses() {
+        return bosses;
+    }
+
+    // ==================== Screen navigation ====================
 
     public InputHandler getInputHandler() {
         return InputHandler.getInstance();
@@ -37,7 +201,9 @@ public class GameController {
     }
 
     public void resumeGame() {
-        game.setScreen(new GameView(this));
+        if (activeGameView != null) {
+            game.setScreen(activeGameView);
+        }
     }
 
     public void openInventory() {
@@ -56,8 +222,8 @@ public class GameController {
         game.setScreen(new StartGameScreen(this));
     }
 
-    public void endGame(boolean playerWon) {
-        game.setScreen(new EndScreen(this, playerWon));
+    public void endGame(PlayerModel player) {
+        game.setScreen(new EndScreen(this, player));
     }
 
     public void openGuide() {
@@ -71,12 +237,14 @@ public class GameController {
     public void startNewGame(int slot) {
         model = new GameModel();
         model.setActiveSlot(slot);
-        game.setScreen(new GameView(this));
+        activeGameView = new GameView(this);
+        game.setScreen(activeGameView);
     }
 
     public void loadGame(int slot) {
         if (model.load(slot)) {
-            game.setScreen(new GameView(this));
+            activeGameView = new GameView(this);
+            game.setScreen(activeGameView);
         }
     }
 
@@ -110,7 +278,9 @@ public class GameController {
         if (current != null) {
             current.dispose();
         }
-    }    // --- Getters ---
+    }
+
+    // --- Getters ---
 
     public GameModel getModel() {
         return model;
@@ -124,4 +294,7 @@ public class GameController {
         return game;
     }
 
+    public ArrayList<CrawlerModel> getTiktiks() {
+        return tiktiks;
+    }
 }

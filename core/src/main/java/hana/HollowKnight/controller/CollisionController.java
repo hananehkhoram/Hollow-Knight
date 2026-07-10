@@ -69,33 +69,55 @@ public class CollisionController {
         return player.getBounds().overlaps(portal.getBounds()) ? portal : null;
     }
 
-    public void updateMovement(float delta, Array<Rectangle> solidTiles) {
+    public void updateMovement(float delta, Array<Rectangle> solidTiles, Array<Rectangle> walls) {
         delta = Math.min(delta, MAX_DELTA);
 
-        if (!player.isDashing()) {
+        if (!player.isDashing() || !player.isMantis()) {
             player.setVelocityY(player.getVelocityY() + PlayerModel.GRAVITY * delta);
         }
 
         player.setX(player.getX() + player.getVelocityX() * delta);
-        resolveHorizontalCollisions(solidTiles);
+        resolveHorizontalCollisions(solidTiles, walls);
 
         player.setY(player.getY() + player.getVelocityY() * delta);
         resolveVerticalCollisions(solidTiles);
     }
 
-    public void resolveHorizontalCollisions(Array<Rectangle> solidTiles) {
+    public void resolveHorizontalCollisions(Array<Rectangle> solidTiles, Array<Rectangle> walls) {
         Rectangle playerBounds = player.getBounds();
+        boolean hitWall = false;
 
         for (Rectangle tile : solidTiles) {
             if (playerBounds.overlaps(tile)) {
+                boolean isMantisWall = walls.contains(tile, false);
+
+                if (isMantisWall) {
+                    hitWall = true;
+                }
+
                 if (player.getVelocityX() > 0) {
                     player.setX(tile.x - player.getWidth());
+                    if (InputHandler.getInstance().isDown(InputHandler.PlayerAction.MOVE_RIGHT) && !player.isOnGround() && isMantisWall) {
+                        player.mantis();
+                    } else {
+                        player.setMantis(false);
+                    }
                 } else if (player.getVelocityX() < 0) {
                     player.setX(tile.x + tile.width);
+                    if (InputHandler.getInstance().isDown(InputHandler.PlayerAction.MOVE_LEFT) && !player.isOnGround() && isMantisWall) {
+                        player.mantis();
+                    } else {
+                        player.setMantis(false);
+                    }
                 }
+
                 player.setVelocityX(0f);
                 playerBounds = player.getBounds();
             }
+        }
+
+        if (!hitWall) {
+            player.setMantis(false);
         }
 
         if (breakableWall != null && !breakableWall.isBroken()) {
@@ -110,7 +132,6 @@ public class CollisionController {
             }
         }
     }
-
     public void resolveVerticalCollisions(Array<Rectangle> solidTiles) {
         player.setOnGround(false);
         Rectangle playerBounds = player.getBounds();

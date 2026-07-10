@@ -1,0 +1,27 @@
+
+roll.png
+size: 2048, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Roll
+  rotate: false
+  xy: 2, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 0
+Roll
+  rotate: false
+  xy: 353, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 1
+Roll
+  rotate: false
+  xy: 704, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 2

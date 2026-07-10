@@ -1,0 +1,55 @@
+
+death.png
+size: 1024, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Death Air
+  rotate: false
+  xy: 2, 2
+  size: 115, 105
+  orig: 115, 105
+  offset: 0, 0
+  index: 0
+Death Air
+  rotate: false
+  xy: 119, 2
+  size: 115, 105
+  orig: 115, 105
+  offset: 0, 0
+  index: 1
+Death Air
+  rotate: false
+  xy: 236, 2
+  size: 115, 105
+  orig: 115, 105
+  offset: 0, 0
+  index: 2
+Death Air
+  rotate: false
+  xy: 353, 2
+  size: 115, 105
+  orig: 115, 105
+  offset: 0, 0
+  index: 3
+Death Air
+  rotate: false
+  xy: 353, 2
+  size: 115, 105
+  orig: 115, 105
+  offset: 0, 0
+  index: 5
+Death Air
+  rotate: false
+  xy: 470, 2
+  size: 115, 105
+  orig: 115, 105
+  offset: 0, 0
+  index: 4
+Death Land
+  rotate: false
+  xy: 470, 2
+  size: 115, 105
+  orig: 115, 105
+  offset: 0, 0
+  index: 2

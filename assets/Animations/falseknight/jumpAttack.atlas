@@ -1,0 +1,62 @@
+
+jumpAttack.png
+size: 4096, 2048
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Jump Attack
+  rotate: false
+  xy: 2, 1278
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 0
+Jump Attack
+  rotate: false
+  xy: 2, 640
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 1
+Jump Attack
+  rotate: false
+  xy: 1099, 1278
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 2
+Jump Attack
+  rotate: false
+  xy: 2, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 3
+Jump Attack
+  rotate: false
+  xy: 1099, 640
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 4
+Jump Attack
+  rotate: false
+  xy: 2196, 1278
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 5
+Jump Attack
+  rotate: false
+  xy: 1099, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 6
+Jump Attack
+  rotate: false
+  xy: 2196, 640
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 7

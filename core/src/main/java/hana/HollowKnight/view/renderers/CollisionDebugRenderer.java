@@ -20,11 +20,17 @@ public class CollisionDebugRenderer {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards, ArrayList<CrawlerModel> crawls, ArrayList<FlyModel> flies) {
+    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards, ArrayList<CrawlerModel> crawls, ArrayList<FlyModel> flies, ArrayList<CrawlerModel> tiktiks) {
         shapeRenderer.setProjectionMatrix(camera.combined);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         Gdx.gl.glLineWidth(3f);
+
+        shapeRenderer.setColor(Color.RED);
+        for (CrawlerModel crawler : tiktiks) {
+            Rectangle rectangle = crawler.getBounds() ;
+            shapeRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        }
 
         shapeRenderer.setColor(Color.RED);
         for (CrawlerModel mosscreepModel : crawls) {

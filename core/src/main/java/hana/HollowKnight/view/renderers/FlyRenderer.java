@@ -25,9 +25,6 @@ public class FlyRenderer {
     private final float SPRITE_WIDTH = 509;
     private final float SPRITE_HEIGHT = 398;
 
-    private float stateTime = 0f;
-    private FlyModel.State currentStatus = FlyModel.State.IDLE;
-
     public FlyRenderer() {
         idleAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "idle.atlas"));
         idleAnimation = new Animation<>(0.05f, idleAtlas.findRegions("Idle"), Animation.PlayMode.LOOP);
@@ -47,33 +44,23 @@ public class FlyRenderer {
     }
 
     public void render(SpriteBatch batch, FlyModel fly) {
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        stateTime += deltaTime;
-
-        FlyModel.State nextStatus = fly.getState();
-
-        if (currentStatus != nextStatus) {
-            stateTime = 0f;
-            currentStatus = nextStatus;
-        }
+        float stateTime = fly.getAnimationTimer();
+        FlyModel.State status = fly.getState();
 
         TextureRegion region;
-        switch (currentStatus) {
+        switch (status) {
             case DEATH:
                 region = deathAnimation.getKeyFrame(stateTime);
                 break;
             case DEATH2:
                 region = death2Animation.getKeyFrame(stateTime);
                 break;
-
             case SPOTTED:
                 region = attackAnimation.getKeyFrame(stateTime);
                 break;
-
             case ATTACK:
                 region = flyAnimation.getKeyFrame(stateTime);
                 break;
-
             case COOLDOWN:
             case IDLE:
             default:

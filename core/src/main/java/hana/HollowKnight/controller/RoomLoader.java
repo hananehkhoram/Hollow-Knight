@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import hana.HollowKnight.model.entities.BossModel;
 import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
@@ -40,6 +41,9 @@ public class RoomLoader {
                         room.setPortal(new PortalModel(rect, targetMap));
                     } else if ("breakable".equals(name) || props.containsKey("breakable")) {
                         room.setBreakableWall(new BreakableWallModel(rect));
+                    } else if ("wall".equals(name)) {
+                        room.getWalls().add(rect);
+                        room.getSolidTiles().add(rect);
                     } else {
                         room.getSolidTiles().add(rect);
                     }
@@ -72,12 +76,41 @@ public class RoomLoader {
             }
         }
 
+        MapLayer bossArenaLayer = map.getLayers().get("boss_arena");
+        if (bossArenaLayer != null) {
+            BossArena arena = new BossArena();
+            for (MapObject object : bossArenaLayer.getObjects()) {
+                if (!(object instanceof RectangleMapObject)) continue;
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                String name = object.getName();
+
+                if ("bounds".equals(name)) {
+                    arena.setBounds(rect);
+                } else if ("trigger".equals(name)) {
+                    arena.setTrigger(rect);
+                } else if ("gate".equals(name)) {
+                    arena.getGates().add(rect);
+                }
+            }
+            room.setBossArena(arena);
+        }
+
         return room;
     }
-    public static ArrayList<CrawlerModel> spawnCrawlers(RoomModel currentRoom) {
+
+    public static ArrayList<BossModel> spawnBoss(RoomModel currentRoom) {
+        ArrayList<BossModel> bosses = new ArrayList<>();
+        for (SpawnPointModel spawn : currentRoom.getEnemySpawns()) {
+            if ("falseknight".equals(spawn.getName())) {
+                bosses.add(new BossModel(spawn.getX(), spawn.getY()));
+            }
+        }
+        return bosses;
+    }
+    public static ArrayList<CrawlerModel> spawnCrawlers(RoomModel currentRoom, String name) {
         ArrayList<CrawlerModel> crawlers = new ArrayList<>();
         for (SpawnPointModel spawn : currentRoom.getEnemySpawns()) {
-            if ("mosscreep".equals(spawn.getName())) {
+            if (name.equals(spawn.getName())) {
                 crawlers.add(new CrawlerModel(spawn.getX(), spawn.getY()));
             }
         }

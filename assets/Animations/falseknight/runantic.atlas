@@ -1,0 +1,20 @@
+
+runantic.png
+size: 4096, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Run Antic
+  rotate: false
+  xy: 2, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 0
+Run Antic
+  rotate: false
+  xy: 1099, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 1

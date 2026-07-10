@@ -94,7 +94,12 @@ public class InputHandler {
         }
         jumpWasDown = jumpDown;
 
+        if (isJustPressed(PlayerAction.PAUSE)){
+            paused = true;
+        }
+
     }
+    public boolean paused = false;
 
     public boolean isDown(PlayerAction action) {
         return Gdx.input.isKeyPressed(keyBindings.get(action));

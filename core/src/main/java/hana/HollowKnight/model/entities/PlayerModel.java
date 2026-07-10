@@ -1,10 +1,8 @@
 package hana.HollowKnight.model.entities;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
 import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.items.CharmType;
-import hana.HollowKnight.view.GameView;
 import hana.HollowKnight.view.audio.AudioManager;
 
 import java.util.ArrayList;
@@ -21,52 +19,57 @@ public class PlayerModel extends Entity {
     public static final float GRAVITY = -1400;
     public static final float JUMP_VELOCITY = 900;
     public static final float DOUBLE_JUMP_VELOCITY = 500;
-
-    private static final float DASH_SPEED = 1000f;
-    private static final float DASH_DURATION = 0.8f;
-    private static final float DASH_COOLDOWN = 1f;
-
-    private static final float ATTACK_DURATION = 0.22f;
-    private static final float ATTACK_COOLDOWN = 0.28f;
-    private static final float ATTACK_RANGE = 40f;
-
-    private static final float INVULNERABILITY_DURATION = 0.9f;
-    private static final float KNOCKBACK_DURATION = 1f;
-
     public static final float FOCUS_DURATION = 1.5f;
-    private float actionTimer = 0f;
     public static final int DEFAULT_MAX_HEALTH = 5;
     public static final int DEFAULT_MAX_SOUL = 100;
     public static final int SOUL_PER_HIT = 11;
     public static final int MAX_NOTCHES = 3;
-
+    public static final float MANTIS_VEL = 250;
+    private static final float DASH_SPEED = 1000f;
+    private static final float DASH_DURATION = 0.8f;
+    private static final float DASH_COOLDOWN = 1f;
+    private static final float ATTACK_DURATION = 0.22f;
+    private static final float ATTACK_COOLDOWN = 0.28f;
+    private static final float ATTACK_RANGE = 40f;
+    private static final float INVULNERABILITY_DURATION = 0.9f;
+    private static final float KNOCKBACK_DURATION = 1f;
+    private final Set<CharmType> unlockedCharms = EnumSet.noneOf(CharmType.class);
+    private final Set<CharmType> equippedCharms = EnumSet.noneOf(CharmType.class);
+    private float actionTimer = 0f;
     private int health;
     private int maxHealth;
     private int soul;
     private int maxSoul;
     private float soulAccumulator = 0f;
-
     private boolean jumping;
     private boolean doubleJumpUsed;
     private boolean dashing;
     private boolean attacking;
     private boolean isBeingKnockedBack = false;
     private boolean isFocusing = false;
-
     private float dashTimer;
     private float dashCooldownTimer;
     private float attackTimer;
     private float attackCooldownTimer;
     private float invulnerabilityTimer;
     private float knockbackTimer;
-
+    private boolean mantis;
     private float lastSafeX;
     private float lastSafeY;
-
     private boolean isJustDead = false;
 
-    private final Set<CharmType> unlockedCharms = EnumSet.noneOf(CharmType.class);
-    private final Set<CharmType> equippedCharms = EnumSet.noneOf(CharmType.class);
+    private int playerDeathsCount = 0;
+    private int playerKillsCount = 0;
+    private float timePassed = 0f;
+
+    public void addPlayerDeathsCount (){
+        this.playerDeathsCount ++;
+    }
+
+    public void addPlayerKillsCount (){
+        this.playerKillsCount = playerKillsCount + 1;
+    }
+
 
     public PlayerModel() {
         this(100f, 100f);
@@ -79,6 +82,16 @@ public class PlayerModel extends Entity {
         this.health = maxHealth;
         this.maxSoul = DEFAULT_MAX_SOUL;
         this.soul = 0;
+    }
+
+    public void mantis() {
+        if (onGround) {
+            setMantis(false);
+            return;
+        }
+        mantis = true;
+        velocityY = -150f;
+        velocityX = 0;
     }
 
     public void focus(float delta) {
@@ -120,6 +133,7 @@ public class PlayerModel extends Entity {
             }
         }
     }
+
     public void moveLeft() {
         if (dashing || isBeingKnockedBack) return;
         velocityX = -MOVE_SPEED;
@@ -137,7 +151,14 @@ public class PlayerModel extends Entity {
     }
 
     public void jump() {
-        if (onGround) {
+        if (mantis) {
+            velocityY = JUMP_VELOCITY;
+            velocityX = facingRight ? -MOVE_SPEED : MOVE_SPEED;
+            facingRight = !facingRight;
+            mantis = false;
+            onGround = false;
+            doubleJumpUsed = false;
+        } else if (onGround) {
             velocityY = JUMP_VELOCITY;
             onGround = false;
             jumping = true;
@@ -182,10 +203,6 @@ public class PlayerModel extends Entity {
         this.onGround = false;
     }
 
-    public void setJumping(boolean jumping) {
-        this.jumping = jumping;
-    }
-
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }
@@ -195,11 +212,21 @@ public class PlayerModel extends Entity {
         return new Rectangle(hitboxX, y, ATTACK_RANGE, height);
     }
 
-    public boolean isAttacking() { return attacking; }
-    public boolean isDashing() { return dashing; }
-    public boolean isJumping() { return jumping; }
-    public boolean isInvincible() { return invulnerabilityTimer > 0f; }
-    public float getInvulnerabilityTimer() { return invulnerabilityTimer; }
+    public boolean isAttacking() {
+        return attacking;
+    }
+
+    public boolean isDashing() {
+        return dashing;
+    }
+
+    public boolean isInvincible() {
+        return invulnerabilityTimer > 0f;
+    }
+
+    public float getInvulnerabilityTimer() {
+        return invulnerabilityTimer;
+    }
 
     public void takeDamage(int amount) {
         if (invulnerabilityTimer > 0f || !alive) return;
@@ -211,14 +238,6 @@ public class PlayerModel extends Entity {
             AudioManager.getInstance().playHeroDeathSound();
             this.health = DEFAULT_MAX_HEALTH;
         }
-    }
-
-    public void heal(int amount) {
-        health = Math.min(maxHealth, health + amount);
-    }
-
-    public boolean isInvulnerable() {
-        return invulnerabilityTimer > 0f;
     }
 
     public void gainSoulOnHit() {
@@ -275,6 +294,7 @@ public class PlayerModel extends Entity {
 
     @Override
     public void update(float delta) {
+        timePassed  += delta;
 
         if (isBeingKnockedBack) {
             knockbackTimer -= delta;
@@ -306,17 +326,37 @@ public class PlayerModel extends Entity {
         if (invulnerabilityTimer > 0f) invulnerabilityTimer -= delta;
     }
 
-    public int getHealth() { return health; }
-    public void setHealth(int health) { this.health = health; }
+    public int getHealth() {
+        return health;
+    }
 
-    public int getMaxHealth() { return maxHealth; }
-    public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
+    public void setHealth(int health) {
+        this.health = health;
+    }
 
-    public int getSoul() { return soul; }
-    public void setSoul(int soul) { this.soul = soul; }
+    public int getMaxHealth() {
+        return maxHealth;
+    }
 
-    public int getMaxSoul() { return maxSoul; }
-    public void setMaxSoul(int maxSoul) { this.maxSoul = maxSoul; }
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public int getSoul() {
+        return soul;
+    }
+
+    public void setSoul(int soul) {
+        this.soul = soul;
+    }
+
+    public int getMaxSoul() {
+        return maxSoul;
+    }
+
+    public void setMaxSoul(int maxSoul) {
+        this.maxSoul = maxSoul;
+    }
 
     public List<String> getUnlockedCharmNames() {
         List<String> names = new ArrayList<>();
@@ -372,5 +412,25 @@ public class PlayerModel extends Entity {
 
     public void setJustDead(boolean justDead) {
         isJustDead = justDead;
+    }
+
+    public boolean isMantis() {
+        return mantis;
+    }
+
+    public void setMantis(boolean mantis) {
+        this.mantis = mantis;
+    }
+
+    public int getPlayerDeathsCount() {
+        return playerDeathsCount;
+    }
+
+    public int getPlayerKillsCount() {
+        return playerKillsCount;
+    }
+
+    public float getTimePassed() {
+        return timePassed;
     }
 }

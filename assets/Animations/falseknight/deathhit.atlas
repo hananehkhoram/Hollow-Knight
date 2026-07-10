@@ -1,0 +1,27 @@
+
+deathhit.png
+size: 4096, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+DeathHit
+  rotate: false
+  xy: 2, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 0
+DeathHit
+  rotate: false
+  xy: 1099, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 1
+DeathHit
+  rotate: false
+  xy: 2196, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 2

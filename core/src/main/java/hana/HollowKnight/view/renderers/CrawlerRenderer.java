@@ -20,9 +20,6 @@ public class CrawlerRenderer {
     private final float SPRITE_WIDTH = 157;
     private final float SPRITE_HEIGHT = 123;
 
-    private float stateTime = 0f;
-    private CrawlerModel.State currentStatus = CrawlerModel.State.WALK;
-
     public CrawlerRenderer(String name) {
         baseDir = "Animations/enemy/" + name + "/";
         walkAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "walk.atlas"));
@@ -36,27 +33,20 @@ public class CrawlerRenderer {
     }
 
     public void render(SpriteBatch batch, CrawlerModel crawler) {
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        stateTime += deltaTime;
-
-        CrawlerModel.State nextStatus = crawler.getState();
-
-        if (currentStatus != nextStatus) {
-            stateTime = 0f;
-            currentStatus = nextStatus;
-        }
+        float crawlerStateTime = crawler.getAnimationTimer();
+        CrawlerModel.State currentStatus = crawler.getState();
 
         TextureRegion region;
         switch (currentStatus) {
             case DEATH:
-                region = deathAnimation.getKeyFrame(stateTime);
+                region = deathAnimation.getKeyFrame(crawlerStateTime);
                 break;
             case TURN:
-                region = turnAnimation.getKeyFrame(stateTime);
+                region = turnAnimation.getKeyFrame(crawlerStateTime);
                 break;
             case WALK:
             default:
-                region = walkAnimation.getKeyFrame(stateTime);
+                region = walkAnimation.getKeyFrame(crawlerStateTime);
                 break;
         }
 

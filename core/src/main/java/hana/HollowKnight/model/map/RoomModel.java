@@ -13,10 +13,12 @@ public class RoomModel {
     private final String mapPath;
     private final Array<Rectangle> hazards = new Array<>();
     private final Array<Rectangle> solidTiles = new Array<>();
+    private final Array<Rectangle> walls = new Array<>();
     private final Array<SpawnPointModel> enemySpawns = new Array<>();
     private ArrayList<CrawlerModel> crawlers = new ArrayList<>();
     private BreakableWallModel breakableWall;
     private PortalModel portal;
+    private BossArena bossArena;
     private Vector2 knightSpawn = new Vector2(0, 0);
     private float minX, minY, maxX, maxY;
 
@@ -28,9 +30,7 @@ public class RoomModel {
         return solidTiles;
     }
 
-    public String getMapPath() {
-        return mapPath;
-    }
+    public Array<Rectangle> getWalls() {return walls;}
 
     public Array<Rectangle> getHazards() {
         return hazards;
@@ -54,6 +54,14 @@ public class RoomModel {
 
     public void setPortal(PortalModel portal) {
         this.portal = portal;
+    }
+
+    public BossArena getBossArena() {
+        return bossArena;
+    }
+
+    public void setBossArena(BossArena bossArena) {
+        this.bossArena = bossArena;
     }
 
     public void setBounds(float minX, float minY, float maxX, float maxY) {

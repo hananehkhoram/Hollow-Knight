@@ -1,0 +1,90 @@
+
+rain.png
+size: 2048, 512
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+ruin_glow_rain
+  rotate: false
+  xy: 2, 2
+  size: 113, 112
+  orig: 113, 112
+  offset: 0, 0
+  index: 20001
+ruin_glow_rain
+  rotate: false
+  xy: 1802, 303
+  size: 113, 112
+  orig: 113, 112
+  offset: 0, 0
+  index: 20005
+ruin_glow_rain
+  rotate: false
+  xy: 117, 2
+  size: 112, 112
+  orig: 112, 112
+  offset: 0, 0
+  index: 20003
+ruin_glow_rain
+  rotate: false
+  xy: 1802, 189
+  size: 111, 112
+  orig: 111, 112
+  offset: 0, 0
+  index: 20000
+ruin_glow_rain
+  rotate: false
+  xy: 1917, 303
+  size: 111, 112
+  orig: 111, 112
+  offset: 0, 0
+  index: 20002
+ruin_glow_rain
+  rotate: false
+  xy: 231, 3
+  size: 111, 111
+  orig: 111, 111
+  offset: 0, 0
+  index: 20004
+ruin_glow_rain0000
+  rotate: false
+  xy: 602, 117
+  size: 298, 298
+  orig: 298, 298
+  offset: 0, 0
+  index: -1
+ruin_glow_rain0001
+  rotate: false
+  xy: 902, 117
+  size: 298, 298
+  orig: 298, 298
+  offset: 0, 0
+  index: -1
+ruin_glow_rain0002
+  rotate: false
+  xy: 1202, 117
+  size: 298, 298
+  orig: 298, 298
+  offset: 0, 0
+  index: -1
+ruin_glow_rain0003
+  rotate: false
+  xy: 2, 116
+  size: 298, 299
+  orig: 298, 299
+  offset: 0, 0
+  index: -1
+ruin_glow_rain0004
+  rotate: false
+  xy: 1502, 117
+  size: 298, 298
+  orig: 298, 298
+  offset: 0, 0
+  index: -1
+ruin_glow_rain0005
+  rotate: false
+  xy: 302, 116
+  size: 298, 299
+  orig: 298, 299
+  offset: 0, 0
+  index: -1

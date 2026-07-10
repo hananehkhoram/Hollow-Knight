@@ -23,6 +23,7 @@ public class AudioManager {
     private final Sound breakWall3;
     private final Sound moving;
     private final Sound sword;
+    private final Music GreenpathSound;
 
     private float sfxVolume = 5f;
     private float bgmVolume = 0.5f;
@@ -45,11 +46,7 @@ public class AudioManager {
         heroDeath = Gdx.audio.newSound(Gdx.files.internal("hero_death_extra_details.wav"));
         moving = Gdx.audio.newSound(Gdx.files.internal("hero_run_footsteps_stone.wav"));
         sword = Gdx.audio.newSound(Gdx.files.internal("sword_4.wav"));
-    }
-
-    public void playHeroDeathSound() {
-        stopCityofTears();
-        heroDeath.play(sfxVolume);
+        GreenpathSound = Gdx.audio.newMusic(Gdx.files.internal("05. Greenpath.mp3"));
     }
 
     public static AudioManager getInstance() {
@@ -57,6 +54,19 @@ public class AudioManager {
             instance = new AudioManager();
         }
         return instance;
+    }
+
+    public void playGreenpathSound() {
+        switchBgm(GreenpathSound);
+    }
+
+    public void stopGreenpathSound() {
+        GreenpathSound.stop();
+    }
+
+    public void playHeroDeathSound() {
+        stopCityofTears();
+        heroDeath.play(sfxVolume);
     }
 
     public void stopCityofTears() {
@@ -79,9 +89,17 @@ public class AudioManager {
         moving.play(sfxVolume);
     }
 
-    public void playBreakWall1 (){breakWall1.play(sfxVolume);}
-    public void playBreakWall2 (){breakWall2.play(sfxVolume);}
-    public void playBreakWall3 (){breakWall3.play(sfxVolume);}
+    public void playBreakWall1() {
+        breakWall1.play(sfxVolume);
+    }
+
+    public void playBreakWall2() {
+        breakWall2.play(sfxVolume);
+    }
+
+    public void playBreakWall3() {
+        breakWall3.play(sfxVolume);
+    }
 
 
     public void playFocusHealSound() {
@@ -91,6 +109,7 @@ public class AudioManager {
     public void playJumpSound() {
         jump.play(sfxVolume);
     }
+
     public void playGetDamageSound() {
         getDamage.play(sfxVolume);
     }

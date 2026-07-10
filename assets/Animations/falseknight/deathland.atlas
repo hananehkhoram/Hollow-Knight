@@ -1,0 +1,83 @@
+
+deathland.png
+size: 4096, 4096
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+DeathLand
+  rotate: false
+  xy: 2, 2554
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 0
+DeathLand
+  rotate: false
+  xy: 2, 1916
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 1
+DeathLand
+  rotate: false
+  xy: 1099, 2554
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 2
+DeathLand
+  rotate: false
+  xy: 2, 1278
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 3
+DeathLand
+  rotate: false
+  xy: 1099, 1916
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 4
+DeathLand
+  rotate: false
+  xy: 2196, 2554
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 5
+DeathLand
+  rotate: false
+  xy: 2, 640
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 6
+DeathLand
+  rotate: false
+  xy: 1099, 1278
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 7
+DeathLand
+  rotate: false
+  xy: 2196, 1916
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 8
+DeathLand
+  rotate: false
+  xy: 2, 2
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 9
+DeathLand
+  rotate: false
+  xy: 1099, 640
+  size: 1095, 636
+  orig: 1095, 636
+  offset: 0, 0
+  index: 10

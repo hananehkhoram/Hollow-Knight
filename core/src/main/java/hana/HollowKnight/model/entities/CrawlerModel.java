@@ -22,6 +22,8 @@ public class CrawlerModel extends EnemyModel {
     private State state = State.WALK;
     private float turnTimer = 0f;
 
+
+
     public CrawlerModel(float x, float y) {
         this(x, y, true);
     }
@@ -51,7 +53,13 @@ public class CrawlerModel extends EnemyModel {
 
         if (dead) {
             state = State.DEATH;
-            velocityX = 0f;
+            if (!isBeingKnockedBack()) {
+                velocityX = 0f;
+            }
+            return;
+        }
+
+        if (isBeingKnockedBack()) {
             return;
         }
 
@@ -62,6 +70,8 @@ public class CrawlerModel extends EnemyModel {
             }
         } else {
             state = State.WALK;
+            float speed = 60f;
+            velocityX = isFacingRight() ? speed : -speed;
         }
     }
 }
