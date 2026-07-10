@@ -77,6 +77,11 @@ public class CollisionController {
             player.setVelocityY(player.getVelocityY() + PlayerModel.GRAVITY * delta);
         }
 
+        if (player.isDashing()) {
+            player.setVelocityX(PlayerModel.DASH_SPEED);
+            player.setVelocityY(0);
+        }
+
         player.setX(player.getX() + player.getVelocityX() * delta);
         resolveHorizontalCollisions(solidTiles, walls);
 

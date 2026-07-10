@@ -100,8 +100,8 @@ public class GameView extends BaseScreen {
         mapRenderer.renderLayer(camera, "for");
         mapRenderer.renderLayer(camera, "secret room");
 
-//        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
-//            controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks());
+        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
+            controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getBosses());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
     }

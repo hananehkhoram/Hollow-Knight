@@ -16,6 +16,18 @@ public abstract class EnemyModel extends Entity {
 
     protected boolean isBeingKnockedBack = false;
     protected float knockbackTimer = 0f;
+    public static final float KNOCKBACK_FORCE_Y = 200f;
+    public static final float KNOCKBACK_FORCE_X = 400f;
+
+    protected static float knockBackForceY = KNOCKBACK_FORCE_Y;
+    protected static float knockBackForceX = KNOCKBACK_FORCE_X;
+
+    public static void setKnockBackForceY(float y) {
+        knockBackForceY = y;
+    }
+    public static void setKnockBackForceX(float x) {
+        knockBackForceX = x;
+    }
 
     protected float animationTimer = 0f;
 
@@ -42,10 +54,8 @@ public abstract class EnemyModel extends Entity {
     public void applyKnockBack(boolean playerFacingRight) {
         this.isBeingKnockedBack = true;
         this.knockbackTimer = KNOCKBACK_DURATION;
-        float knockbackForceX = 400f;
-        float knockbackForceY = 250f;
-        this.velocityX = playerFacingRight ? knockbackForceX : -knockbackForceX;
-        this.velocityY = knockbackForceY;
+        this.velocityX = playerFacingRight ? knockBackForceX : -knockBackForceX;
+        this.velocityY = knockBackForceY;
         this.onGround = false;
     }
 

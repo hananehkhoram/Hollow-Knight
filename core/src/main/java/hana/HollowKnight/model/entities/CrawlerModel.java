@@ -1,12 +1,5 @@
 package hana.HollowKnight.model.entities;
 
-/**
- * Mosscreep: walks back and forth along the ground and turns around
- * whenever it hits a wall or reaches the edge of a platform.
- * Movement/collision itself is driven from AIController; this class
- * only holds the enemy's own state (facing, walk/turn/death) and reacts
- * to turn() calls.
- */
 public class CrawlerModel extends EnemyModel {
 
     public enum State { WALK, TURN, DEATH }

@@ -1,20 +1,5 @@
 package hana.HollowKnight.model.entities;
 
-/**
- * False Knight boss.
- *
- * `State` mirrors the actual animation clips available (idle, turn,
- * run/runAntic, attack/attackAntic/attackRecover, jump/jumpAttack/
- * jumpAttackHit, land, body/body(stun)/stunRecover, deathFall/deathHit/
- * deathLand). `Move` is the higher-level "what is the boss doing" concept
- * used by the AI decision system (5 moves + anti-spam); BossAIController
- * sequences a Move through the right chain of States frame by frame.
- *
- * BossModel only self-manages the two purely time-based sequences (the
- * stun window and the death sequence) since those don't need physics or
- * player position. Everything move-related (state transitions that depend
- * on landing, hit timing, velocity) is driven externally by BossAIController.
- */
 public class BossModel extends EnemyModel {
 
     public enum State {
@@ -28,8 +13,8 @@ public class BossModel extends EnemyModel {
 
     public enum Move { MACE_SLAM, CHARGE, LEAP_OFFENSIVE, LEAP_DEFENSIVE, MACE_SLAM_POWER }
 
-    private static final float WIDTH = 140f;
-    private static final float HEIGHT = 120f;
+    private static final float WIDTH = 300;
+    private static final float HEIGHT = 300;
 
     private static final int MAX_HEALTH = 80;
     private static final int CONTACT_DAMAGE = 2;

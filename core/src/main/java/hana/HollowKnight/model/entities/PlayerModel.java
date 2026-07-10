@@ -13,26 +13,26 @@ import java.util.Set;
 public class PlayerModel extends Entity {
 
     public static final float DEFAULT_WIDTH = 50;
-    public static final float DEFAULT_HEIGHT = 123;
+    public static final float DEFAULT_HEIGHT = 100;
 
     public static final float MOVE_SPEED = 500;
     public static final float GRAVITY = -1400;
     public static final float JUMP_VELOCITY = 900;
     public static final float DOUBLE_JUMP_VELOCITY = 500;
-    public static final float FOCUS_DURATION = 1.5f;
+    public static float FOCUS_DURATION = 1.5f;
     public static final int DEFAULT_MAX_HEALTH = 5;
     public static final int DEFAULT_MAX_SOUL = 100;
-    public static final int SOUL_PER_HIT = 11;
+    public static int SOUL_PER_HIT = 11;
     public static final int MAX_NOTCHES = 3;
-    public static final float MANTIS_VEL = 250;
-    private static final float DASH_SPEED = 1000f;
-    private static final float DASH_DURATION = 0.8f;
-    private static final float DASH_COOLDOWN = 1f;
-    private static final float ATTACK_DURATION = 0.22f;
-    private static final float ATTACK_COOLDOWN = 0.28f;
-    private static final float ATTACK_RANGE = 40f;
-    private static final float INVULNERABILITY_DURATION = 0.9f;
-    private static final float KNOCKBACK_DURATION = 1f;
+    public static final float DASH_SPEED = 1000f;
+    public static float DASH_DURATION = 0.8f;
+    public static float DASH_COOLDOWN = 1f;
+    public static float ATTACK_DURATION = 0.5f;
+    public static float ATTACK_COOLDOWN = 0.5f;
+    public static final float ATTACK_RANGE = 40f;
+    public static final float INVULNERABILITY_DURATION = 0.9f;
+    public static final float KNOCKBACK_DURATION = 1f;
+
     private final Set<CharmType> unlockedCharms = EnumSet.noneOf(CharmType.class);
     private final Set<CharmType> equippedCharms = EnumSet.noneOf(CharmType.class);
     private float actionTimer = 0f;
@@ -49,6 +49,7 @@ public class PlayerModel extends Entity {
     private boolean isFocusing = false;
     private float dashTimer;
     private float dashCooldownTimer;
+    private float dashCooldown = DASH_COOLDOWN;
     private float attackTimer;
     private float attackCooldownTimer;
     private float invulnerabilityTimer;
@@ -57,11 +58,18 @@ public class PlayerModel extends Entity {
     private float lastSafeX;
     private float lastSafeY;
     private boolean isJustDead = false;
+    private int damagePerHit = 1;
+    private int soulAddition = SOUL_PER_HIT;
+
+    private int usedNotches = 0;
 
     private int playerDeathsCount = 0;
     private int playerKillsCount = 0;
     private float timePassed = 0f;
 
+    public void setSoulAddition(int soulAddition) {
+        this.soulAddition = soulAddition;
+    }
     public void addPlayerDeathsCount (){
         this.playerDeathsCount ++;
     }
@@ -241,11 +249,11 @@ public class PlayerModel extends Entity {
     }
 
     public void gainSoulOnHit() {
-        addSoul(SOUL_PER_HIT);
+        addSoul();
     }
 
-    public void addSoul(int amount) {
-        soul = Math.min(maxSoul, soul + amount);
+    public void addSoul() {
+        soul = Math.min(maxSoul, soul + soulAddition);
     }
 
     public boolean useSoul(int cost) {
@@ -265,7 +273,7 @@ public class PlayerModel extends Entity {
     public boolean equipCharm(CharmType type) {
         if (!unlockedCharms.contains(type)) return false;
         if (equippedCharms.contains(type)) return true;
-        if (getUsedNotches() + type.getNotchCost() > MAX_NOTCHES) return false;
+        if (getUsedNotches() + 1 > MAX_NOTCHES) return false;
         equippedCharms.add(type);
         return true;
     }
@@ -276,7 +284,7 @@ public class PlayerModel extends Entity {
 
     public int getUsedNotches() {
         int used = 0;
-        for (CharmType c : equippedCharms) used += c.getNotchCost();
+        for (CharmType c : equippedCharms) used += 1;
         return used;
     }
 
@@ -308,7 +316,7 @@ public class PlayerModel extends Entity {
             dashTimer += delta;
             if (dashTimer >= DASH_DURATION) {
                 dashing = false;
-                dashCooldownTimer = DASH_COOLDOWN;
+                dashCooldownTimer = dashCooldown;
                 velocityX = 0f;
             }
         }
@@ -320,6 +328,15 @@ public class PlayerModel extends Entity {
                 attacking = false;
                 attackCooldownTimer = ATTACK_COOLDOWN;
             }
+        }
+
+        if (isFocusing()){
+            setVelocityX(0);
+            setVelocityY(0);
+            setMantis(false);
+            dashing = false;
+            attacking = false;
+
         }
         if (attackCooldownTimer > 0f) attackCooldownTimer -= delta;
 
@@ -382,6 +399,7 @@ public class PlayerModel extends Entity {
         for (String n : names) equippedCharms.add(CharmType.valueOf(n));
     }
 
+    public void add
     public boolean isFocusing() {
         return isFocusing;
     }
@@ -432,5 +450,20 @@ public class PlayerModel extends Entity {
 
     public float getTimePassed() {
         return timePassed;
+    }
+
+    public int getDamagePerHit() {
+        return damagePerHit;
+    }
+
+    public void setDamagePerHit(int damagePerHit) {
+        this.damagePerHit = damagePerHit;
+    }
+
+    public void decreaseUsedNotches() {
+        this.usedNotches --;
+    }
+    public void increaseUsedNotches() {
+        this.usedNotches ++;
     }
 }
