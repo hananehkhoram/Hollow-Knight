@@ -36,7 +36,8 @@ public class CollisionController {
             if (playerBounds.overlaps(hazard)) {
                 player.takeDamage(damageAmount);
                 player.applyKnockBack();
-                player.setPosition(player.getLastSafeX(), player.getLastSafeY());
+
+                player.setPosition(player.getLastSafeX() - (hazard.x -  player.getX())/2, player.getLastSafeY());
                 return;
             }
         }

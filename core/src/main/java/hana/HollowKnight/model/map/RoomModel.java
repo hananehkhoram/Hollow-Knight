@@ -21,6 +21,7 @@ public class RoomModel {
     private BossArena bossArena;
     private Vector2 knightSpawn = new Vector2(0, 0);
     private float minX, minY, maxX, maxY;
+    private float targetX, targetY;
 
     public RoomModel(String mapPath) {
         this.mapPath = mapPath;
@@ -101,5 +102,21 @@ public class RoomModel {
 
     public void setCrawlers(ArrayList<CrawlerModel> crawlers) {
         this.crawlers = crawlers;
+    }
+
+    public float getTargetX() {
+        return targetX;
+    }
+
+    public void setTargetX(float targetX) {
+        this.targetX = targetX;
+    }
+
+    public float getTargetY() {
+        return targetY;
+    }
+
+    public void setTargetY(float targetY) {
+        this.targetY = targetY;
     }
 }

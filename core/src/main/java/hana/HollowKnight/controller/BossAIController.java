@@ -4,25 +4,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.BossModel;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.map.BossArena;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Drives the False Knight boss.
- *
- * decideNextMove(): distance-based weighted random pick with a hard
- * anti-spam rule (never repeat the previous Move).
- *
- * Each Move is then played out as a chain of BossModel.State animation
- * clips (e.g. CHARGE = TURN -> RUN_ANTIC -> RUN; LEAP_OFFENSIVE = JUMP ->
- * JUMP_ATTACK -> JUMP_ATTACK_HIT). runCurrentMove() advances that chain
- * frame by frame, reading real physics state (onGround, velocityY sign)
- * for the transitions that need it (landing, apex) and plain timers for
- * the rest. Ground-slam/shockwave hitboxes are also checked here since
- * they extend past the boss's own body.
- */
 public class BossAIController {
 
     private static final float MAX_DELTA = 1f / 30f;
@@ -30,20 +17,17 @@ public class BossAIController {
 
     private static final float IDLE_DECISION_DELAY = 0.5f;
 
-    // Mace Slam: ATTACK_ANTIC -> ATTACK (hit lands here) -> ATTACK_RECOVER
     private static final float ATTACK_ANTIC_DURATION = 0.3f;
     private static final float ATTACK_DURATION = 0.25f;
     private static final float ATTACK_RECOVER_DURATION = 0.3f;
     private static final float MACE_SLAM_RANGE = 90f;
     private static final int MACE_SLAM_DAMAGE = 1;
 
-    // Charge: TURN -> RUN_ANTIC -> RUN
     private static final float TURN_DURATION = 0.15f;
     private static final float RUN_ANTIC_DURATION = 0.25f;
     private static final float CHARGE_DURATION = 0.9f;
     private static final float CHARGE_SPEED = 320f;
 
-    // Leap Offensive: JUMP -> JUMP_ATTACK -> JUMP_ATTACK_HIT
     private static final float LEAP_MIN_AIRTIME = 0.15f;
     private static final float JUMP_ATTACK_HIT_DURATION = 0.15f;
     private static final float LEAP_OFFENSIVE_SPEED_X = 260f;
@@ -51,12 +35,10 @@ public class BossAIController {
     private static final float LEAP_HIT_RANGE = 90f;
     private static final int LEAP_DAMAGE = 1;
 
-    // Leap Defensive: JUMP -> LAND
     private static final float LAND_DURATION = 0.2f;
     private static final float LEAP_DEFENSIVE_SPEED_X = 220f;
     private static final float LEAP_DEFENSIVE_SPEED_Y = 500f;
 
-    // Power Mace Slam (phase 2 only): JUMP -> JUMP_ATTACK -> JUMP_ATTACK_HIT (+ shockwave)
     private static final float POWER_SLAM_HOP_SPEED = 500f;
     private static final float POWER_SLAM_RANGE = 90f;
     private static final float SHOCKWAVE_INITIAL_SPEED = 250f;
@@ -69,12 +51,17 @@ public class BossAIController {
 
     private final Random random = new Random();
 
-    public void updateBoss(BossModel boss, float delta, PlayerModel player, Array<Rectangle> solidTiles) {
+    public void updateBoss(BossModel boss, float delta, PlayerModel player, Array<Rectangle> solidTiles, BossArena arena) {
         delta = Math.min(delta, MAX_DELTA);
 
         if (boss.isDead() && !boss.isDeathSequenceActive()) {
             boss.update(delta);
             return;
+        }
+
+        if (!arena.isLocked()) {
+            boss.setVelocityX(0f);
+            boss.setVelocityY(0f);
         }
 
         boss.savePrevPosition();
@@ -102,10 +89,6 @@ public class BossAIController {
     private float speedMultiplier(BossModel boss) {
         return boss.isPhase2() ? BossModel.PHASE2_SPEED_MULTIPLIER : 1f;
     }
-
-    // ---------------------------------------------------------------
-    // Move sequencing
-    // ---------------------------------------------------------------
 
     private void runCurrentMove(BossModel boss, float delta, PlayerModel player, boolean hitWall) {
         if (boss.isAvailableForNextMove()) {

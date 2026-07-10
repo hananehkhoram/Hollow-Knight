@@ -5,17 +5,24 @@ import com.badlogic.gdx.math.Rectangle;
 public class PortalModel {
     private final Rectangle bounds;
     private final String targetMathPath;
-    private final float x, y;
+    private final float targetX;
+    private final float targetY;
 
-    public PortalModel(Rectangle bounds, String targetMathPath) {
+    public PortalModel(Rectangle bounds, String targetMathPath, float targetX, float targetY) {
         this.bounds = bounds;
         this.targetMathPath = targetMathPath;
-        this.x = bounds.x;
-        this.y = bounds.y;
+        this.targetX = targetX;
+        this.targetY = targetY;
     }
 
     public Rectangle getBounds() {return this.bounds;}
     public String getTargetMapPath() {return this.targetMathPath;}
-    public float getX() {return this.x;}
-    public float getY() {return this.y;}
+
+    public float getTargetY() {
+        return targetY;
+    }
+
+    public float getTargetX() {
+        return targetX;
+    }
 }

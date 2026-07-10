@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import hana.HollowKnight.model.entities.BossModel;
 import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
@@ -20,7 +21,7 @@ public class CollisionDebugRenderer {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards, ArrayList<CrawlerModel> crawls, ArrayList<FlyModel> flies, ArrayList<CrawlerModel> tiktiks) {
+    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards, ArrayList<CrawlerModel> crawls, ArrayList<FlyModel> flies, ArrayList<CrawlerModel> tiktiks, ArrayList<BossModel> bosses) {
         shapeRenderer.setProjectionMatrix(camera.combined);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -29,6 +30,12 @@ public class CollisionDebugRenderer {
         shapeRenderer.setColor(Color.RED);
         for (CrawlerModel crawler : tiktiks) {
             Rectangle rectangle = crawler.getBounds() ;
+            shapeRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        }
+
+        shapeRenderer.setColor(Color.GREEN);
+        for(BossModel boss : bosses){
+            Rectangle rectangle = boss.getBounds() ;
             shapeRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         }
 

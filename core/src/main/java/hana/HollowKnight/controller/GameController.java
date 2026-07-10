@@ -111,8 +111,8 @@ public class GameController {
         PortalModel triggeredPortal = collision.checkPortalCollision();
         if (triggeredPortal != null) {
             requestRoomChange(triggeredPortal.getTargetMapPath(),
-                triggeredPortal.getX(), triggeredPortal.getY());
-            return; // let GameView reload the map on the next frame before resuming updates
+                triggeredPortal.getTargetX(), triggeredPortal.getTargetY());
+            return;
         }
 
         PlayerModel player = model.getPlayer();
@@ -134,7 +134,7 @@ public class GameController {
             fly.update(delta);
         }
         for (BossModel boss : bosses) {
-            bossAIController.updateBoss(boss, delta, player, currentRoom.getSolidTiles());
+            bossAIController.updateBoss(boss, delta, player, currentRoom.getSolidTiles(), currentRoom.getBossArena());
             aiController.checkPlayerInteraction(boss, player, 1);
         }
 
@@ -142,7 +142,7 @@ public class GameController {
 
         if (player.isJustDead()) {
             player.setHealth(player.getMaxHealth());
-            requestRoomChange(currentMapPath); // respawn in the same room at the knight spawn
+            requestRoomChange(currentMapPath);
         }
     }
 
@@ -153,11 +153,13 @@ public class GameController {
         if (!arena.isLocked() && arena.getTrigger() != null
             && arena.getTrigger().overlaps(model.getPlayer().getBounds()) && !bosses.isEmpty()) {
             arena.setLocked(true);
+            arena.setGateVisibility(true);
             currentRoom.getSolidTiles().addAll(arena.getGates());
         }
 
         if (arena.isLocked() && allBossesDead()) {
             arena.setLocked(false);
+            arena.setGateVisibility(false);
             currentRoom.getSolidTiles().removeAll(arena.getGates(), true);
         }
     }

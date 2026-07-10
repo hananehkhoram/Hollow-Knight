@@ -1,19 +1,15 @@
 package hana.HollowKnight.model.map;
 
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-/**
- * Represents the enclosed boss-fight room: the camera-clamp bounds, the
- * trigger zone that seals the room when the player walks in, and the gate
- * rectangles that get added to/removed from the room's solid tiles to lock
- * the exits.
- */
 public class BossArena {
 
     private Rectangle bounds;
     private Rectangle trigger;
     private final Array<Rectangle> gates = new Array<>();
+    private MapLayer gateLayer;
 
     private boolean locked = false;
 
@@ -43,5 +39,13 @@ public class BossArena {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public void setGateVisibility(boolean visible) {
+        gateLayer.setVisible(visible);
+    }
+
+    public void setGateLayer(MapLayer gateLayer) {
+        this.gateLayer = gateLayer;
     }
 }

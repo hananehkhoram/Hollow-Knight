@@ -36,9 +36,13 @@ public class RoomLoader {
                     MapProperties props = object.getProperties();
                     String name = object.getName();
 
-                    if ("portal".equals(name) || props.containsKey("targetMap")) {
-                        String targetMap = props.get("targetMap", String.class);
-                        room.setPortal(new PortalModel(rect, targetMap));
+                    if ("portal".equals(name)) {
+                        String targetMap = props.get("targetPath", String.class);
+                        float targetX = props.get("targetX", Float.class);
+                        float targetY = props.get("targetY", Float.class);
+                        room.setPortal(new PortalModel(rect, targetMap, targetX, targetY));
+                        room.setTargetX(targetX);
+                        room.setTargetY(targetY);
                     } else if ("breakable".equals(name) || props.containsKey("breakable")) {
                         room.setBreakableWall(new BreakableWallModel(rect));
                     } else if ("wall".equals(name)) {
@@ -76,9 +80,12 @@ public class RoomLoader {
             }
         }
 
+        MapLayer gateLayer = map.getLayers().get("gate");
+
         MapLayer bossArenaLayer = map.getLayers().get("boss_arena");
         if (bossArenaLayer != null) {
             BossArena arena = new BossArena();
+            arena.setGateLayer(gateLayer);
             for (MapObject object : bossArenaLayer.getObjects()) {
                 if (!(object instanceof RectangleMapObject)) continue;
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
@@ -126,5 +133,7 @@ public class RoomLoader {
         }
         return fly;
     }
+
+
 
 }
