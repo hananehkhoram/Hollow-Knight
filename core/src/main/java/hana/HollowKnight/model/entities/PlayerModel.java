@@ -1,9 +1,10 @@
 package hana.HollowKnight.model.entities;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
 import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.items.CharmType;
+import hana.HollowKnight.view.GameView;
 import hana.HollowKnight.view.audio.AudioManager;
 
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import java.util.Set;
 
 public class PlayerModel extends Entity {
 
-    public static final float DEFAULT_WIDTH = 90;
-    public static final float DEFAULT_HEIGHT = 140;
+    public static final float DEFAULT_WIDTH = 50;
+    public static final float DEFAULT_HEIGHT = 123;
 
     public static final float MOVE_SPEED = 500;
     public static final float GRAVITY = -1400;
@@ -23,7 +24,7 @@ public class PlayerModel extends Entity {
 
     private static final float DASH_SPEED = 1000f;
     private static final float DASH_DURATION = 0.8f;
-    private static final float DASH_COOLDOWN = 5f;
+    private static final float DASH_COOLDOWN = 1f;
 
     private static final float ATTACK_DURATION = 0.22f;
     private static final float ATTACK_COOLDOWN = 0.28f;
@@ -38,8 +39,6 @@ public class PlayerModel extends Entity {
     public static final int DEFAULT_MAX_SOUL = 100;
     public static final int SOUL_PER_HIT = 11;
     public static final int MAX_NOTCHES = 3;
-    public static final float FOOTSTEP_INTERVAL = 3;
-    private float footstepTimer = 0;
 
     private int health;
     private int maxHealth;
@@ -64,12 +63,15 @@ public class PlayerModel extends Entity {
     private float lastSafeX;
     private float lastSafeY;
 
+    private boolean isJustDead = false;
+
     private final Set<CharmType> unlockedCharms = EnumSet.noneOf(CharmType.class);
     private final Set<CharmType> equippedCharms = EnumSet.noneOf(CharmType.class);
 
     public PlayerModel() {
         this(100f, 100f);
     }
+
 
     public PlayerModel(float startX, float startY) {
         super(startX, startY, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -207,6 +209,7 @@ public class PlayerModel extends Entity {
         if (health <= 0) {
             alive = false;
             AudioManager.getInstance().playHeroDeathSound();
+            this.health = DEFAULT_MAX_HEALTH;
         }
     }
 
@@ -301,19 +304,6 @@ public class PlayerModel extends Entity {
         if (attackCooldownTimer > 0f) attackCooldownTimer -= delta;
 
         if (invulnerabilityTimer > 0f) invulnerabilityTimer -= delta;
-
-        if (footstepTimer > 0) {
-            footstepTimer -= Gdx.graphics.getDeltaTime();
-        }
-
-        if (this.isOnGround() && Math.abs(this.getVelocityX()) > 0.1f && !this.isDashing() && !this.isFocusing()) {
-            if (footstepTimer <= 0) {
-                AudioManager.getInstance().playMovingSound();
-                footstepTimer = FOOTSTEP_INTERVAL;
-            }
-        } else {
-            footstepTimer = 0f;
-        }
     }
 
     public int getHealth() { return health; }
@@ -374,5 +364,13 @@ public class PlayerModel extends Entity {
 
     public void setLastSafeX(float lastSafeX) {
         this.lastSafeX = lastSafeX;
+    }
+
+    public boolean isJustDead() {
+        return isJustDead;
+    }
+
+    public void setJustDead(boolean justDead) {
+        isJustDead = justDead;
     }
 }

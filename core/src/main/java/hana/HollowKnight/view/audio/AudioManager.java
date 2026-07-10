@@ -22,9 +22,10 @@ public class AudioManager {
     private final Sound breakWall2;
     private final Sound breakWall3;
     private final Sound moving;
+    private final Sound sword;
 
-    private float sfxVolume = 1f;
-    private float bgmVolume = 0.75f;
+    private float sfxVolume = 5f;
+    private float bgmVolume = 0.5f;
     private Music currentBgm;
 
     private AudioManager() {
@@ -43,9 +44,11 @@ public class AudioManager {
         breakWall3 = Gdx.audio.newSound(Gdx.files.internal("breakable_wall_death.wav"));
         heroDeath = Gdx.audio.newSound(Gdx.files.internal("hero_death_extra_details.wav"));
         moving = Gdx.audio.newSound(Gdx.files.internal("hero_run_footsteps_stone.wav"));
+        sword = Gdx.audio.newSound(Gdx.files.internal("sword_4.wav"));
     }
 
     public void playHeroDeathSound() {
+        stopCityofTears();
         heroDeath.play(sfxVolume);
     }
 
@@ -56,8 +59,16 @@ public class AudioManager {
         return instance;
     }
 
+    public void stopCityofTears() {
+        cityOfTearsSound.stop();
+    }
+
     public void playFocusSound() {
         focus.play(sfxVolume);
+    }
+
+    public void playSwordSound() {
+        sword.play(sfxVolume);
     }
 
     public void stopFocusSound() {

@@ -7,13 +7,15 @@ import hana.HollowKnight.controller.AIController;
 import hana.HollowKnight.controller.CollisionController;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.controller.RoomLoader;
-import hana.HollowKnight.model.entities.MosscreepModel;
+import hana.HollowKnight.model.entities.CrawlerModel;
+import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.map.PortalModel;
 import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.hud.GameHUD;
 import hana.HollowKnight.view.renderers.CollisionDebugRenderer;
-import hana.HollowKnight.view.renderers.MosscreepRenderer;
+import hana.HollowKnight.view.renderers.CrawlerRenderer;
+import hana.HollowKnight.view.renderers.FlyRenderer;
 import hana.HollowKnight.view.renderers.MapRenderer;
 import hana.HollowKnight.view.renderers.PlayerRenderer;
 import hana.HollowKnight.view.screens.BaseScreen;
@@ -32,12 +34,14 @@ public class GameView extends BaseScreen {
     private CollisionDebugRenderer debugRenderer;
 
     private final AIController aiController = new AIController();
-    private final MosscreepRenderer crawlerRenderer = new MosscreepRenderer();
-    private ArrayList<MosscreepModel> crawlers;
+    private final CrawlerRenderer mosscreepRenderer = new CrawlerRenderer("mosscreep");
+    private final FlyRenderer flyRenderer = new FlyRenderer();
+    private ArrayList<CrawlerModel> crawlers;
+    private ArrayList<FlyModel> flies;
 
     public GameView(GameController controller) {
         super(controller);
-    }
+        playerRenderer = new PlayerRenderer();}
 
     @Override
     public void show() {
@@ -66,6 +70,7 @@ public class GameView extends BaseScreen {
             currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer);
         crawlers = RoomLoader.spawnCrawlers(currentRoom);
         currentRoom.setCrawlers(crawlers);
+        flies = RoomLoader.spawnFlies(currentRoom, player);
     }
 
     @Override
@@ -77,7 +82,7 @@ public class GameView extends BaseScreen {
             camera.position.set(player.getX(), player.getY(), 0);
         }
 
-        Gdx.gl.glClearColor(0.2f, 0.4f, 0.6f, 1f);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         controller.updateGameplay(delta);
@@ -90,8 +95,15 @@ public class GameView extends BaseScreen {
         collision.checkHazardCollisions(HAZARD_DAMAGE);
         collision.checkAttackOnBreakable();
 
-        for (MosscreepModel crawler : crawlers) {
+        for (CrawlerModel crawler : crawlers) {
             aiController.updateCrawler(crawler, delta, currentRoom.getSolidTiles(), player);
+        }
+        for (FlyModel fly : flies) {
+            aiController.updateFly(fly, delta, currentRoom.getSolidTiles(), player);
+        }
+
+        for (FlyModel fly : flies) {
+            fly.update(delta);
         }
 
         camera.position.set(player.getX(), player.getY() + 200, 0);
@@ -103,6 +115,12 @@ public class GameView extends BaseScreen {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
+        for (CrawlerModel crawler : crawlers) {
+            mosscreepRenderer.render(batch, crawler);
+        }
+        for (FlyModel fly : flies) {
+            flyRenderer.render(batch, fly);
+        }
         if (player.isInvincible()) {
             if (com.badlogic.gdx.math.MathUtils.sin(player.getInvulnerabilityTimer() * 25f) > 0) {
                 playerRenderer.render(batch, player);
@@ -110,17 +128,19 @@ public class GameView extends BaseScreen {
         } else {
             playerRenderer.render(batch, player);
         }
-        for (MosscreepModel crawler : crawlers) {
-            crawlerRenderer.render(batch, crawler);
-        }
+
         batch.end();
 
         mapRenderer.renderLayer(camera, "for");
         mapRenderer.renderLayer(camera, "secret room");
 
-        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(), crawlers);
+        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(), crawlers, flies);
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
+        if (player.isJustDead()) {
+            player.setHealth(player.getMaxHealth());
+            show();
+        }
     }
 
     @Override
@@ -136,7 +156,7 @@ public class GameView extends BaseScreen {
         if (hud != null) hud.dispose();
         mapRenderer.dispose();
         playerRenderer.dispose();
-        crawlerRenderer.dispose();
+        mosscreepRenderer.dispose();
+        flyRenderer.dispose();
     }
-
 }

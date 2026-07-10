@@ -2,16 +2,11 @@ package hana.HollowKnight.controller;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import hana.HollowKnight.model.entities.MosscreepModel;
+import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.EnemyModel;
+import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
 
-/**
- * Drives simple ground-patrol AI for enemies that don't need pathfinding.
- * For now this only handles MosscreepModel (Mosscreep); other enemy types
- * (Hornhead, Spitter, Zote, ...) will likely need their own update method
- * here or their own controller once their behavior is implemented.
- */
 public class AIController {
 
     private static final float MAX_DELTA = 1f / 30f;
@@ -19,7 +14,67 @@ public class AIController {
     private static final float EDGE_PROBE_DEPTH = 6f;
     private static final float EDGE_PROBE_WIDTH = 2f;
 
-    public void updateCrawler(MosscreepModel crawler, float delta, Array<Rectangle> solidTiles, PlayerModel player) {
+    public void updateFly(FlyModel fly, float delta, Array<Rectangle> solidTiles, PlayerModel player) {
+        delta = Math.min(delta, MAX_DELTA);
+
+        if (fly.isDead()) {
+            fly.setVelocityY(fly.getVelocityY() + GRAVITY * delta);
+            fly.setY(fly.getY() + fly.getVelocityY() * delta);
+
+            Rectangle bounds = fly.getBounds();
+            for (Rectangle tile : solidTiles) {
+                if (bounds.overlaps(tile)) {
+                    if (fly.getVelocityY() <= 0) {
+                        fly.setY(tile.y + tile.height);
+                        fly.setVelocityY(0f);
+                    } else {
+                        fly.setY(tile.y - fly.getHeight());
+                        fly.setVelocityY(0f);
+                    }
+                    break;
+                }
+            }
+            fly.update(delta);
+            return;
+        }
+
+        fly.savePrevPosition();
+
+        fly.setX(fly.getX() + fly.getVelocityX() * delta);
+        Rectangle bounds = fly.getBounds();
+        for (Rectangle tile : solidTiles) {
+            if (bounds.overlaps(tile)) {
+                if (fly.getVelocityX() > 0) {
+                    fly.setX(tile.x - fly.getWidth());
+                    fly.setFacingRight(false);
+                } else if (fly.getVelocityX() < 0) {
+                    fly.setX(tile.x + tile.width);
+                    fly.setFacingRight(true);
+                }
+                break;
+            }
+        }
+
+        fly.setY(fly.getY() + fly.getVelocityY() * delta);
+        bounds = fly.getBounds();
+        for (Rectangle tile : solidTiles) {
+            if (bounds.overlaps(tile)) {
+                if (fly.getVelocityY() > 0) {
+                    fly.setY(tile.y - fly.getHeight());
+                } else if (fly.getVelocityY() < 0) {
+                    fly.setY(tile.y + tile.height);
+                }
+                fly.setVelocityY(0f);
+                break;
+            }
+        }
+
+        checkPlayerInteraction(fly, player, 1);
+
+        fly.update(delta);
+    }
+
+    public void updateCrawler(CrawlerModel crawler, float delta, Array<Rectangle> solidTiles, PlayerModel player) {
         delta = Math.min(delta, MAX_DELTA);
 
         if (crawler.isDead()) {
@@ -46,7 +101,7 @@ public class AIController {
         crawler.update(delta);
     }
 
-    private void resolveVerticalCollisions(MosscreepModel crawler, Array<Rectangle> solidTiles) {
+    private void resolveVerticalCollisions(CrawlerModel crawler, Array<Rectangle> solidTiles) {
         crawler.setOnGround(false);
         Rectangle bounds = crawler.getBounds();
 
@@ -65,8 +120,7 @@ public class AIController {
         }
     }
 
-    /** Stops the crawler and flips it around if it walked into a solid tile. */
-    private boolean resolveHorizontalCollisions(MosscreepModel crawler, Array<Rectangle> solidTiles) {
+    private boolean resolveHorizontalCollisions(CrawlerModel crawler, Array<Rectangle> solidTiles) {
         Rectangle bounds = crawler.getBounds();
 
         for (Rectangle tile : solidTiles) {
@@ -82,8 +136,7 @@ public class AIController {
         return false;
     }
 
-    /** True if there is no ground tile just past the crawler's leading edge. */
-    private boolean isAtLedge(MosscreepModel crawler, Array<Rectangle> solidTiles) {
+    private boolean isAtLedge(CrawlerModel crawler, Array<Rectangle> solidTiles) {
         float probeX = crawler.isFacingRight()
             ? crawler.getX() + crawler.getWidth()
             : crawler.getX() - EDGE_PROBE_WIDTH;
@@ -99,13 +152,6 @@ public class AIController {
         return true;
     }
 
-    /**
-     * Handles combat between the player and a single enemy:
-     * - if the player is mid-attack and its hitbox overlaps the enemy, the enemy takes damage
-     *   (only once per swing, tracked via wasHitByCurrentAttack)
-     * - if the enemy's body overlaps the player and the player isn't invincible, the player
-     *   takes the enemy's contact damage and gets knocked back
-     */
     public void checkPlayerInteraction(EnemyModel enemy, PlayerModel player, int attackDamage) {
         if (enemy.isDead()) return;
 

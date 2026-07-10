@@ -1,0 +1,62 @@
+
+dashE.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Dash Effect
+  rotate: false
+  xy: 2, 659
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 0
+Dash Effect
+  rotate: false
+  xy: 2, 440
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 1
+Dash Effect
+  rotate: false
+  xy: 405, 659
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 2
+Dash Effect
+  rotate: false
+  xy: 2, 221
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 3
+Dash Effect
+  rotate: false
+  xy: 405, 440
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 4
+Dash Effect
+  rotate: false
+  xy: 2, 2
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 5
+Dash Effect
+  rotate: false
+  xy: 405, 221
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 6
+Dash Effect
+  rotate: false
+  xy: 405, 2
+  size: 401, 217
+  orig: 401, 217
+  offset: 0, 0
+  index: 7

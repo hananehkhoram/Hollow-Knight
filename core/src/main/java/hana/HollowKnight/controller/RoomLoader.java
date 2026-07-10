@@ -6,7 +6,9 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
-import hana.HollowKnight.model.entities.MosscreepModel;
+import hana.HollowKnight.model.entities.CrawlerModel;
+import hana.HollowKnight.model.entities.FlyModel;
+import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.map.*;
 
 import java.util.ArrayList;
@@ -72,14 +74,24 @@ public class RoomLoader {
 
         return room;
     }
-    public static ArrayList<MosscreepModel> spawnCrawlers(RoomModel currentRoom) {
-        ArrayList<MosscreepModel> crawlers = new ArrayList<>();
+    public static ArrayList<CrawlerModel> spawnCrawlers(RoomModel currentRoom) {
+        ArrayList<CrawlerModel> crawlers = new ArrayList<>();
         for (SpawnPointModel spawn : currentRoom.getEnemySpawns()) {
             if ("mosscreep".equals(spawn.getName())) {
-                crawlers.add(new MosscreepModel(spawn.getX(), spawn.getY()));
+                crawlers.add(new CrawlerModel(spawn.getX(), spawn.getY()));
             }
         }
         return crawlers;
+    }
+
+    public static ArrayList<FlyModel> spawnFlies(RoomModel currentRoom, PlayerModel player) {
+        ArrayList<FlyModel> fly = new ArrayList<>();
+        for (SpawnPointModel spawn : currentRoom.getEnemySpawns()) {
+            if ("winged".equals(spawn.getName())) {
+                fly.add(new FlyModel(spawn.getX(), spawn.getY(), player));
+            }
+        }
+        return fly;
     }
 
 }

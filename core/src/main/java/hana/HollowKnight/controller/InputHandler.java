@@ -77,6 +77,7 @@ public class InputHandler {
         }
         if (isJustPressed(PlayerAction.ATTACK)) {
             player.attack();
+            AudioManager.getInstance().playSwordSound();
         }
 
         player.focus(Gdx.graphics.getDeltaTime());

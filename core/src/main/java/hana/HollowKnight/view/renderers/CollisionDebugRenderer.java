@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import hana.HollowKnight.model.entities.MosscreepModel;
+import hana.HollowKnight.model.entities.CrawlerModel;
+import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
 
 import java.util.ArrayList;
@@ -19,16 +20,21 @@ public class CollisionDebugRenderer {
         this.shapeRenderer = new ShapeRenderer();
     }
 
-    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards, ArrayList<MosscreepModel> crawls) {
+    public void render(OrthographicCamera camera, PlayerModel player, Array<Rectangle> solidTiles, Array<Rectangle> hazards, ArrayList<CrawlerModel> crawls, ArrayList<FlyModel> flies) {
         shapeRenderer.setProjectionMatrix(camera.combined);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         Gdx.gl.glLineWidth(3f);
 
         shapeRenderer.setColor(Color.RED);
-        for (MosscreepModel mosscreepModel : crawls) {
+        for (CrawlerModel mosscreepModel : crawls) {
             Rectangle rectangle = mosscreepModel.getBounds();
                 shapeRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        }
+        shapeRenderer.setColor(Color.GREEN);
+        for (FlyModel flyModel : flies) {
+            Rectangle rectangle = flyModel.getBounds();
+            shapeRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         }
 
         shapeRenderer.setColor(Color.GREEN);

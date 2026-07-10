@@ -71,10 +71,10 @@ public class GameHUD {
             waterSoulAtlas.findRegions("HUD_Soulorb_fills_soul_shrink"), Animation.PlayMode.LOOP);
 
         hpBreakAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "breakHealth.atlas"));
-        hpBreakAn = new Animation<>(0.2f, hpBreakAtlas.findRegions("BreakHealth"), Animation.PlayMode.NORMAL);
+        hpBreakAn = new Animation<>(0.1f, hpBreakAtlas.findRegions("BreakHealth"), Animation.PlayMode.NORMAL);
 
         hpRefillAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "refillHealth.atlas"));
-        hpRefillAn = new Animation<>(0.2f, hpRefillAtlas.findRegions("HealthRefill"), Animation.PlayMode.NORMAL);
+        hpRefillAn = new Animation<>(0.1f, hpRefillAtlas.findRegions("HealthRefill"), Animation.PlayMode.NORMAL);
     }
 
     public void render(SpriteBatch sb, int currentHp, int maxHp, int soul, int maxSoul) {

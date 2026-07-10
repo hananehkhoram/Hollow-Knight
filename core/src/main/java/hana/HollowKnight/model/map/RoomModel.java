@@ -3,7 +3,7 @@ package hana.HollowKnight.model.map;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import hana.HollowKnight.model.entities.MosscreepModel;
+import hana.HollowKnight.model.entities.CrawlerModel;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class RoomModel {
     private final Array<Rectangle> hazards = new Array<>();
     private final Array<Rectangle> solidTiles = new Array<>();
     private final Array<SpawnPointModel> enemySpawns = new Array<>();
-    private ArrayList<MosscreepModel> crawlers = new ArrayList<>();
+    private ArrayList<CrawlerModel> crawlers = new ArrayList<>();
     private BreakableWallModel breakableWall;
     private PortalModel portal;
     private Vector2 knightSpawn = new Vector2(0, 0);
@@ -87,11 +87,11 @@ public class RoomModel {
         this.knightSpawn.set(x, y);
     }
 
-    public ArrayList<MosscreepModel> getCrawlers() {
+    public ArrayList<CrawlerModel> getCrawlers() {
         return crawlers;
     }
 
-    public void setCrawlers(ArrayList<MosscreepModel> crawlers) {
+    public void setCrawlers(ArrayList<CrawlerModel> crawlers) {
         this.crawlers = crawlers;
     }
 }
