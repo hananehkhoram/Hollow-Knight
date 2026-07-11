@@ -55,6 +55,7 @@ public class CollisionController {
                 if (breakableWall.isBroken()) {
                     mapRenderer.setLayerVisibility("wall", false);
                     mapRenderer.setLayerVisibility("secret_room_back", true);
+                    mapRenderer.setLayerVisibility("voidheart", true);
                 }
             }
         } else {
@@ -62,10 +63,6 @@ public class CollisionController {
         }
     }
 
-    public boolean isBlockedByBreakable(Rectangle nextBounds) {
-        if (breakableWall == null || breakableWall.isBroken()) return false;
-        return nextBounds.overlaps(breakableWall.getBounds());
-    }
 
     public PortalModel checkPortalCollision() {
         if (portal == null) return null;

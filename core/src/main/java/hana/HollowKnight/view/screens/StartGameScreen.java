@@ -1,5 +1,6 @@
 package hana.HollowKnight.view.screens;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -86,12 +87,11 @@ public class StartGameScreen extends BaseScreen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     audioManager.clickMenuSound();
-//                    if (controller.hasSave(slot)) {
-//                        controller.loadGame(slot);
-//                    } else {
-                        AudioManager.getInstance().playCityOfTearsSound();
+                    if (controller.hasSave(slot)) {
+                        controller.loadGame(slot);
+                    } else {
                         controller.startNewGame(slot);
-//                    }
+                    }
                 }
             });
 

@@ -11,16 +11,11 @@ public class DashmasterModel extends Charm {
 
     @Override
     public void applyCharm() {
-        if (player.getUsedNotches() < 3) {
-            PlayerModel.DASH_COOLDOWN = 0.5f;
-        }
+        PlayerModel.DASH_COOLDOWN = 0.1f;
     }
 
     @Override
     public void cancelCharm() {
-        if (this.equipped) {
-            this.equipped = false;
-            PlayerModel.DASH_COOLDOWN = 1.5f;
-        }
+        PlayerModel.DASH_COOLDOWN = 1.5f;
     }
 }

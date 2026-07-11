@@ -127,7 +127,7 @@ public class InventoryMenu {
 
             Texture tex = charmTextures.get(charm);
             Image img = new Image(tex);
-            changeColor(theCharm.isEquipped(), img);
+            changeColor(theCharm.isEquipped(),theCharm.isUnlocked(), img);
             charmTable.add(img).row();
 
             ImageTextButton label = new ImageTextButton(theCharm.getType().toString(), menuSkin, "mute");
@@ -136,7 +136,7 @@ public class InventoryMenu {
                 public void clicked(InputEvent event, float x, float y) {
                     AudioManager.getInstance().clickMenuSound();
                     theCharm.toggleEquipped();
-                    changeColor(theCharm.isEquipped(), img);
+                    changeColor(theCharm.isEquipped(),theCharm.isUnlocked(), img);
                 }
             });
             MainMenuView.setupButtonAnimation(label, bilbilakLeft, bilbilakRight);
@@ -161,8 +161,8 @@ public class InventoryMenu {
         bilbilakRight.toFront();
     }
 
-    public void changeColor(boolean isEquipped, Image img) {
-        if (isEquipped) {
+    public void changeColor(boolean isEquipped, boolean isUnlocked,Image img) {
+        if (isEquipped && isUnlocked) {
             img.setColor(com.badlogic.gdx.graphics.Color.WHITE);
         } else {
             img.setColor(new com.badlogic.gdx.graphics.Color(0.25f, 0.25f, 0.25f, 0.8f));

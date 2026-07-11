@@ -3,6 +3,7 @@ package hana.HollowKnight.model.entities;
 import com.badlogic.gdx.math.Rectangle;
 import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.items.CharmType;
+import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.audio.AudioManager;
 
 import java.util.ArrayList;
@@ -147,6 +148,15 @@ public class PlayerModel extends Entity {
         if (dashing || isBeingKnockedBack) return;
         velocityX = MOVE_SPEED;
         facingRight = true;
+    }
+
+    public boolean checkVoidHeart () {
+        if (x > 398 &&  x < 493) {
+            if (y > 872 && y < 1470){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void stopMoving() {

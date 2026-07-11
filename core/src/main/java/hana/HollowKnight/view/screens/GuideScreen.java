@@ -126,15 +126,12 @@ public class GuideScreen extends BaseScreen {
 
         contentTable.add(createSectionTitle("CHEAT CODES")).colspan(4).padBottom(15f).center().row();
 
-        String cheatInfo = "• GHOST: Press [G] to toggle God Mode (Invincibility).\n" +
-            "• GEOS: Press [M] to add 1000 Geo instantly.\n" +
-            "• INF_SOUL: Press [P] to fully restore your Soul Gauge.";
-
-        Label cheatLabel = new Label(cheatInfo, menuSkin, "settingmenu");
-        cheatLabel.setWrap(true);
-        cheatLabel.setAlignment(Align.left);
-        cheatLabel.setColor(Color.WHITE);
-        contentTable.add(cheatLabel).colspan(4).width(740f).padBottom(15f).left().row();
+        contentTable.add(new Label(" Boss Arena Teleport - \"BT\"", menuSkin, "settingmenu")).colspan(4).padBottom(5f).center().row();
+        contentTable.add(new Label(" Spectator Mode  - \"SM\"", menuSkin, "settingmenu")).colspan(4).padBottom(5f).center().row();
+        contentTable.add(new Label(" Emergency Heal - \"EH\"", menuSkin, "settingmenu")).colspan(4).padBottom(5f).center().row();
+        contentTable.add(new Label(" Refill Soul Vessel - \"RS\"", menuSkin, "settingmenu")).colspan(4).padBottom(5f).center().row();
+        contentTable.add(new Label(" God Mode - \"GM\"", menuSkin, "settingmenu")).colspan(4).padBottom(5f).center().row();
+        contentTable.add(new Label("Boss Kill - \"BK\"", menuSkin, "settingmenu")).colspan(4).padBottom(15f).center().row();
 
         ScrollPane.ScrollPaneStyle scrollStyle = new ScrollPane.ScrollPaneStyle();
         ScrollPane scrollPane = new ScrollPane(contentTable, scrollStyle);

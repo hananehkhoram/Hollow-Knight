@@ -95,6 +95,7 @@ public class EndScreen extends BaseScreen {
                 audioManager.clickMenuSound();
                 audioManager.stopCityofTears();
                 audioManager.stopGreenpathSound();
+                audioManager.stopBossFight();
                 audioManager.playMenuSound();
                 controller.goToMainMenu();
             }

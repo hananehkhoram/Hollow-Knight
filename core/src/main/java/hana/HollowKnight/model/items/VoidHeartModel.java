@@ -12,13 +12,11 @@ public class VoidHeartModel extends Charm {
 
     @Override
     public void applyCharm() {
-        if (player.getUsedNotches() < 3 && this.unlocked) {
-            player.setDamagePerHit((player.getDamagePerHit() * 10));
-        }
+        player.setDamagePerHit((player.getDamagePerHit() * 10));
     }
 
     @Override
     public void cancelCharm() {
-            player.setDamagePerHit((player.getDamagePerHit() / 10));
+        player.setDamagePerHit((player.getDamagePerHit() / 10));
     }
 }

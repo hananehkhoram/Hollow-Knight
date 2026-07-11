@@ -24,13 +24,13 @@ public class AudioManager {
     private final Sound moving;
     private final Sound sword;
     private final Music GreenpathSound;
+    private final Music bossFight;
+    private final Music gameOver;
 
-    // ولوم صدا در LibGDX حداکثر 1.0f است
     private float sfxVolume = 1.0f;
     private float bgmVolume = 0.5f;
     private Music currentBgm;
 
-    // متغیرهای سیستم Fade Out
     private Music musicToFadeOut = null;
     private float fadeDuration = 0f;
     private float fadeTimer = 0f;
@@ -55,6 +55,8 @@ public class AudioManager {
         moving = Gdx.audio.newSound(Gdx.files.internal("hero_run_footsteps_stone.wav"));
         sword = Gdx.audio.newSound(Gdx.files.internal("sword_4.wav"));
         GreenpathSound = Gdx.audio.newMusic(Gdx.files.internal("05. Greenpath.mp3"));
+        bossFight = Gdx.audio.newMusic(Gdx.files.internal("Boss Defeat.wav"));
+        gameOver = Gdx.audio.newMusic(Gdx.files.internal("PersianGameOfThrones.mp3"));
     }
 
     public static AudioManager getInstance() {
@@ -64,10 +66,6 @@ public class AudioManager {
         return instance;
     }
 
-    /**
-     * این متد باید در حلقه اصلی بازی (متد update مربوط به GameController یا render کلی)
-     * در هر فریم صدا زده شود تا کاهش ولوم تدریجی اعمال شود.
-     */
     public void update(float delta) {
         if (!isFading || musicToFadeOut == null) return;
 
@@ -85,9 +83,6 @@ public class AudioManager {
         }
     }
 
-    /**
-     * موزیک فعلی را در مدت زمان مشخصی به آرامی قطع می‌کند.
-     */
     public void fadeOutCurrentMusic(float duration) {
         if (currentBgm == null || !currentBgm.isPlaying()) return;
 
@@ -99,12 +94,17 @@ public class AudioManager {
         isFading = true;
     }
 
-    // ==================== BGM Control ====================
+    public void playGameOver(){
+        switchBgm(gameOver);
+    }
+
+    public void stopGameOver(){
+        gameOver.stop();
+    }
 
     private void switchBgm(Music newBgm) {
         if (currentBgm == newBgm) return;
 
-        // اگر موزیکی در حال پخش است، آن را به آرامی در 1.5 ثانیه محو کن
         if (currentBgm != null) {
             fadeOutCurrentMusic(1.5f);
         }
@@ -124,21 +124,23 @@ public class AudioManager {
         if (currentBgm == GreenpathSound) currentBgm = null;
     }
 
-    public void playCrossroadsSound() {
-        switchBgm(crossroadsSound);
-    }
-
     public void playCityOfTearsSound() {
         switchBgm(cityOfTearsSound);
     }
+    public void playBossFightSound() {switchBgm(bossFight);}
 
     public void stopCityofTears() {
         cityOfTearsSound.stop();
         if (currentBgm == cityOfTearsSound) currentBgm = null;
     }
+    public void stopBossFight() {
+        bossFight.stop();
+    }
 
     public void playMenuSound() {
         switchBgm(backgroundSound);
+        stopGameOver();
+        stopBossFight();
     }
 
     public void stopMenuSound() {

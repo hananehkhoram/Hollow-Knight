@@ -4,19 +4,19 @@ public class FlyModel extends EnemyModel {
 
     public enum State { IDLE, SPOTTED, ATTACK, COOLDOWN, DEATH, DEATH2 }
 
-    private static final float WIDTH = 250;
-    private static final float HEIGHT = 150;
+    private static final float WIDTH = 200;
+    private static final float HEIGHT = 100;
 
     private static final float FLY_SPEED = 100f;
     private static final float ATTACK_SPEED = 450f;
-    private static final float Y_TRACKING_SPEED = 80f;
+    private static final float MAX_Y_TRACKING_SPEED = 120f;
     private static final int MAX_HEALTH = 2;
     private static final int CONTACT_DAMAGE = 1;
 
     private static final float SPOTTED_DURATION = 0.6f;
     private static final float COOLDOWN_DURATION = 1.5f;
-    private static final float DETECTION_RANGE_X = 500f;
-    private static final float DETECTION_RANGE_Y = 250f;
+    private static final float DETECTION_RANGE_X = 800f;
+    private static final float DETECTION_RANGE_Y = 500f;
 
     private PlayerModel player;
 
@@ -46,11 +46,21 @@ public class FlyModel extends EnemyModel {
         if (dead) {
             if (state != State.DEATH) {
                 state = State.DEATH;
-                velocityX = 0f;
+                if (!isBeingKnockedBack) {
+                    velocityX = 0f;
+                    return;
+                }
             } else {
                 state = State.DEATH2;
-                velocityX = 0f;
+                if (!isBeingKnockedBack){
+                    velocityX = 0f;
+                    return;
+                }
             }
+            return;
+        }
+
+        if (isBeingKnockedBack) {
             return;
         }
 
@@ -60,8 +70,12 @@ public class FlyModel extends EnemyModel {
             case IDLE:
                 velocityX = facingRight ? FLY_SPEED : -FLY_SPEED;
 
-                if (Math.abs(player.getY() - this.y) > 10f) {
-                    velocityY = player.getY() > this.y ? Y_TRACKING_SPEED : -Y_TRACKING_SPEED;
+                // 🟢 حرکت عمودی نرم: سرعت تعقیب متناسب با فاصله تنظیم می‌شود تا لرزش نداشته باشد
+                float distanceY = player.getY() - this.y;
+                if (Math.abs(distanceY) > 5f) {
+                    velocityY = distanceY * 2.5f;
+                    if (velocityY > MAX_Y_TRACKING_SPEED) velocityY = MAX_Y_TRACKING_SPEED;
+                    if (velocityY < -MAX_Y_TRACKING_SPEED) velocityY = -MAX_Y_TRACKING_SPEED;
                 } else {
                     velocityY = 0f;
                 }
@@ -71,7 +85,7 @@ public class FlyModel extends EnemyModel {
                     stateTimer = 0f;
                     velocityX = 0f;
                     velocityY = 0f;
-                    attackTargetY = player.getY();
+                    attackTargetY = player.getY(); // ثبت موقعیت ارتفاع پلیر برای شیرجه زدن
                     facingRight = (player.getX() > this.x);
                 }
                 break;
@@ -88,12 +102,19 @@ public class FlyModel extends EnemyModel {
                 break;
 
             case ATTACK:
-                velocityY = 0f;
+                // 🟢 شیرجه زاویه‌دار نرم: به جای قفل شدن محور Y، مگس به سمت ارتفاعی که هدف گرفته بود مایل می‌شود
+                float targetDiffY = attackTargetY - this.y;
+                if (Math.abs(targetDiffY) > 5f) {
+                    velocityY = targetDiffY * 4f;
+                } else {
+                    velocityY = 0f;
+                }
 
-                if (stateTimer >= 0.8f) {
+                if (stateTimer >= 0.6f) {
                     state = State.COOLDOWN;
                     stateTimer = 0f;
                     velocityX = 0f;
+                    velocityY = 0f;
                 }
                 break;
 

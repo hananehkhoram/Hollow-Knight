@@ -1,5 +1,6 @@
 package hana.HollowKnight.model.map;
 
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -22,6 +23,7 @@ public class RoomModel {
     private Vector2 knightSpawn = new Vector2(0, 0);
     private float minX, minY, maxX, maxY;
     private float targetX, targetY;
+    private MapLayer voidHeart;
 
     public RoomModel(String mapPath) {
         this.mapPath = mapPath;
@@ -118,5 +120,13 @@ public class RoomModel {
 
     public void setTargetY(float targetY) {
         this.targetY = targetY;
+    }
+
+    public MapLayer getVoidHeart() {
+        return voidHeart;
+    }
+
+    public void setVoidHeart(MapLayer voidHeart) {
+        this.voidHeart = voidHeart;
     }
 }

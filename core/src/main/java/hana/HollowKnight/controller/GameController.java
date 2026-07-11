@@ -1,5 +1,6 @@
 package hana.HollowKnight.controller;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,10 +12,12 @@ import hana.HollowKnight.model.entities.BossModel;
 import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.items.CharmType;
 import hana.HollowKnight.model.map.BossArena;
 import hana.HollowKnight.model.map.PortalModel;
 import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.GameView;
+import hana.HollowKnight.view.audio.AudioManager;
 import hana.HollowKnight.view.renderers.MapRenderer;
 import hana.HollowKnight.view.screens.*;
 
@@ -162,6 +165,11 @@ public class GameController {
             aiController.checkPlayerInteraction(boss, player, 1);
         }
 
+        if (player.checkVoidHeart()){
+            currentRoom.getVoidHeart().setVisible(false);
+            model.getCharms().get(CharmType.VOID_HEART).setUnlocked(true);
+        }
+
         updateBossArena();
 
         if (player.isJustDead()) {
@@ -178,6 +186,7 @@ public class GameController {
             && arena.getTrigger().overlaps(model.getPlayer().getBounds()) && !bosses.isEmpty()) {
             arena.setLocked(true);
             arena.setGateVisibility(true);
+            AudioManager.getInstance().playBossFightSound();
             currentRoom.getSolidTiles().addAll(arena.getGates());
         }
 
@@ -222,16 +231,6 @@ public class GameController {
         game.setScreen(new MainMenuView(this));
     }
 
-    public void resumeGame() {
-        if (activeGameView != null) {
-            game.setScreen(activeGameView);
-        }
-    }
-
-    public void openInventory() {
-        game.setScreen(new InventoryScreenView(this));
-    }
-
     public void openSettings() {
         game.setScreen(new SettingScreenView(this));
     }
@@ -245,6 +244,7 @@ public class GameController {
     }
 
     public void endGame(PlayerModel player) {
+        AudioManager.getInstance().playGameOver();
         game.setScreen(new EndScreen(this, player));
     }
 
@@ -278,6 +278,9 @@ public class GameController {
         if (model.getActiveSlot() != -1) {
             model.save(model.getActiveSlot());
         }
+        AudioManager.getInstance().stopGreenpathSound();
+        AudioManager.getInstance().stopCityofTears();
+        AudioManager.getInstance().playMenuSound();
         goToMainMenu();
     }
 

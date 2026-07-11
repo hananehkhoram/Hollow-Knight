@@ -12,15 +12,14 @@ public class HeavyBlowModel extends Charm {
 
     @Override
     public void applyCharm() {
-        if (player.getUsedNotches() < 3) {
-            EnemyModel.setKnockBackForceX(EnemyModel.KNOCKBACK_FORCE_X * 2);
-            EnemyModel.setKnockBackForceY(EnemyModel.KNOCKBACK_FORCE_Y * 2);
-        }
+        EnemyModel.setKnockBackForceX(EnemyModel.KNOCKBACK_FORCE_X * 2);
+        EnemyModel.setKnockBackForceY(EnemyModel.KNOCKBACK_FORCE_Y * 2);
+
     }
 
     @Override
     public void cancelCharm() {
-            EnemyModel.setKnockBackForceX(EnemyModel.KNOCKBACK_FORCE_X);
-            EnemyModel.setKnockBackForceY(EnemyModel.KNOCKBACK_FORCE_Y);
+        EnemyModel.setKnockBackForceX(EnemyModel.KNOCKBACK_FORCE_X);
+        EnemyModel.setKnockBackForceY(EnemyModel.KNOCKBACK_FORCE_Y);
     }
 }

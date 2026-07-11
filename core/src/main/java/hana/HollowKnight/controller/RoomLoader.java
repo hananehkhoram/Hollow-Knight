@@ -80,6 +80,9 @@ public class RoomLoader {
             }
         }
 
+        MapLayer voidHeart = map.getLayers().get("voidheart");
+        room.setVoidHeart(voidHeart);
+
         MapLayer gateLayer = map.getLayers().get("gate");
 
         MapLayer bossArenaLayer = map.getLayers().get("boss_arena");

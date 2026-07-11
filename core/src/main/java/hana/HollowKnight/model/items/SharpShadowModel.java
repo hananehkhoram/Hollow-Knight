@@ -1,6 +1,5 @@
 package hana.HollowKnight.model.items;
 
-import hana.HollowKnight.model.entities.EnemyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
 
 public class SharpShadowModel extends Charm {
@@ -13,13 +12,12 @@ public class SharpShadowModel extends Charm {
 
     @Override
     public void applyCharm() {
-        if (player.getUsedNotches() < 3) {
-            PlayerModel.DASH_DURATION = PlayerModel.DASH_DURATION * 1.2f;
-        }
+        PlayerModel.DASH_DURATION = PlayerModel.DASH_DURATION * 1.2f;
+
     }
 
     @Override
     public void cancelCharm() {
-            PlayerModel.DASH_DURATION = PlayerModel.DASH_DURATION / 1.2f;
+        PlayerModel.DASH_DURATION = PlayerModel.DASH_DURATION / 1.2f;
     }
 }

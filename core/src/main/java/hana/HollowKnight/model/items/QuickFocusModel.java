@@ -11,14 +11,11 @@ public class QuickFocusModel extends Charm {
 
     @Override
     public void applyCharm() {
-        if (player.getUsedNotches() < 3) {
-            PlayerModel.FOCUS_DURATION = 1f;
-
-        }
+        PlayerModel.FOCUS_DURATION = 0.1f;
     }
 
     @Override
     public void cancelCharm() {
-            PlayerModel.FOCUS_DURATION = 1.5f;
+        PlayerModel.FOCUS_DURATION = 1.5f;
     }
 }

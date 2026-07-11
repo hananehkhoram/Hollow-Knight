@@ -119,50 +119,6 @@ public class PauseMenu {
         root.add(menuButton("BACK", this::showMainPanel)).colspan(3).width(320f).height(55f).padTop(30f);
     }
 
-    private void showCharmsPanel() {
-        root.clearChildren();
-        PlayerModel player = controller.getModel().getPlayer();
-
-        Label title = new Label("CHARMS  (" + player.getUsedNotches() + " / " + player.getMaxNotches() + " notches)", menuSkin);
-        title.setFontScale(1.1f);
-        root.add(title).padBottom(20f).row();
-
-        for (CharmType type : CharmType.values()) {
-            boolean unlocked = player.isCharmUnlocked(type);
-            boolean equipped = player.getEquippedCharms().contains(type);
-
-            String label = formatCharmName(type) + (equipped ? "  [EQUIPPED]" : unlocked ? "" : "  [LOCKED]");
-            ImageTextButton btn = new ImageTextButton(label, menuSkin, unlocked ? "default" : "mute");
-            btn.setTouchable(unlocked ? Touchable.enabled : Touchable.disabled);
-
-            btn.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    AudioManager.getInstance().clickMenuSound();
-                    if (player.getEquippedCharms().contains(type)) {
-                        player.unequipCharm(type);
-                    } else {
-                        player.equipCharm(type); // no-ops if not enough free notches
-                    }
-                    showCharmsPanel(); // rebuild to refresh labels + notch count
-                }
-            });
-
-            root.add(btn).width(420f).height(45f).padBottom(8f).row();
-        }
-
-        root.add(menuButton("BACK", this::showMainPanel)).width(320f).height(55f).padTop(20f);
-    }
-
-    private String formatCharmName(CharmType type) {
-        String[] words = type.name().split("_");
-        StringBuilder sb = new StringBuilder();
-        for (String w : words) {
-            sb.append(w.charAt(0)).append(w.substring(1).toLowerCase()).append(' ');
-        }
-        return sb.toString().trim();
-    }
-
     private ImageTextButton menuButton(String text, Runnable action) {
         ImageTextButton btn = new ImageTextButton(text, menuSkin, "mute");
         btn.addListener(new ClickListener() {

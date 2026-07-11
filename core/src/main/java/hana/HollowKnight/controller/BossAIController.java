@@ -20,7 +20,7 @@ public class BossAIController {
 
     private static final float ATTACK_ANTIC_DURATION = 0.3f;
     private static final float ATTACK_DURATION = 0.25f;
-    private static final float ATTACK_RECOVER_DURATION = 0.3f;
+    private static final float ATTACK_RECOVER_DURATION = 0.5f;
     private static final float MACE_SLAM_RANGE = 90f;
     private static final int MACE_SLAM_DAMAGE = 1;
 
@@ -33,8 +33,6 @@ public class BossAIController {
     private static final float JUMP_ATTACK_HIT_DURATION = 0.15f;
     private static final float LEAP_OFFENSIVE_SPEED_X = 260f;
     private static final float LEAP_OFFENSIVE_SPEED_Y = 620f;
-    private static final float LEAP_HIT_RANGE = 90f;
-    private static final int LEAP_DAMAGE = 1;
 
     private static final float LAND_DURATION = 0.2f;
     private static final float LEAP_DEFENSIVE_SPEED_X = 220f;
@@ -289,7 +287,6 @@ public class BossAIController {
                 distance <= NEAR_DISTANCE ? 3f : 0.5f, boss.getLastMove());
         }
 
-        // Forced/likely defensive leap after taking rapid damage.
         if (boss.isDefensiveLeapPending()) {
             boss.clearDefensiveLeapPending();
             if (boss.getLastMove() != BossModel.Move.LEAP_DEFENSIVE) {
@@ -330,7 +327,7 @@ public class BossAIController {
         Rectangle hitbox = new Rectangle(hitboxX, boss.getY(), boss.getWidth() + range, boss.getHeight() * 0.5f);
 
         if (hitbox.overlaps(player.getBounds()) && !player.isInvincible()) {
-            player.takeDamage(damage);
+            player.takeDamage(1);
             AudioManager.getInstance().playGetDamageSound();
             player.applyKnockBack();
         }

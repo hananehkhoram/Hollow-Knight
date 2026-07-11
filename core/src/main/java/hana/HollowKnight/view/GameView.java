@@ -70,6 +70,11 @@ public class GameView extends BaseScreen {
     private void loadNewRoom(String mapPath) {
         mapRenderer.load(mapPath);
         controller.initRoom(mapPath, mapRenderer.getMap(), mapRenderer);
+        if (mapPath.contains("Greenpath")) {
+            AudioManager.getInstance().playGreenpathSound();
+        } else {
+            AudioManager.getInstance().playCityOfTearsSound();
+        }
     }
 
     // ==================== Pause ====================
