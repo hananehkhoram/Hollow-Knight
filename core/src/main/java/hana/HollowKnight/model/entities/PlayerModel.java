@@ -15,8 +15,8 @@ public class PlayerModel extends Entity {
     public static final float DEFAULT_WIDTH = 50;
     public static final float DEFAULT_HEIGHT = 100;
 
-    public static final float MOVE_SPEED = 500;
-    public static final float GRAVITY = -1400;
+    public static float MOVE_SPEED = 500;
+    public static float GRAVITY = -1400;
     public static final float JUMP_VELOCITY = 900;
     public static final float DOUBLE_JUMP_VELOCITY = 500;
     public static float FOCUS_DURATION = 1.5f;
@@ -24,7 +24,7 @@ public class PlayerModel extends Entity {
     public static final int DEFAULT_MAX_SOUL = 100;
     public static int SOUL_PER_HIT = 11;
     public static final int MAX_NOTCHES = 3;
-    public static final float DASH_SPEED = 1000f;
+    public static float DASH_SPEED = 1000f;
     public static float DASH_DURATION = 0.8f;
     public static float DASH_COOLDOWN = 1f;
     public static float ATTACK_DURATION = 0.5f;
@@ -46,10 +46,10 @@ public class PlayerModel extends Entity {
     private boolean dashing;
     private boolean attacking;
     private boolean isBeingKnockedBack = false;
+    private boolean isGodeMode = false;
     private boolean isFocusing = false;
     private float dashTimer;
     private float dashCooldownTimer;
-    private float dashCooldown = DASH_COOLDOWN;
     private float attackTimer;
     private float attackCooldownTimer;
     private float invulnerabilityTimer;
@@ -118,14 +118,9 @@ public class PlayerModel extends Entity {
             float soulPerSecond = 11f / FOCUS_DURATION;
             soulAccumulator += soulPerSecond * delta;
 
-            if (soulAccumulator >= 1f) {
-                int soulToDeduct = (int) soulAccumulator;
-                soul = Math.max(0, soul - soulToDeduct);
-                soulAccumulator -= soulToDeduct;
-            }
-
             if (actionTimer >= FOCUS_DURATION) {
                 setHealth(Math.min(maxHealth, health + 1));
+                setSoul((int) Math.max(0 , soul - soulAccumulator));
                 AudioManager.getInstance().playFocusHealSound();
 
                 actionTimer = 0f;
@@ -202,6 +197,7 @@ public class PlayerModel extends Entity {
     }
 
     public void applyKnockBack() {
+        if (!isGodeMode){
         this.isBeingKnockedBack = true;
         this.knockbackTimer = KNOCKBACK_DURATION;
         float knockbackForceX = 350f;
@@ -209,7 +205,7 @@ public class PlayerModel extends Entity {
         this.velocityX = facingRight ? -knockbackForceX : knockbackForceX;
         this.velocityY = knockbackForceY;
         this.onGround = false;
-    }
+    }}
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
@@ -237,6 +233,7 @@ public class PlayerModel extends Entity {
     }
 
     public void takeDamage(int amount) {
+        if (!isGodeMode){
         if (invulnerabilityTimer > 0f || !alive) return;
         health = Math.max(0, health - amount);
         AudioManager.getInstance().playGetDamageSound();
@@ -245,7 +242,7 @@ public class PlayerModel extends Entity {
             alive = false;
             AudioManager.getInstance().playHeroDeathSound();
             this.health = DEFAULT_MAX_HEALTH;
-        }
+        }}
     }
 
     public void gainSoulOnHit() {
@@ -283,9 +280,7 @@ public class PlayerModel extends Entity {
     }
 
     public int getUsedNotches() {
-        int used = 0;
-        for (CharmType c : equippedCharms) used += 1;
-        return used;
+        return usedNotches;
     }
 
     public int getMaxNotches() {
@@ -316,7 +311,7 @@ public class PlayerModel extends Entity {
             dashTimer += delta;
             if (dashTimer >= DASH_DURATION) {
                 dashing = false;
-                dashCooldownTimer = dashCooldown;
+                dashCooldownTimer = DASH_COOLDOWN;
                 velocityX = 0f;
             }
         }
@@ -399,7 +394,6 @@ public class PlayerModel extends Entity {
         for (String n : names) equippedCharms.add(CharmType.valueOf(n));
     }
 
-    public void add
     public boolean isFocusing() {
         return isFocusing;
     }
@@ -465,5 +459,13 @@ public class PlayerModel extends Entity {
     }
     public void increaseUsedNotches() {
         this.usedNotches ++;
+    }
+
+    public boolean isGodeMode() {
+        return isGodeMode;
+    }
+
+    public void setGodeMode(boolean godeMode) {
+        isGodeMode = godeMode;
     }
 }

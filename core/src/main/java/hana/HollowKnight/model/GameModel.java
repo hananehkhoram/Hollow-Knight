@@ -3,7 +3,11 @@ package hana.HollowKnight.model;
 import hana.HollowKnight.model.data.GameData;
 import hana.HollowKnight.model.data.SaveManager;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.items.Charm;
+import hana.HollowKnight.model.items.CharmType;
 import hana.HollowKnight.model.stats.GameStats;
+
+import java.util.HashMap;
 
 public class GameModel {
     private PlayerModel player;
@@ -11,11 +15,19 @@ public class GameModel {
     private String currentRoomId;
     private final SaveManager saveManager;
     private int activeSlot = -1;
+    private HashMap<CharmType, Charm> charms = new HashMap<>();
 
     public GameModel() {
         this.player = new PlayerModel();
         this.gameStats = new GameStats();
         this.saveManager = new SaveManager();
+        for (CharmType charmType : CharmType.values()) {
+            charms.put(charmType, Charm.charmFactory(charmType, player));
+        }
+    }
+
+    public HashMap<CharmType, Charm> getCharms() {
+        return charms;
     }
 
     public void save(int slot) {

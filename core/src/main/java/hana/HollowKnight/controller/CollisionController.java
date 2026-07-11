@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.map.BreakableWallModel;
 import hana.HollowKnight.model.map.PortalModel;
+import hana.HollowKnight.view.audio.AudioManager;
 import hana.HollowKnight.view.renderers.MapRenderer;
 
 public class CollisionController {
@@ -35,6 +36,7 @@ public class CollisionController {
         for (Rectangle hazard : hazards) {
             if (playerBounds.overlaps(hazard)) {
                 player.takeDamage(damageAmount);
+                AudioManager.getInstance().playGetDamageSound();
                 player.applyKnockBack();
 
                 player.setPosition(player.getLastSafeX() - (hazard.x -  player.getX())/2, player.getLastSafeY());
@@ -78,7 +80,6 @@ public class CollisionController {
         }
 
         if (player.isDashing()) {
-            player.setVelocityX(PlayerModel.DASH_SPEED);
             player.setVelocityY(0);
         }
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.BossModel;
 import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.map.BossArena;
+import hana.HollowKnight.view.audio.AudioManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -270,10 +271,6 @@ public class BossAIController {
         return boss.getStateTimer() <= delta;
     }
 
-    // ---------------------------------------------------------------
-    // Move selection: distance-based weights + randomization + anti-spam
-    // ---------------------------------------------------------------
-
     private BossModel.Move decideNextMove(BossModel boss, PlayerModel player) {
         float distance = Math.abs(player.getX() - boss.getX());
 
@@ -327,9 +324,6 @@ public class BossAIController {
         weights.add(weight);
     }
 
-    // ---------------------------------------------------------------
-    // Attack hitboxes
-    // ---------------------------------------------------------------
 
     private void checkGroundSlamHit(BossModel boss, PlayerModel player, float range, int damage) {
         float hitboxX = boss.isFacingRight() ? boss.getX() + boss.getWidth() : boss.getX() - range;
@@ -337,6 +331,7 @@ public class BossAIController {
 
         if (hitbox.overlaps(player.getBounds()) && !player.isInvincible()) {
             player.takeDamage(damage);
+            AudioManager.getInstance().playGetDamageSound();
             player.applyKnockBack();
         }
     }
@@ -351,7 +346,8 @@ public class BossAIController {
             boss.getY(), 10f, SHOCKWAVE_HEIGHT);
 
         if (waveBox.overlaps(player.getBounds()) && !player.isInvincible()) {
-            player.takeDamage(MACE_SLAM_DAMAGE * 2);
+            player.takeDamage(1);
+            AudioManager.getInstance().playGetDamageSound();
             player.applyKnockBack();
             boss.stopShockwave();
             return;
@@ -361,10 +357,6 @@ public class BossAIController {
             boss.stopShockwave();
         }
     }
-
-    // ---------------------------------------------------------------
-    // Ground/wall physics
-    // ---------------------------------------------------------------
 
     private void resolveVertical(BossModel boss, Array<Rectangle> solidTiles) {
         boss.setOnGround(false);

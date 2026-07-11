@@ -46,6 +46,7 @@ public class GameController {
     private String pendingMapPath;
     private float pendingSpawnX, pendingSpawnY;
     private boolean pendingUseRoomSpawn = true;
+    private boolean pendingSpawnAtBossArena = false;
 
     public GameController(Game game, SpriteBatch batch) {
         this.game = game;
@@ -69,7 +70,16 @@ public class GameController {
 
         currentMapPath = mapPath;
 
-        if (pendingUseRoomSpawn) {
+        if (pendingSpawnAtBossArena) {
+            BossArena arena = currentRoom.getBossArena();
+            if (arena != null && arena.getBounds() != null) {
+                player.setPosition(arena.getBounds().x, arena.getBounds().y);
+            } else {
+                // Fallback map didn't have an arena either — don't drop the player off-map.
+                Vector2 spawn = currentRoom.getKnightSpawn();
+                player.setPosition(spawn.x, spawn.y);
+            }
+        } else if (pendingUseRoomSpawn) {
             Vector2 spawn = currentRoom.getKnightSpawn();
             player.setPosition(spawn.x, spawn.y);
         } else {
@@ -79,6 +89,18 @@ public class GameController {
 
         pendingMapPath = null;
         pendingUseRoomSpawn = true;
+        pendingSpawnAtBossArena = false;
+    }
+
+    public void teleportToBossArena(String fallbackMapPath) {
+        BossArena arena = (currentRoom != null) ? currentRoom.getBossArena() : null;
+        if (arena != null && arena.getBounds() != null) {
+            model.getPlayer().setPosition(arena.getBounds().x, arena.getBounds().y);
+            model.getPlayer().savePrevPosition();
+            return;
+        }
+        pendingSpawnAtBossArena = true;
+        pendingMapPath = fallbackMapPath;
     }
 
     public boolean hasPendingRoomChange() {
@@ -104,9 +126,11 @@ public class GameController {
 
     public void updateGameplay(float delta) {
         InputHandler.getInstance().update(model.getPlayer());
-        if (InputHandler.getInstance().paused) game.setScreen(new EndScreen(this, model.getPlayer()));
-
-        if (collision == null || currentRoom == null) return; // room not loaded yet
+        InputHandler.getInstance().updateCheat(delta,this);
+        if (collision == null || currentRoom == null) return;
+        if (!bosses.isEmpty() && !bosses.getFirst().isAlive()) {
+            endGame(model.getPlayer());
+        }
 
         PortalModel triggeredPortal = collision.checkPortalCollision();
         if (triggeredPortal != null) {
@@ -198,10 +222,6 @@ public class GameController {
         game.setScreen(new MainMenuView(this));
     }
 
-    public void pauseGame() {
-        game.setScreen(new PauseMenuView(this));
-    }
-
     public void resumeGame() {
         if (activeGameView != null) {
             game.setScreen(activeGameView);
@@ -282,7 +302,6 @@ public class GameController {
         }
     }
 
-    // --- Getters ---
 
     public GameModel getModel() {
         return model;

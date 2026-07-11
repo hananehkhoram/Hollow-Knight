@@ -25,9 +25,17 @@ public class AudioManager {
     private final Sound sword;
     private final Music GreenpathSound;
 
-    private float sfxVolume = 5f;
+    // ولوم صدا در LibGDX حداکثر 1.0f است
+    private float sfxVolume = 1.0f;
     private float bgmVolume = 0.5f;
     private Music currentBgm;
+
+    // متغیرهای سیستم Fade Out
+    private Music musicToFadeOut = null;
+    private float fadeDuration = 0f;
+    private float fadeTimer = 0f;
+    private float fadeStartVolume = 0f;
+    private boolean isFading = false;
 
     private AudioManager() {
         backgroundSound = Gdx.audio.newMusic(Gdx.files.internal("01. Enter Hallownest.mp3"));
@@ -56,33 +64,109 @@ public class AudioManager {
         return instance;
     }
 
+    /**
+     * این متد باید در حلقه اصلی بازی (متد update مربوط به GameController یا render کلی)
+     * در هر فریم صدا زده شود تا کاهش ولوم تدریجی اعمال شود.
+     */
+    public void update(float delta) {
+        if (!isFading || musicToFadeOut == null) return;
+
+        fadeTimer += delta;
+        float progress = fadeTimer / fadeDuration;
+
+        if (progress >= 1f) {
+            musicToFadeOut.setVolume(0f);
+            musicToFadeOut.stop();
+            musicToFadeOut = null;
+            isFading = false;
+        } else {
+            float newVolume = fadeStartVolume * (1f - progress);
+            musicToFadeOut.setVolume(newVolume);
+        }
+    }
+
+    /**
+     * موزیک فعلی را در مدت زمان مشخصی به آرامی قطع می‌کند.
+     */
+    public void fadeOutCurrentMusic(float duration) {
+        if (currentBgm == null || !currentBgm.isPlaying()) return;
+
+        musicToFadeOut = currentBgm;
+        currentBgm = null;
+        fadeDuration = duration;
+        fadeTimer = 0f;
+        fadeStartVolume = musicToFadeOut.getVolume();
+        isFading = true;
+    }
+
+    // ==================== BGM Control ====================
+
+    private void switchBgm(Music newBgm) {
+        if (currentBgm == newBgm) return;
+
+        // اگر موزیکی در حال پخش است، آن را به آرامی در 1.5 ثانیه محو کن
+        if (currentBgm != null) {
+            fadeOutCurrentMusic(1.5f);
+        }
+
+        currentBgm = newBgm;
+        currentBgm.setLooping(true);
+        currentBgm.setVolume(bgmVolume);
+        currentBgm.play();
+    }
+
     public void playGreenpathSound() {
         switchBgm(GreenpathSound);
     }
 
     public void stopGreenpathSound() {
         GreenpathSound.stop();
+        if (currentBgm == GreenpathSound) currentBgm = null;
     }
 
-    public void playHeroDeathSound() {
-        stopCityofTears();
-        heroDeath.play(sfxVolume);
+    public void playCrossroadsSound() {
+        switchBgm(crossroadsSound);
+    }
+
+    public void playCityOfTearsSound() {
+        switchBgm(cityOfTearsSound);
     }
 
     public void stopCityofTears() {
         cityOfTearsSound.stop();
+        if (currentBgm == cityOfTearsSound) currentBgm = null;
+    }
+
+    public void playMenuSound() {
+        switchBgm(backgroundSound);
+    }
+
+    public void stopMenuSound() {
+        if (currentBgm == backgroundSound) {
+            backgroundSound.stop();
+            currentBgm = null;
+        }
+    }
+
+    // ==================== SFX Control ====================
+
+    public void playHeroDeathSound() {
+        if (currentBgm != null) {
+            fadeOutCurrentMusic(0.5f); // قطع سریع‌تر موزیک هنگام مرگ
+        }
+        heroDeath.play(sfxVolume);
     }
 
     public void playFocusSound() {
         focus.play(sfxVolume);
     }
 
-    public void playSwordSound() {
-        sword.play(sfxVolume);
-    }
-
     public void stopFocusSound() {
         focus.stop();
+    }
+
+    public void playSwordSound() {
+        sword.play(sfxVolume);
     }
 
     public void playMovingSound() {
@@ -100,7 +184,6 @@ public class AudioManager {
     public void playBreakWall3() {
         breakWall3.play(sfxVolume);
     }
-
 
     public void playFocusHealSound() {
         focusHealthHeal.play(sfxVolume);
@@ -122,43 +205,10 @@ public class AudioManager {
         heroDamage.play(sfxVolume);
     }
 
-    private void switchBgm(Music newBgm) {
-        if (currentBgm == newBgm) return;
-        if (currentBgm != null) {
-            currentBgm.stop();
-        }
-        currentBgm = newBgm;
-        currentBgm.setLooping(true);
-        currentBgm.setVolume(bgmVolume);
-        currentBgm.play();
-    }
-
-    public void playMenuSound() {
-        switchBgm(backgroundSound);
-    }
-
-    public void playCrossroadsSound() {
-        switchBgm(crossroadsSound);
-    }
-
-    public void playCityOfTearsSound() {
-        switchBgm(cityOfTearsSound);
-    }
-
-    public void stopMenuSound() {
-        if (currentBgm == backgroundSound) {
-            backgroundSound.stop();
-            currentBgm = null;
-        }
-    }
-
     public void clickMenuSound() {
         clickedSound.play(sfxVolume);
     }
 
-    public float getSfxVolume() {
-        return sfxVolume;
-    }
 
     public void setVolume(float volume) {
         this.sfxVolume = volume;
@@ -175,6 +225,7 @@ public class AudioManager {
         }
     }
 
+
     public void dispose() {
         backgroundSound.dispose();
         clickedSound.dispose();
@@ -182,5 +233,16 @@ public class AudioManager {
         cityOfTearsSound.dispose();
         heroDamage.dispose();
         heroDash.dispose();
+        heroDeath.dispose();
+        jump.dispose();
+        getDamage.dispose();
+        focusHealthHeal.dispose();
+        focus.dispose();
+        breakWall1.dispose();
+        breakWall2.dispose();
+        breakWall3.dispose();
+        moving.dispose();
+        sword.dispose();
+        GreenpathSound.dispose();
     }
 }

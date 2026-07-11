@@ -7,19 +7,18 @@ public class VoidHeartModel extends Charm {
     protected VoidHeartModel(PlayerModel playerModel) {
         super(CharmType.VOID_HEART, playerModel);
         this.unlocked = false;
+        this.picPath = "charms/Void Heart - charm_black.png";
     }
 
     @Override
     public void applyCharm() {
         if (player.getUsedNotches() < 3 && this.unlocked) {
             player.setDamagePerHit((player.getDamagePerHit() * 10));
-            setPicPath("");
         }
     }
 
     @Override
     public void cancelCharm() {
             player.setDamagePerHit((player.getDamagePerHit() / 10));
-            setPicPath("");
     }
 }

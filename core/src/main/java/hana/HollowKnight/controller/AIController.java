@@ -6,6 +6,7 @@ import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.EnemyModel;
 import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.view.audio.AudioManager;
 
 public class AIController {
 
@@ -185,6 +186,7 @@ public class AIController {
 
         if (!enemy.isDead() && !player.isInvincible() && enemy.getBounds().overlaps(player.getBounds())) {
             player.takeDamage(enemy.getContactDamage());
+            AudioManager.getInstance().playGetDamageSound();
             player.applyKnockBack();
         }
     }}

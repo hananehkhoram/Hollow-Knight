@@ -15,8 +15,34 @@ public abstract class Charm {
         this.player = player;
     }
 
-    public void setPicPath(String picPath) {
-        this.picPath = picPath;
+    public static Charm charmFactory (CharmType type, PlayerModel player) {
+         switch (type) {
+             case DASHMASTER : {
+                 return new DashmasterModel(player);
+             }
+             case HEAVY_BLOW : {
+                 return new HeavyBlowModel(player);
+             }
+             case QUICK_FOCUS : {
+                 return new QuickFocusModel(player);
+             }
+             case QUICK_SLASH : {
+                 return new QuickSlashModel(player);
+             }
+             case SHARP_SHADOW : {
+                 return new SharpShadowModel(player);
+             }
+             case SOUL_CATCHER : {
+                 return new SoulCatcherModel(player);
+             }
+             case UNBREAKABLE_STRENGTH : {
+                 return new UnbreakableStrengthModel(player);
+             }
+             case VOID_HEART : {
+                 return new VoidHeartModel(player);
+             }
+             default: return null;
+         }
     }
 
     public abstract void applyCharm();
@@ -27,8 +53,8 @@ public abstract class Charm {
         if (isEquipped()) {
             cancelCharm();
             player.decreaseUsedNotches();
-            this.unlocked = false;
-        } else {
+            this.equipped = false;
+        } else if (player.getUsedNotches() < 3) {
             applyCharm();
             player.increaseUsedNotches();
             this.equipped = true;
@@ -55,6 +81,10 @@ public abstract class Charm {
     public void setEquipped(boolean equipped) {
         if (equipped && !unlocked) return;
         this.equipped = equipped;
+    }
+
+    public String getPicPath() {
+        return picPath;
     }
 
     public String getDisplayName() {

@@ -4,13 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
 import hana.HollowKnight.controller.GameController;
+import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.entities.BossModel;
 import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.map.BossArena;
 import hana.HollowKnight.model.map.RoomModel;
+import hana.HollowKnight.view.audio.AudioManager;
 import hana.HollowKnight.view.hud.GameHUD;
+import hana.HollowKnight.view.overlays.InventoryMenu;
+import hana.HollowKnight.view.overlays.PauseMenu;
 import hana.HollowKnight.view.renderers.BossRenderer;
 import hana.HollowKnight.view.renderers.CollisionDebugRenderer;
 import hana.HollowKnight.view.renderers.CrawlerRenderer;
@@ -26,11 +30,17 @@ public class GameView extends BaseScreen {
     private final PlayerModel player = controller.getModel().getPlayer();
     private PlayerRenderer playerRenderer;
     private CollisionDebugRenderer debugRenderer;
+    private PauseMenu pauseOverlay;
+    private InventoryMenu inventoryOverlay;
+    private boolean isPaused = false;
 
     private final CrawlerRenderer mosscreepRenderer = new CrawlerRenderer("mosscreep");
     private final CrawlerRenderer tiktikRenderer = new CrawlerRenderer("tiktik");
     private final FlyRenderer flyRenderer = new FlyRenderer();
     private final BossRenderer bossRenderer = new BossRenderer();
+
+    private enum OverlayType { NONE, PAUSE, INVENTORY }
+    private OverlayType currentOverlay = OverlayType.NONE;
 
     public GameView(GameController controller) {
         super(controller);
@@ -42,6 +52,9 @@ public class GameView extends BaseScreen {
         debugRenderer = new CollisionDebugRenderer();
         hud = new GameHUD();
         playerRenderer = new PlayerRenderer();
+        pauseOverlay = new PauseMenu(controller, this::resumeFromPause);
+        inventoryOverlay = new InventoryMenu(controller, this::resumeFromPause);
+        isPaused = false;
 
         String targetMap = (controller.getModel().getRoomPath() != null)
             ? controller.getModel().getRoomPath()
@@ -59,21 +72,62 @@ public class GameView extends BaseScreen {
         controller.initRoom(mapPath, mapRenderer.getMap(), mapRenderer);
     }
 
+    // ==================== Pause ====================
+
+    private void togglePause(boolean pauseMenu) {
+        isPaused = !isPaused;
+        audioManager.clickMenuSound();
+
+        if (isPaused) {
+            if (pauseMenu) {
+                currentOverlay = OverlayType.PAUSE;
+                pauseOverlay.showMainPanel();
+                Gdx.input.setInputProcessor(pauseOverlay.getStage());
+            } else {
+                currentOverlay = OverlayType.INVENTORY;
+                inventoryOverlay.show();
+                Gdx.input.setInputProcessor(inventoryOverlay.getStage());
+            }
+        } else {
+            currentOverlay = OverlayType.NONE;
+            Gdx.input.setInputProcessor(null);
+        }
+    }
+
+    private void resumeFromPause() {
+        isPaused = false;
+        currentOverlay = OverlayType.NONE;
+        audioManager.clickMenuSound();
+        Gdx.input.setInputProcessor(null);
+    }
+
     @Override
     public void render(float delta) {
-        if (controller.hasPendingRoomChange()) {
-            String nextMap = controller.consumePendingMapPath();
-            loadNewRoom(nextMap);
-            camera.position.set(player.getX(), player.getY(), 0);
-        } else {
-            controller.updateGameplay(delta);
+        if (InputHandler.getInstance().isJustPressed(InputHandler.PlayerAction.PAUSE)) {
+            togglePause(true);
+        } else if  (InputHandler.getInstance().isJustPressed(InputHandler.PlayerAction.OPEN_INVENTORY)) {
+            togglePause(false);
+        }
+        AudioManager.getInstance().update(delta);
+
+        if (!isPaused) {
+            if (controller.hasPendingRoomChange()) {
+                String nextMap = controller.consumePendingMapPath();
+                loadNewRoom(nextMap);
+                camera.position.set(player.getX(), player.getY(), 0);
+            } else {
+                controller.updateGameplay(delta);
+            }
         }
 
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         RoomModel currentRoom = controller.getCurrentRoom();
-        updateCamera(delta, currentRoom);
+
+        if (!isPaused) {
+            updateCamera(delta, currentRoom);
+        }
 
         mapRenderer.renderAllExcept(camera, "for");
         mapRenderer.renderAllExcept(camera, "secret room");
@@ -104,6 +158,14 @@ public class GameView extends BaseScreen {
             controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getBosses());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
+
+        if (isPaused) {
+            if (currentOverlay == OverlayType.PAUSE) {
+                pauseOverlay.render(delta);
+            } else if (currentOverlay == OverlayType.INVENTORY) {
+                inventoryOverlay.render(delta);
+            }
+        }
     }
 
     private void renderPlayer() {
@@ -161,12 +223,14 @@ public class GameView extends BaseScreen {
         super.resize(width, height);
         viewport.update(width, height, false);
         if (hud != null) hud.resize(width, height);
+        if (pauseOverlay != null) pauseOverlay.resize(width, height);
     }
 
     @Override
     public void dispose() {
         super.dispose();
         if (hud != null) hud.dispose();
+        if (pauseOverlay != null) pauseOverlay.dispose();
         mapRenderer.dispose();
         playerRenderer.dispose();
         mosscreepRenderer.dispose();

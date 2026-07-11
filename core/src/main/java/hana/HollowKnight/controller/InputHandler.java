@@ -1,5 +1,6 @@
 package hana.HollowKnight.controller;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import hana.HollowKnight.model.entities.PlayerModel;
@@ -10,6 +11,63 @@ import java.util.Map;
 
 public class InputHandler {
     private static InputHandler instance;
+    private final StringBuilder inputBuffer = new StringBuilder();
+    private float bufferTimer = 0f;
+    private static final float BUFFER_TIMEOUT = 1.5f;
+
+    public void updateCheat(float delta, GameController controller) {
+        bufferTimer += delta;
+        if (bufferTimer >= BUFFER_TIMEOUT){
+            inputBuffer.setLength(0);
+        }
+        for (int keyCode = 0; keyCode < 256; keyCode++){
+            if (Gdx.input.isKeyJustPressed(keyCode)){
+                String keyStr = Input.Keys.toString(keyCode).toUpperCase();
+                if (keyStr.length() == 1){
+                    inputBuffer.append(keyStr);
+                    bufferTimer = 0;
+                    checkCheats(controller);
+                }
+            }
+        }}
+
+    private void checkCheats(GameController controller) {
+        String currentInput = inputBuffer.toString();
+        PlayerModel player = controller.getModel().getPlayer();
+
+        if (currentInput.endsWith("EH")) { //Emergency Heal
+            if (player.getHealth() < 3){
+                player.setHealth(player.getHealth() + 1);
+            }}
+
+        if (currentInput.endsWith("GM")) { //God Mode
+            player.setGodeMode(true);
+        }
+
+        if (currentInput.endsWith("RS")) { //Refill Soul
+            player.setSoul(PlayerModel.DEFAULT_MAX_SOUL);
+        }
+
+        if (currentInput.endsWith("SM")) { //Spectator Mode
+            PlayerModel.MOVE_SPEED *= 7;
+            PlayerModel.GRAVITY = 0;
+            PlayerModel.DASH_SPEED *= 5;
+        }
+
+        if (currentInput.endsWith("BK")) { //Boss Kill (only in greenpath)
+            controller.getBosses().getFirst().setAlive(false);
+        }
+
+        if (currentInput.endsWith("BT")) { //Boss Arena Teleport
+            controller.teleportToBossArena("maps/Greenpath/Greenpath.tmx");
+        }
+
+        if (inputBuffer.length() > 10) {
+            inputBuffer.delete(0, 1);
+        }
+    }
+
+
 
     public static InputHandler getInstance() {
         if (instance == null) {
@@ -48,7 +106,7 @@ public class InputHandler {
         keyBindings.put(PlayerAction.FOCUS_SOUL, Input.Keys.A);
         keyBindings.put(PlayerAction.DASH, Input.Keys.C);
 
-        keyBindings.put(PlayerAction.OPEN_INVENTORY, Input.Keys.TAB);
+        keyBindings.put(PlayerAction.OPEN_INVENTORY, Input.Keys.I);
         keyBindings.put(PlayerAction.PAUSE, Input.Keys.ESCAPE);
     }
 
@@ -72,7 +130,7 @@ public class InputHandler {
         if (isJustPressed(PlayerAction.DASH)) {
             player.dash();
             if (player.isDashing()) {
-            AudioManager.getInstance().playHeroDashSound();}
+                AudioManager.getInstance().playHeroDashSound();}
 
         }
         if (isJustPressed(PlayerAction.ATTACK)) {
@@ -94,12 +152,7 @@ public class InputHandler {
         }
         jumpWasDown = jumpDown;
 
-        if (isJustPressed(PlayerAction.PAUSE)){
-            paused = true;
-        }
-
     }
-    public boolean paused = false;
 
     public boolean isDown(PlayerAction action) {
         return Gdx.input.isKeyPressed(keyBindings.get(action));
@@ -132,7 +185,7 @@ public class InputHandler {
         keyBindings.put(PlayerAction.FOCUS_SOUL, Input.Keys.A);
         keyBindings.put(PlayerAction.DASH, Input.Keys.C);
 
-        keyBindings.put(PlayerAction.OPEN_INVENTORY, Input.Keys.TAB);
+        keyBindings.put(PlayerAction.OPEN_INVENTORY, Input.Keys.I);
         keyBindings.put(PlayerAction.PAUSE, Input.Keys.ESCAPE);
     }
 }
