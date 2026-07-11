@@ -15,6 +15,7 @@ import hana.HollowKnight.view.audio.AudioManager;
 import hana.HollowKnight.view.hud.GameHUD;
 import hana.HollowKnight.view.overlays.InventoryMenu;
 import hana.HollowKnight.view.overlays.PauseMenu;
+import hana.HollowKnight.view.overlays.AchievementPopup;
 import hana.HollowKnight.view.renderers.BossRenderer;
 import hana.HollowKnight.view.renderers.CollisionDebugRenderer;
 import hana.HollowKnight.view.renderers.CrawlerRenderer;
@@ -32,6 +33,7 @@ public class GameView extends BaseScreen {
     private CollisionDebugRenderer debugRenderer;
     private PauseMenu pauseOverlay;
     private InventoryMenu inventoryOverlay;
+    private AchievementPopup achievementPopup;
     private boolean isPaused = false;
 
     private final CrawlerRenderer mosscreepRenderer = new CrawlerRenderer("mosscreep");
@@ -54,6 +56,8 @@ public class GameView extends BaseScreen {
         playerRenderer = new PlayerRenderer();
         pauseOverlay = new PauseMenu(controller, this::resumeFromPause);
         inventoryOverlay = new InventoryMenu(controller, this::resumeFromPause);
+        achievementPopup = new AchievementPopup(batch);
+        controller.getModel().getStats().addListener(achievementPopup);
         isPaused = false;
 
         String targetMap = (controller.getModel().getRoomPath() != null)
@@ -163,6 +167,7 @@ public class GameView extends BaseScreen {
             controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getBosses());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
+        achievementPopup.render(delta);
 
         if (isPaused) {
             if (currentOverlay == OverlayType.PAUSE) {
@@ -229,6 +234,7 @@ public class GameView extends BaseScreen {
         viewport.update(width, height, false);
         if (hud != null) hud.resize(width, height);
         if (pauseOverlay != null) pauseOverlay.resize(width, height);
+        if (achievementPopup != null) achievementPopup.resize(width, height);
     }
 
     @Override
@@ -236,6 +242,7 @@ public class GameView extends BaseScreen {
         super.dispose();
         if (hud != null) hud.dispose();
         if (pauseOverlay != null) pauseOverlay.dispose();
+        if (achievementPopup != null) achievementPopup.dispose();
         mapRenderer.dispose();
         playerRenderer.dispose();
         mosscreepRenderer.dispose();

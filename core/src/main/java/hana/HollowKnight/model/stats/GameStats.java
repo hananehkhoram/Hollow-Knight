@@ -52,6 +52,10 @@ public class GameStats {
         unlock(Achievement.DEFEAT_FALSE_KNIGHT);
     }
 
+    public void startFirstGame() {
+        unlock(Achievement.NOOB);
+    }
+
     public void onGameCompleted() {
         unlock(Achievement.COMPLETION);
         if (playtimeSeconds <= SPEEDRUN_TARGET_SECONDS) {

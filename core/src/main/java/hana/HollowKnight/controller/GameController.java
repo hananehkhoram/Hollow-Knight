@@ -132,6 +132,8 @@ public class GameController {
         InputHandler.getInstance().updateCheat(delta,this);
         if (collision == null || currentRoom == null) return;
         if (!bosses.isEmpty() && !bosses.getFirst().isAlive()) {
+            model.getStats().defeatedBoss();
+            model.getStats().onGameCompleted();
             endGame(model.getPlayer());
         }
 
@@ -144,6 +146,7 @@ public class GameController {
 
         PlayerModel player = model.getPlayer();
         player.savePrevPosition();
+        model.getStats().update(delta);
 
         collision.updateMovement(delta, currentRoom.getSolidTiles(), currentRoom.getWalls());
         player.update(delta);
@@ -174,6 +177,9 @@ public class GameController {
 
         if (player.isJustDead()) {
             player.setHealth(player.getMaxHealth());
+            player.setAlive(true);
+            player.setJustDead(false);
+            model.getStats().recordDeath();
             requestRoomChange(currentMapPath);
         }
     }
@@ -261,6 +267,7 @@ public class GameController {
         model.setActiveSlot(slot);
         activeGameView = new GameView(this);
         game.setScreen(activeGameView);
+        model.getStats().startFirstGame();
     }
 
     public void loadGame(int slot) {

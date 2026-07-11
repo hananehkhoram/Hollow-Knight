@@ -208,14 +208,14 @@ public class PlayerModel extends Entity {
 
     public void applyKnockBack() {
         if (!isGodeMode){
-        this.isBeingKnockedBack = true;
-        this.knockbackTimer = KNOCKBACK_DURATION;
-        float knockbackForceX = 350f;
-        float knockbackForceY = 300f;
-        this.velocityX = facingRight ? -knockbackForceX : knockbackForceX;
-        this.velocityY = knockbackForceY;
-        this.onGround = false;
-    }}
+            this.isBeingKnockedBack = true;
+            this.knockbackTimer = KNOCKBACK_DURATION;
+            float knockbackForceX = 350f;
+            float knockbackForceY = 300f;
+            this.velocityX = facingRight ? -knockbackForceX : knockbackForceX;
+            this.velocityY = knockbackForceY;
+            this.onGround = false;
+        }}
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
@@ -244,15 +244,15 @@ public class PlayerModel extends Entity {
 
     public void takeDamage(int amount) {
         if (!isGodeMode){
-        if (invulnerabilityTimer > 0f || !alive) return;
-        health = Math.max(0, health - amount);
-        AudioManager.getInstance().playGetDamageSound();
-        invulnerabilityTimer = INVULNERABILITY_DURATION;
-        if (health <= 0) {
-            alive = false;
-            AudioManager.getInstance().playHeroDeathSound();
-            this.health = DEFAULT_MAX_HEALTH;
-        }}
+            if (invulnerabilityTimer > 0f || !alive) return;
+            health = Math.max(0, health - amount);
+            AudioManager.getInstance().playGetDamageSound();
+            invulnerabilityTimer = INVULNERABILITY_DURATION;
+            if (health <= 0) {
+                alive = false;
+                isJustDead = true;
+                AudioManager.getInstance().playHeroDeathSound();
+            }}
     }
 
     public void gainSoulOnHit() {
