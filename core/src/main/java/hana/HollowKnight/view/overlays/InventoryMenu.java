@@ -21,7 +21,6 @@ import java.util.HashMap;
 public class InventoryMenu {
 
     private final GameController controller;
-    private final Runnable onResume;
 
     private final Stage stage;
     private final Skin menuSkin;
@@ -36,7 +35,6 @@ public class InventoryMenu {
 
     public InventoryMenu(GameController controller, Runnable onResume) {
         this.controller = controller;
-        this.onResume = onResume;
 
         this.stage = new Stage(new ScreenViewport(), controller.getBatch());
         this.menuSkin = new Skin(Gdx.files.internal("ui/uiskin.json"));

@@ -44,7 +44,6 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        float b = GameController.brightness;
 
         com.badlogic.gdx.utils.ScreenUtils.clear(0.031f, 0.039f, 0.058f, 1f);
 

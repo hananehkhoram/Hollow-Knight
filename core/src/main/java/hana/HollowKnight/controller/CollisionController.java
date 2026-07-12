@@ -206,8 +206,7 @@ public class CollisionController {
 
     public void updateMovementZote(float delta, Array<Rectangle> solidTiles) {
         delta = Math.min(delta, MAX_DELTA);
-        if (player.isFacingRight()) {zote.setFacingRight(false);}
-        else zote.setFacingRight(true);
+        zote.setFacingRight(!player.isFacingRight());
 
         zote.setX(zote.getX() + zote.getVelocityX() * delta);
         resolveHorizontalCollisionsForZote(solidTiles);

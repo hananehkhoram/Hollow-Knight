@@ -21,7 +21,6 @@ public class MainMenuView extends BaseScreen {
     private Stage stage;
     private Skin menuSkin;
     private Texture logoTexture;
-    private Image backgroundImage;
 
     public MainMenuView(GameController gameController) {
         super(gameController);
@@ -74,7 +73,7 @@ public class MainMenuView extends BaseScreen {
 
         logoTexture = new Texture(Gdx.files.internal("HOLLOW KNIGHT .png"));
         menuSkin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-        backgroundImage = new Image(backgroundTexture);
+        Image backgroundImage = new Image(backgroundTexture);
         backgroundImage.setFillParent(true);
         backgroundImage.setAlign(Align.center);
         stage.addActor(backgroundImage);

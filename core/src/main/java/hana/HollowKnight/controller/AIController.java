@@ -1,6 +1,5 @@
 package hana.HollowKnight.controller;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.CrawlerModel;
@@ -86,7 +85,7 @@ public class AIController {
 
     private void resolveVerticalCollisions(EnemyModel enemy, Array<Rectangle> solidTiles) {
         if (enemy instanceof CrawlerModel) {
-            ((CrawlerModel) enemy).setOnGround(false);
+            enemy.setOnGround(false);
         }
         Rectangle bounds = enemy.getBounds();
 
@@ -96,7 +95,7 @@ public class AIController {
                     enemy.setY(tile.y + tile.height);
                     enemy.setVelocityY(0f);
                     if (enemy instanceof CrawlerModel) {
-                        ((CrawlerModel) enemy).setOnGround(true);
+                        enemy.setOnGround(true);
                     }
                 } else {
                     enemy.setY(tile.y - enemy.getHeight());

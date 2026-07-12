@@ -1,6 +1,5 @@
 package hana.HollowKnight.controller;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import hana.HollowKnight.model.entities.PlayerModel;
@@ -171,10 +170,6 @@ public class InputHandler {
 
     public void rebind(PlayerAction action, int newKeyCode) {
         keyBindings.put(action, newKeyCode);
-    }
-
-    public Map<PlayerAction, Integer> getAllBindings() {
-        return keyBindings;
     }
 
     public void reset (){

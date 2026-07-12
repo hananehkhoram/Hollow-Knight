@@ -22,7 +22,6 @@ public class BossAIController {
     private static final float ATTACK_DURATION = 0.25f;
     private static final float ATTACK_RECOVER_DURATION = 0.5f;
     private static final float MACE_SLAM_RANGE = 90f;
-    private static final int MACE_SLAM_DAMAGE = 1;
 
     private static final float TURN_DURATION = 0.15f;
     private static final float RUN_ANTIC_DURATION = 0.25f;
@@ -39,8 +38,6 @@ public class BossAIController {
     private static final float LEAP_DEFENSIVE_SPEED_Y = 500f;
 
     private static final float POWER_SLAM_HOP_SPEED = 500f;
-    private static final float POWER_SLAM_RANGE = 90f;
-    private static final float SHOCKWAVE_INITIAL_SPEED = 250f;
     private static final float SHOCKWAVE_ACCELERATION = 300f;
     private static final float SHOCKWAVE_MAX_TRAVEL = 500f;
     private static final float SHOCKWAVE_HEIGHT = 40f;
@@ -112,13 +109,13 @@ public class BossAIController {
                 runCharge(boss, hitWall);
                 break;
             case LEAP_OFFENSIVE:
-                runLeapOffensive(boss, delta, player);
+                runLeapOffensive(boss);
                 break;
             case LEAP_DEFENSIVE:
                 runLeapDefensive(boss);
                 break;
             case MACE_SLAM_POWER:
-                runPowerSlam(boss, delta, player);
+                runPowerSlam(boss);
                 break;
         }
     }
@@ -168,7 +165,7 @@ public class BossAIController {
                 break;
             case ATTACK:
                 if (isJustEntered(boss, delta)) {
-                    checkGroundSlamHit(boss, player, MACE_SLAM_RANGE, MACE_SLAM_DAMAGE);
+                    checkGroundSlamHit(boss, player);
                 }
                 if (boss.getStateTimer() >= ATTACK_DURATION) {
                     boss.setState(BossModel.State.ATTACK_RECOVER);
@@ -209,7 +206,7 @@ public class BossAIController {
         }
     }
 
-    private void runLeapOffensive(BossModel boss, float delta, PlayerModel player) {
+    private void runLeapOffensive(BossModel boss) {
         switch (boss.getState()) {
             case JUMP:
                 if (boss.getStateTimer() >= LEAP_MIN_AIRTIME && boss.getVelocityY() < 0) {
@@ -243,7 +240,7 @@ public class BossAIController {
         }
     }
 
-    private void runPowerSlam(BossModel boss, float delta, PlayerModel player) {
+    private void runPowerSlam(BossModel boss) {
         switch (boss.getState()) {
             case JUMP:
                 if (boss.getStateTimer() >= LEAP_MIN_AIRTIME && boss.getVelocityY() < 0) {
@@ -311,7 +308,7 @@ public class BossAIController {
                 return candidates.get(i);
             }
         }
-        return candidates.get(candidates.size() - 1);
+        return candidates.getLast();
     }
 
     private void addCandidate(List<BossModel.Move> candidates, List<Float> weights,
@@ -322,9 +319,9 @@ public class BossAIController {
     }
 
 
-    private void checkGroundSlamHit(BossModel boss, PlayerModel player, float range, int damage) {
-        float hitboxX = boss.isFacingRight() ? boss.getX() + boss.getWidth() : boss.getX() - range;
-        Rectangle hitbox = new Rectangle(hitboxX, boss.getY(), boss.getWidth() + range, boss.getHeight() * 0.5f);
+    private void checkGroundSlamHit(BossModel boss, PlayerModel player) {
+        float hitboxX = boss.isFacingRight() ? boss.getX() + boss.getWidth() : boss.getX() - BossAIController.MACE_SLAM_RANGE;
+        Rectangle hitbox = new Rectangle(hitboxX, boss.getY(), boss.getWidth() + BossAIController.MACE_SLAM_RANGE, boss.getHeight() * 0.5f);
 
         if (hitbox.overlaps(player.getBounds()) && !player.isInvincible()) {
             player.takeDamage(1);

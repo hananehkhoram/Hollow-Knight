@@ -1,11 +1,9 @@
 package hana.HollowKnight.controller;
 
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import hana.HollowKnight.model.GameModel;
 import hana.HollowKnight.model.data.GameData;
@@ -352,7 +350,4 @@ public class GameController {
         return zote;
     }
 
-    public void setZote(ZoteModel zote) {
-        this.zote = zote;
-    }
 }

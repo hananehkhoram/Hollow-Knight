@@ -12,8 +12,6 @@ public class FlyRenderer {
 
     private final TextureAtlas idleAtlas;
     private final Animation<TextureAtlas.AtlasRegion> idleAnimation;
-    private final TextureAtlas turnAtlas;
-    private final Animation<TextureAtlas.AtlasRegion> turnAnimation;
     private final TextureAtlas deathAtlas;
     private final Animation<TextureAtlas.AtlasRegion> deathAnimation;
     private final TextureAtlas attackAtlas;
@@ -28,9 +26,6 @@ public class FlyRenderer {
     public FlyRenderer() {
         idleAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "idle.atlas"));
         idleAnimation = new Animation<>(0.05f, idleAtlas.findRegions("Idle"), Animation.PlayMode.LOOP);
-
-        turnAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "turn.atlas"));
-        turnAnimation = new Animation<>(0.08f, turnAtlas.findRegions("Turn To Fly"), Animation.PlayMode.NORMAL);
 
         deathAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "death.atlas"));
         deathAnimation = new Animation<>(0.1f, deathAtlas.findRegions("Death Air"), Animation.PlayMode.NORMAL);
@@ -87,7 +82,6 @@ public class FlyRenderer {
 
     public void dispose() {
         idleAtlas.dispose();
-        turnAtlas.dispose();
         deathAtlas.dispose();
         attackAtlas.dispose();
         flyAtlas.dispose();

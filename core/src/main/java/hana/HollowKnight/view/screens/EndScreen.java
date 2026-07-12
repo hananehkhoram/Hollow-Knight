@@ -94,7 +94,7 @@ public class EndScreen extends BaseScreen {
         Label killsCountLabel = new Label("Kills Count", menuSkin, "settingmenu");
         Label killsCount = new Label(Integer.toString(player.getPlayerKillsCount()), menuSkin, "settingmenu");
         Label timeDurationLabel = new Label("Time Duration", menuSkin, "settingmenu");
-        Label timeDuration = new Label(Float.toString(player.getTimePassed()/60) + " minutes", menuSkin, "settingmenu");
+        Label timeDuration = new Label(player.getTimePassed() / 60 + " minutes", menuSkin, "settingmenu");
 
         ImageTextButton reStart = new ImageTextButton("Restart", menuSkin);
         ImageTextButton mainMenu = new ImageTextButton("Main Menu", menuSkin);

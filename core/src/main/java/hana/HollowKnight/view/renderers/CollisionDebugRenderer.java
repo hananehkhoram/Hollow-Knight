@@ -75,8 +75,6 @@ public class CollisionDebugRenderer {
     }
 
     public void dispose() {
-        if (shapeRenderer != null) {
-            shapeRenderer.dispose();
-        }
+        shapeRenderer.dispose();
     }
 }

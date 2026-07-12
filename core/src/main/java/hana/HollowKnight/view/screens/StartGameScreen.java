@@ -1,6 +1,5 @@
 package hana.HollowKnight.view.screens;
 
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.model.data.GameData;
-import hana.HollowKnight.view.audio.AudioManager;
 
 public class StartGameScreen extends BaseScreen {
 

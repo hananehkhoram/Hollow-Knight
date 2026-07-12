@@ -146,11 +146,10 @@ public class PlayerRenderer {
         if (currentStatus == Status.DASH) {
             if (!player.isFacingRight()) {
                 effectX += 200f;
-                effectY -= 80f;
             } else {
                 effectX -= 200f;
-                effectY -= 80f;
             }
+            effectY -= 80f;
         }
 
         batch.draw(region2, effectX, effectY);
