@@ -19,7 +19,7 @@ public class ProjectileModel {
             this.width = 182;
             this.height = 209;
             this.velocityX = 0;
-            this.velocityY = 200;
+            this.velocityY = -1000;
         }else {
             this.width = 100;
             this.height = 100;
@@ -34,7 +34,7 @@ public class ProjectileModel {
         if (type == ProjectileType.POGO) {
             velocityY += PlayerModel.GRAVITY * 2 * delta;
         } else if (type == ProjectileType.VENEGFUL) {
-            velocityY += 500f * delta;
+//            velocityY += 500f * delta;
             velocityX -= 0;
         }
 

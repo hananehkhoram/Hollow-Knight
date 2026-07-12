@@ -191,7 +191,7 @@ public class PlayerModel extends Entity {
     public ProjectileModel pogo(){
 
         this.isPogo = true;
-        this.velocityY = 100f;
+        this.velocityY += 800;
         return new ProjectileModel(this.x, this.y, isFacingRight(), ProjectileType.POGO);
     }
 

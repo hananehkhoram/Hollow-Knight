@@ -48,7 +48,7 @@ public class ProjectileRenderer {
             batch.draw(
                 region,
                 projectile.getX0(),
-                projectile.getY0(),
+                projectile.getY0() - 100,
                 projectile.getBounds().width,
                 projectile.getBounds().height
             );
