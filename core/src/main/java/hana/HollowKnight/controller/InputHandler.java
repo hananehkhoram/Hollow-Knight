@@ -155,7 +155,12 @@ public class InputHandler {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) && !player.isPogo()) {
+            AudioManager.getInstance().playPogo();
             controller.lunchPogo();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && !player.isVenegful()) {
+            AudioManager.getInstance().playPogo();
+            controller.lunchVenegful();
         }
 
         boolean jumpDown = isDown(PlayerAction.JUMP);

@@ -34,6 +34,7 @@ public class AudioManager {
     private final Sound zote5;
     private final Sound zoteAttack;
     private int zoteIndex;
+    private final Sound pogo;
 
     private float sfxVolume = 1.0f;
     private float bgmVolume = 0.5f;
@@ -73,6 +74,7 @@ public class AudioManager {
         zote5 = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_05.wav"));
         zoteAttack = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_battle_defeat_end.wav"));
         zoteIndex = 1;
+        pogo = Gdx.audio.newSound(Gdx.files.internal("hero_double_damage.wav"));
 
     }
 
@@ -83,6 +85,9 @@ public class AudioManager {
         return instance;
     }
 
+    public void playPogo(){
+        pogo.play(sfxVolume);
+    }
     public void playZote() {
         zoteIndex = (zoteIndex + 1) % 6;
         if (zoteIndex == 0) {

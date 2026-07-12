@@ -5,19 +5,14 @@ import com.badlogic.gdx.math.Rectangle;
 public class ProjectileModel {
     private final ProjectileType type;
     private float x, y;
-    private float x0, y0;
     private float width, height;
     private float velocityX, velocityY;
     private boolean active;
 
-    public ProjectileModel(float x, float y, boolean isFacingRight, ProjectileType type) {
-        this.x = x;
-        this.y = y;
-        this.x0 = isFacingRight ? x - 200 : x + 200;
-        this.y0 = y - 100;
+    public ProjectileModel(float spawnCenterX, float spawnCenterY, boolean isFacingRight, ProjectileType type) {
         if (type == ProjectileType.POGO) {
-            this.width = 182;
-            this.height = 209;
+            this.width = 150;
+            this.height = 200;
             this.velocityX = 0;
             this.velocityY = -1000;
         }else {
@@ -26,6 +21,8 @@ public class ProjectileModel {
             this.velocityX = isFacingRight ? 50 : -50;
             this.velocityY = 0;
         }
+        this.x = spawnCenterX - width / 2f;
+        this.y = spawnCenterY - height / 2f;
         this.type = type;
         this.active = true;
     }
@@ -64,13 +61,5 @@ public class ProjectileModel {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public float getY0() {
-        return y0;
-    }
-
-    public float getX0() {
-        return x0;
     }
 }

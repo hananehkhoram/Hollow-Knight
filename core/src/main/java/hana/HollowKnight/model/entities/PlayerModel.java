@@ -192,12 +192,12 @@ public class PlayerModel extends Entity {
 
         this.isPogo = true;
         this.velocityY += 800;
-        return new ProjectileModel(this.x, this.y, isFacingRight(), ProjectileType.POGO);
+        return new ProjectileModel(this.x + this.width / 2f, this.y + this.height / 2f, isFacingRight(), ProjectileType.POGO);
     }
 
     public ProjectileModel venegful(){
         this.isVenegful = true;
-        return new ProjectileModel(this.x, this.y,isFacingRight(), ProjectileType.VENEGFUL);
+        return new ProjectileModel(this.x + this.width / 2f, this.y + this.height / 2f, isFacingRight(), ProjectileType.VENEGFUL);
     }
 
     public boolean isDoubleJumpUsed() {
