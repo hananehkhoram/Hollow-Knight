@@ -27,6 +27,13 @@ public class AudioManager {
     private final Music bossFight;
     private final Music gameOver;
     private final Sound bossDefeat;
+    private final Sound zote1;
+    private final Sound zote2;
+    private final Sound zote3;
+    private final Sound zote4;
+    private final Sound zote5;
+    private final Sound zoteAttack;
+    private int zoteIndex;
 
     private float sfxVolume = 1.0f;
     private float bgmVolume = 0.5f;
@@ -59,6 +66,14 @@ public class AudioManager {
         bossDefeat = Gdx.audio.newSound(Gdx.files.internal("Boss Defeat.wav"));
         bossFight = Gdx.audio.newMusic(Gdx.files.internal("04. False Knight.mp3"));
         gameOver = Gdx.audio.newMusic(Gdx.files.internal("PersianGameOfThrones.mp3"));
+        zote1 = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_01.wav"));
+        zote2 = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_02.wav"));
+        zote3 = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_03.wav"));
+        zote4 = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_04.wav"));
+        zote5 = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_05.wav"));
+        zoteAttack = Gdx.audio.newSound(Gdx.files.internal("Animations/zote/Zote_battle_defeat_end.wav"));
+        zoteIndex = 1;
+
     }
 
     public static AudioManager getInstance() {
@@ -66,6 +81,34 @@ public class AudioManager {
             instance = new AudioManager();
         }
         return instance;
+    }
+
+    public void playZote() {
+        zoteIndex = (zoteIndex + 1) % 6;
+        if (zoteIndex == 0) {
+            zoteIndex = 1;
+        }
+
+        switch (zoteIndex) {
+            case 1:
+                zote1.play(sfxVolume);
+                break;
+            case 2:
+                zote2.play(sfxVolume);
+                break;
+            case 3:
+                zote3.play(sfxVolume);
+                break;
+            case 4:
+                zote4.play(sfxVolume);
+                break;
+            case 5:
+                zote5.play(sfxVolume);
+        }
+    }
+
+    public void playZoteAttack(){
+        zoteAttack.play(sfxVolume);
     }
 
     public void update(float delta) {
@@ -96,11 +139,11 @@ public class AudioManager {
         isFading = true;
     }
 
-    public void playGameOver(){
+    public void playGameOver() {
         switchBgm(gameOver);
     }
 
-    public void stopGameOver(){
+    public void stopGameOver() {
         gameOver.stop();
     }
 
@@ -129,12 +172,16 @@ public class AudioManager {
     public void playCityOfTearsSound() {
         switchBgm(cityOfTearsSound);
     }
-    public void playBossFightSound() {switchBgm(bossFight);}
+
+    public void playBossFightSound() {
+        switchBgm(bossFight);
+    }
 
     public void stopCityofTears() {
         cityOfTearsSound.stop();
         if (currentBgm == cityOfTearsSound) currentBgm = null;
     }
+
     public void stopBossFight() {
         bossFight.stop();
     }

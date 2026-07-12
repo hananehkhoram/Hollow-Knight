@@ -1,5 +1,7 @@
 package hana.HollowKnight.model.entities;
 
+import hana.HollowKnight.view.audio.AudioManager;
+
 public class ZoteModel extends Entity {
     public static final String[] talking = {
         "Hoy! Watch where you're going, you soggy vagabond! I don't want you splashing me. I've had a miserable time trying to keep dry.\n" +
@@ -21,8 +23,8 @@ public class ZoteModel extends Entity {
     };
 
     private final int rulesNumber = rules.length;
-    private static final float DEFAULT_WIDTH = 300;
-    private static final float DEFAULT_HEIGHT = 300;
+    private static final float DEFAULT_WIDTH = 100;
+    private static final float DEFAULT_HEIGHT = 100;
     private States state = States.IDLE;
     private boolean isTalking = false;
     private boolean hasEverTalked = false;
@@ -30,9 +32,14 @@ public class ZoteModel extends Entity {
     private int rulesId = 0;
     private float stateTimer = 0f;
     private float attackCooldown = 0f;
+    private float attackDuration = 0.5f;
 
     public ZoteModel() {
         this(100f, 100f);
+    }
+
+    public float getStateTimer() {
+        return stateTimer;
     }
 
 
@@ -64,12 +71,21 @@ public class ZoteModel extends Entity {
         this.talkingId++;
     }
 
+    public boolean hasMoreIntroLines() {
+        return talkingId < talking.length;
+    }
+
     public void advanceRulesId() {
         this.rulesId = (this.rulesId + 1) % rulesNumber;
     }
 
     public String talk() {
-        state = States.TALK;
+        if (this.state != States.TALK) {
+            this.state = States.TALK;
+        }
+        this.stateTimer = 0f;
+
+
         isTalking = true;
         hasEverTalked = true;
 
@@ -83,31 +99,30 @@ public class ZoteModel extends Entity {
             return rule;
         }
     }
-
     public void attack() {
         if (state == States.IDLE || state == States.TALK) {
             state = States.ATTACK;
             stateTimer = 0f;
             this.velocityX = 150f;
+            AudioManager.getInstance().playZoteAttack();
         }
     }
 
     @Override
     public void update(float delta) {
         stateTimer += delta;
-        if (attackCooldown > 0) attackCooldown -= delta;
 
         switch (state) {
             case ATTACK:
-                if (stateTimer > 1.0f) {
+                if (stateTimer >= 0.5f) {
                     state = States.ROLL;
                     stateTimer = 0f;
-                    this.setVelocityX(-100f);
+                    velocityX = this.isFacingRight() ? -100f : 100f;
                 }
                 break;
 
             case ROLL:
-                if (stateTimer > 0.8f) {
+                if (stateTimer > 0.5f) {
                     state = States.GETUP;
                     stateTimer = 0f;
                     this.setVelocityX(0f);
@@ -115,30 +130,29 @@ public class ZoteModel extends Entity {
                 break;
 
             case GETUP:
-                if (stateTimer > 0.5f) {
+                if (stateTimer > 0.3f) {
                     state = States.IDLE;
                     isTalking = false;
                     stateTimer = 0f;
                 }
                 break;
 
-            case TALK:
+            case FALL:
+                if (isOnGround()){
+                    state = States.IDLE;
+                }
                 break;
 
-            case IDLE:
+            case TALK:
+                this.setVelocityX(0f); // 🟢 مطمئن می‌شویم زوت موقع حرف زدن راه نمی‌رود
+                break;
+
             default:
                 this.setVelocityX(0f);
                 break;
         }
 
         super.update(delta);
-
-        this.setX(this.getX() + this.getVelocityX() * delta);
-        this.setY(this.getY() + this.getVelocityY() * delta);
-    }
-
-    public boolean isTalking() {
-        return isTalking;
     }
 
     public void setTalking(boolean talking) {

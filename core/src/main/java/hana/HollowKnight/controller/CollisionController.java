@@ -12,21 +12,20 @@ import hana.HollowKnight.view.renderers.MapRenderer;
 public class CollisionController {
 
     private static final float MAX_DELTA = 1f / 30f;
-    private boolean wallDamagedThisAttack = false;
-
     private final PlayerModel player;
     private final Array<Rectangle> hazards;
     private final BreakableWallModel breakableWall;
     private final PortalModel portal;
     private final MapRenderer mapRenderer;
     private final ZoteModel zote;
+    private boolean wallDamagedThisAttack = false;
 
     public CollisionController(PlayerModel player,
                                Array<Rectangle> hazards,
                                BreakableWallModel breakableWall,
                                PortalModel portal,
                                MapRenderer mapRenderer,
-                                ZoteModel zote) {
+                               ZoteModel zote) {
         this.player = player;
         this.hazards = hazards;
         this.breakableWall = breakableWall;
@@ -43,17 +42,9 @@ public class CollisionController {
                 AudioManager.getInstance().playGetDamageSound();
                 player.applyKnockBack();
 
-                player.setPosition(player.getLastSafeX() - (hazard.x -  player.getX())/2, player.getLastSafeY());
+                player.setPosition(player.getLastSafeX() - (hazard.x - player.getX()) / 2, player.getLastSafeY());
                 return;
             }
-        }
-    }
-
-    public void checkZoteCollosions() {
-        Rectangle playerBounds = player.getBounds();
-        Rectangle zoteBounds = zote.getBounds();
-        if (playerBounds.overlaps(zoteBounds)){
-
         }
     }
 
@@ -148,6 +139,7 @@ public class CollisionController {
             }
         }
     }
+
     public void resolveVerticalCollisions(Array<Rectangle> solidTiles) {
         player.setOnGround(false);
         Rectangle playerBounds = player.getBounds();
@@ -168,4 +160,62 @@ public class CollisionController {
             }
         }
     }
+
+    public void resolveHorizontalCollisionsForZote(Array<Rectangle> solidTiles) {
+        Rectangle playerBounds = zote.getBounds();
+
+        for (Rectangle tile : solidTiles) {
+            if (playerBounds.overlaps(tile)) {
+                if (zote.getVelocityX() > 0) {
+                    zote.setX(tile.x - player.getWidth());
+                } else if (zote.getVelocityX() < 0) {
+                    zote.setX(tile.x + tile.width);
+                }
+
+                zote.setVelocityX(0f);
+            }
+        }
+    }
+
+    public void resolveVerticalCollisionsForZote(Array<Rectangle> solidTiles) {
+        zote.setOnGround(false);
+        Rectangle playerBounds = zote.getBounds();
+
+        for (Rectangle tile : solidTiles) {
+            if (playerBounds.overlaps(tile)) {
+                if (zote.getVelocityY() <= 0) {
+                    zote.setY(tile.y + tile.height);
+                    zote.setVelocityY(0f);
+                    zote.setOnGround(true);
+                } else {
+                    zote.setState(ZoteModel.States.FALL);
+                    }
+                }
+            }
+        }
+
+
+    public void checkZoteCollosions() {
+        Rectangle playerBounds = player.getBounds();
+        Rectangle zoteBounds = zote.getBounds();
+        if (playerBounds.overlaps(zoteBounds) && player.isAttacking()) {
+            if (zote.getState() == ZoteModel.States.IDLE || zote.getState() == ZoteModel.States.TALK)
+                zote.setState(ZoteModel.States.ATTACK);
+        }
+    }
+
+    public void updateMovementZote(float delta, Array<Rectangle> solidTiles) {
+        delta = Math.min(delta, MAX_DELTA);
+        if (player.isFacingRight()) {zote.setFacingRight(false);}
+        else zote.setFacingRight(true);
+
+        zote.setX(zote.getX() + zote.getVelocityX() * delta);
+        resolveHorizontalCollisionsForZote(solidTiles);
+
+        zote.setVelocityY(zote.getVelocityY() + PlayerModel.GRAVITY * delta);
+        zote.setY(zote.getY() + zote.getVelocityY() * delta);
+        resolveVerticalCollisionsForZote(solidTiles);
+        checkZoteCollosions();
+    }
+
 }

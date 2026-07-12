@@ -42,6 +42,7 @@ public class GameController {
     private ArrayList<FlyModel> flies = new ArrayList<>();
     private ArrayList<BossModel> bosses = new ArrayList<>();
     private ZoteModel zote;
+    private String zoteMapPath;
 
     private String currentMapPath;
     private String pendingMapPath;
@@ -59,6 +60,15 @@ public class GameController {
         PlayerModel player = model.getPlayer();
 
         currentRoom = RoomLoader.load(map, mapPath);
+
+        // Only make a fresh Zote when we're actually entering a different room than the one
+        // he's currently in — otherwise every death-respawn or portal-back-into-the-same-room
+        // wiped his talkingId/rulesId/hasEverTalked progress back to zero.
+        if (zote == null || !mapPath.equals(zoteMapPath)) {
+            zote = new ZoteModel(currentRoom.getZoteSpawn().x, currentRoom.getZoteSpawn().y);
+            zoteMapPath = mapPath;
+        }
+
         collision = new CollisionController(player, currentRoom.getHazards(),
             currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer, zote);
 
@@ -67,7 +77,6 @@ public class GameController {
         currentRoom.setCrawlers(mosscreeps);
         flies = RoomLoader.spawnFlies(currentRoom, player);
         bosses = RoomLoader.spawnBoss(currentRoom);
-        zote = new ZoteModel(currentRoom.getZoteSpawn().x, currentRoom.getZoteSpawn().y);
 
         currentMapPath = mapPath;
 
@@ -141,6 +150,10 @@ public class GameController {
             player.update(delta);
             return;
         }
+        if (zote != null){
+            zote.update(delta);
+            collision.updateMovementZote(delta, currentRoom.getSolidTiles());
+        }
 
         InputHandler.getInstance().update(player);
         InputHandler.getInstance().updateCheat(delta, this);
@@ -167,6 +180,7 @@ public class GameController {
         player.update(delta);
         collision.checkHazardCollisions(HAZARD_DAMAGE);
         collision.checkAttackOnBreakable();
+
 
         for (CrawlerModel crawler : mosscreeps) {
             aiController.updateCrawler(crawler, delta, currentRoom.getSolidTiles(), player);

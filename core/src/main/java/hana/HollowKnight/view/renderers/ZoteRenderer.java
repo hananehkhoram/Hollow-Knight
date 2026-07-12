@@ -30,62 +30,64 @@ public class ZoteRenderer {
 
     public ZoteRenderer() {
         idleAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "idle.atlas"));
-        idleAnimation = new Animation<>(0.05f, idleAtlas.findRegions("Idle"), Animation.PlayMode.LOOP);
+        idleAnimation = new Animation<>(0.1f, idleAtlas.findRegions("Idle"), Animation.PlayMode.LOOP);
 
         talkAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "talk.atlas"));
         talkAnimation = new Animation<>(0.1f, talkAtlas.findRegions("Talk"), Animation.PlayMode.LOOP);
 
         rollAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "roll.atlas"));
-        rollAnimation = new Animation<>(0.1f, rollAtlas.findRegions("Roll"), Animation.PlayMode.NORMAL);
+        rollAnimation = new Animation<>(0.08f, rollAtlas.findRegions("Roll"), Animation.PlayMode.LOOP);
 
         attackAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "attack.atlas"));
-        attackAnimation = new Animation<>(0.1f, attackAtlas.findRegions("Attack"), Animation.PlayMode.NORMAL);
+        attackAnimation = new Animation<>(0.08f, attackAtlas.findRegions("Attack"), Animation.PlayMode.LOOP);
 
         getUpAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "getup.atlas"));
         getUpAnimaton = new Animation<>(0.05f, getUpAtlas.findRegions("Get Up"), Animation.PlayMode.NORMAL);
 
         fallAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "fall.atlas"));
-        fallAnimation = new Animation<>(0.1f, fallAtlas.findRegions("Fall"), Animation.PlayMode.NORMAL);
+        fallAnimation = new Animation<>(0.1f, fallAtlas.findRegions("Fall"), Animation.PlayMode.LOOP);
     }
 
     public void render(SpriteBatch batch, ZoteModel zote) {
         float deltaTime = Gdx.graphics.getDeltaTime();
         stateTime += deltaTime;
+
         ZoteModel.States state = zote.getState();
+        float currentAnimTime = zote.getStateTimer();
 
         TextureRegion region;
         switch (state) {
             case IDLE:
-                region = idleAnimation.getKeyFrame(stateTime);
+                region = idleAnimation.getKeyFrame(currentAnimTime);
                 break;
             case TALK:
-                region = talkAnimation.getKeyFrame(stateTime);
+                region = talkAnimation.getKeyFrame(currentAnimTime);
                 break;
             case ATTACK:
-                region = attackAnimation.getKeyFrame(stateTime);
+                region = attackAnimation.getKeyFrame(currentAnimTime);
                 break;
             case ROLL:
-                region = rollAnimation.getKeyFrame(stateTime);
+                region = rollAnimation.getKeyFrame(currentAnimTime);
                 break;
             case FALL:
-                region = fallAnimation.getKeyFrame(stateTime);
+                region = fallAnimation.getKeyFrame(currentAnimTime);
                 break;
             case GETUP:
-                region = getUpAnimaton.getKeyFrame(stateTime);
+                region = getUpAnimaton.getKeyFrame(currentAnimTime);
                 break;
             default:
-                region = idleAnimation.getKeyFrame(stateTime);
+                region = idleAnimation.getKeyFrame(currentAnimTime);
         }
         if (zote.isFacingRight() && !region.isFlipX() || !zote.isFacingRight() && region.isFlipX()){
             region.flip(true, false);
         }
 
-        float offsetX = SPRITE_WIDTH/2;
-        float offsetY = SPRITE_HEIGHT/2;
+        float offsetX = (SPRITE_WIDTH - zote.getWidth()) / 2f;
+        float offsetY = 0f;
         batch.draw(
             region,
-            zote.getX(),
-            zote.getY(),
+            zote.getX() - offsetX,
+            zote.getY() - offsetY,
             SPRITE_WIDTH,
             SPRITE_HEIGHT
         );
@@ -96,6 +98,7 @@ public class ZoteRenderer {
         fallAtlas.dispose();
         talkAtlas.dispose();
         getUpAtlas.dispose();
+        attackAtlas.dispose();
     }
 
 }

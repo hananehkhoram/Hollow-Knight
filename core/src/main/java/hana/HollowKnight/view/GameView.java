@@ -54,7 +54,6 @@ public class GameView extends BaseScreen {
         playerRenderer = new PlayerRenderer();
         pauseOverlay = new PauseMenu(controller, this::resumeFromPause);
         inventoryOverlay = new InventoryMenu(controller, this::resumeFromPause);
-        zoteOverlay = new ZoteDialog(controller, controller.getZote());
         achievementPopup = new AchievementPopup(batch);
         controller.getModel().getStats().addListener(achievementPopup);
         isPaused = false;
@@ -64,6 +63,8 @@ public class GameView extends BaseScreen {
             : "maps/City of Tears-20260707T215923Z-3-001/cityOfTears1.tmx";
 
         loadNewRoom(targetMap);
+        zoteOverlay = new ZoteDialog(controller, controller.getZote());
+
 
         camera.position.set(player.getX(), player.getY(), 0);
         camera.zoom = 1.6f;
@@ -116,7 +117,16 @@ public class GameView extends BaseScreen {
         }
         AudioManager.getInstance().update(delta);
 
+        boolean talkingToZote = false;
         if (!isPaused) {
+            zoteOverlay.update(controller.isInZoteArea());
+            talkingToZote = zoteOverlay.isTalking();
+            if (talkingToZote) {
+                controller.getZote().update(delta);
+            }
+        }
+
+        if (!isPaused && !talkingToZote) {
             if (controller.hasPendingRoomChange()) {
                 String nextMap = controller.consumePendingMapPath();
                 loadNewRoom(nextMap);
@@ -131,7 +141,7 @@ public class GameView extends BaseScreen {
 
         RoomModel currentRoom = controller.getCurrentRoom();
 
-        if (!isPaused) {
+        if (!isPaused && !talkingToZote) {
             updateCamera(delta, currentRoom);
         }
 
@@ -244,6 +254,8 @@ public class GameView extends BaseScreen {
         if (hud != null) hud.dispose();
         if (pauseOverlay != null) pauseOverlay.dispose();
         if (achievementPopup != null) achievementPopup.dispose();
+        if (zoteOverlay != null) zoteOverlay.dispose();
+        zoteRenderer.dispose();
         mapRenderer.dispose();
         playerRenderer.dispose();
         mosscreepRenderer.dispose();
