@@ -59,9 +59,6 @@ public class GameController {
 
         currentRoom = RoomLoader.load(map, mapPath);
 
-        // Only make a fresh Zote when we're actually entering a different room than the one
-        // he's currently in — otherwise every death-respawn or portal-back-into-the-same-room
-        // wiped his talkingId/rulesId/hasEverTalked progress back to zero.
         if (zote == null || !mapPath.equals(zoteMapPath)) {
             zote = new ZoteModel(currentRoom.getZoteSpawn().x, currentRoom.getZoteSpawn().y);
             zoteMapPath = mapPath;
@@ -75,8 +72,12 @@ public class GameController {
         currentRoom.setCrawlers(mosscreeps);
         flies = RoomLoader.spawnFlies(currentRoom, player);
         bosses = RoomLoader.spawnBoss(currentRoom);
+        if (model.isBossDefeated()) {
+            bosses.clear();
+        }
 
         currentMapPath = mapPath;
+        model.setRoomPath(mapPath);
 
         if (pendingSpawnAtBossArena) {
             BossArena arena = currentRoom.getBossArena();
@@ -158,8 +159,12 @@ public class GameController {
         if (collision == null || currentRoom == null) return;
 
         if (!bosses.isEmpty() && !bosses.getFirst().isAlive()) {
+            model.setBossDefeated(true);
             model.getStats().defeatedBoss();
             model.getStats().onGameCompleted();
+            if (model.getActiveSlot() != -1) {
+                model.save(model.getActiveSlot());
+            }
             endGame(player);
         }
         model.getStats().checkHunterAchievement(3);
@@ -284,11 +289,16 @@ public class GameController {
         model.setActiveSlot(slot);
         activeGameView = new GameView(this);
         game.setScreen(activeGameView);
-        model.getStats().startFirstGame();
+        if (slot == 0) model.getStats().startFirstGame();
     }
 
     public void loadGame(int slot) {
         if (model.load(slot)) {
+            PlayerModel player = model.getPlayer();
+            pendingUseRoomSpawn = false;
+            pendingSpawnAtBossArena = false;
+            pendingSpawnX = player.getX();
+            pendingSpawnY = player.getY();
             activeGameView = new GameView(this);
             game.setScreen(activeGameView);
         }

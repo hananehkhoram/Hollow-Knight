@@ -64,8 +64,6 @@ public class GameView extends BaseScreen {
 
         loadNewRoom(targetMap);
         zoteOverlay = new ZoteDialog(controller, controller.getZote());
-
-
         camera.position.set(player.getX(), player.getY(), 0);
         camera.zoom = 1.6f;
         camera.update();

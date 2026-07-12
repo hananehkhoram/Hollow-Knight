@@ -199,11 +199,10 @@ public class AudioManager {
         }
     }
 
-    // ==================== SFX Control ====================
 
     public void playHeroDeathSound() {
         if (currentBgm != null) {
-            fadeOutCurrentMusic(0.5f); // قطع سریع‌تر موزیک هنگام مرگ
+            fadeOutCurrentMusic(0.5f);
         }
         heroDeath.play(sfxVolume);
     }

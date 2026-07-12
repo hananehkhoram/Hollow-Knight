@@ -46,7 +46,8 @@ public class SaveManager {
                 "max_health INTEGER," +
                 "soul INTEGER," +
                 "playtime_seconds REAL," +
-                "enemies_killed INTEGER)");
+                "enemies_killed INTEGER," +
+                "boss_defeated INTEGER)");
 
             st.execute("CREATE TABLE IF NOT EXISTS save_charms (" +
                 "slot INTEGER NOT NULL," +
@@ -60,6 +61,13 @@ public class SaveManager {
                 "achievement_name TEXT NOT NULL," +
                 "PRIMARY KEY (slot, achievement_name)," +
                 "FOREIGN KEY (slot) REFERENCES saves(slot) ON DELETE CASCADE)");
+
+            // Backward-compatible migration: older save DBs created before boss_defeated existed.
+            try (Statement migrate = conn.createStatement()) {
+                migrate.execute("ALTER TABLE saves ADD COLUMN boss_defeated INTEGER DEFAULT 0");
+            } catch (SQLException alreadyExists) {
+                // column already present, ignore
+            }
 
             st.execute("CREATE TABLE IF NOT EXISTS save_defeated_bosses (" +
                 "slot INTEGER NOT NULL," +
@@ -75,12 +83,13 @@ public class SaveManager {
         data.saveDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
 
         String upsertSql = "INSERT INTO saves " +
-            "(slot, save_date, room_id, player_x, player_y, health, max_health, soul, playtime_seconds, enemies_killed) " +
-            "VALUES (?,?,?,?,?,?,?,?,?,?) " +
+            "(slot, save_date, room_id, player_x, player_y, health, max_health, soul, playtime_seconds, enemies_killed, boss_defeated) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?) " +
             "ON CONFLICT(slot) DO UPDATE SET " +
             "save_date=excluded.save_date, room_id=excluded.room_id, player_x=excluded.player_x, " +
             "player_y=excluded.player_y, health=excluded.health, max_health=excluded.max_health, " +
-            "soul=excluded.soul, playtime_seconds=excluded.playtime_seconds, enemies_killed=excluded.enemies_killed";
+            "soul=excluded.soul, playtime_seconds=excluded.playtime_seconds, enemies_killed=excluded.enemies_killed, " +
+            "boss_defeated=excluded.boss_defeated";
 
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
@@ -96,6 +105,7 @@ public class SaveManager {
                     ps.setInt(8, data.playerSoul);
                     ps.setFloat(9, data.playtimeSeconds);
                     ps.setInt(10, data.enemiesKilled);
+                    ps.setInt(11, data.bossDefeated ? 1 : 0);
                     ps.executeUpdate();
                 }
 
@@ -185,6 +195,7 @@ public class SaveManager {
                 data.playerSoul = rs.getInt("soul");
                 data.playtimeSeconds = rs.getFloat("playtime_seconds");
                 data.enemiesKilled = rs.getInt("enemies_killed");
+                data.bossDefeated = rs.getInt("boss_defeated") == 1;
 
                 loadCharms(conn, slot, data);
                 loadAchievements(conn, slot, data);

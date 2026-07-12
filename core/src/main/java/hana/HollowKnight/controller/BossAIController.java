@@ -294,7 +294,7 @@ public class BossAIController {
         }
 
         if (candidates.isEmpty()) {
-            return BossModel.Move.MACE_SLAM; // fallback, should be rare
+            return BossModel.Move.MACE_SLAM;
         }
 
         float total = 0f;

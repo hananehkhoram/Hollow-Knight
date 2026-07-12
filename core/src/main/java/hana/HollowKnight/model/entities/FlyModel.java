@@ -70,7 +70,6 @@ public class FlyModel extends EnemyModel {
             case IDLE:
                 velocityX = facingRight ? FLY_SPEED : -FLY_SPEED;
 
-                // 🟢 حرکت عمودی نرم: سرعت تعقیب متناسب با فاصله تنظیم می‌شود تا لرزش نداشته باشد
                 float distanceY = player.getY() - this.y;
                 if (Math.abs(distanceY) > 5f) {
                     velocityY = distanceY * 2.5f;
@@ -85,7 +84,7 @@ public class FlyModel extends EnemyModel {
                     stateTimer = 0f;
                     velocityX = 0f;
                     velocityY = 0f;
-                    attackTargetY = player.getY(); // ثبت موقعیت ارتفاع پلیر برای شیرجه زدن
+                    attackTargetY = player.getY();
                     facingRight = (player.getX() > this.x);
                 }
                 break;
@@ -102,7 +101,6 @@ public class FlyModel extends EnemyModel {
                 break;
 
             case ATTACK:
-                // 🟢 شیرجه زاویه‌دار نرم: به جای قفل شدن محور Y، مگس به سمت ارتفاعی که هدف گرفته بود مایل می‌شود
                 float targetDiffY = attackTargetY - this.y;
                 if (Math.abs(targetDiffY) > 5f) {
                     velocityY = targetDiffY * 4f;

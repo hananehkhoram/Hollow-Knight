@@ -16,6 +16,8 @@ public class GameData {
     public float playtimeSeconds;
     public int enemiesKilled;
 
+    public boolean bossDefeated;
+
     public GameData() {
     }
 }

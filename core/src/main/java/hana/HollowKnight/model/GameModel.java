@@ -15,6 +15,7 @@ public class GameModel {
     private String currentRoomId;
     private final SaveManager saveManager;
     private int activeSlot = -1;
+    private boolean bossDefeated = false;
     private HashMap<CharmType, Charm> charms = new HashMap<>();
 
     public GameModel() {
@@ -43,6 +44,7 @@ public class GameModel {
         data.unlockedAchievements = gameStats.getUnlockedAchievementIds();
         data.playtimeSeconds = gameStats.getPlaytimeSeconds();
         data.enemiesKilled = gameStats.getEnemiesKilled();
+        data.bossDefeated = bossDefeated;
 
         saveManager.save(slot, data);
         activeSlot = slot;
@@ -53,7 +55,7 @@ public class GameModel {
         if (data == null) return false;
 
         currentRoomId = data.roomId;
-        player.setPosition(0, 0);
+        player.setPosition(data.playerX, data.playerY);
         player.setHealth(data.playerHealth);
         player.setMaxHealth(data.playerMaxHealth);
         player.setSoul(data.playerSoul);
@@ -62,6 +64,7 @@ public class GameModel {
         gameStats.setUnlockedAchievementIds(data.unlockedAchievements);
         gameStats.setPlaytimeSeconds(data.playtimeSeconds);
         gameStats.setEnemiesKilled(data.enemiesKilled);
+        bossDefeated = data.bossDefeated;
 
         activeSlot = slot;
         return true;
@@ -80,5 +83,13 @@ public class GameModel {
 
     public void setRoomPath(String roomPath) {
         this.currentRoomId = roomPath;
+    }
+
+    public boolean isBossDefeated() {
+        return bossDefeated;
+    }
+
+    public void setBossDefeated(boolean bossDefeated) {
+        this.bossDefeated = bossDefeated;
     }
 }

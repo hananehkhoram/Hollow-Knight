@@ -114,7 +114,7 @@ public class ZoteModel extends Entity {
 
         switch (state) {
             case ATTACK:
-                if (stateTimer >= 0.5f) {
+                if (stateTimer >= 1f) {
                     state = States.ROLL;
                     stateTimer = 0f;
                     velocityX = this.isFacingRight() ? -100f : 100f;
@@ -144,7 +144,7 @@ public class ZoteModel extends Entity {
                 break;
 
             case TALK:
-                this.setVelocityX(0f); // 🟢 مطمئن می‌شویم زوت موقع حرف زدن راه نمی‌رود
+                this.setVelocityX(0f);
                 break;
 
             default:
