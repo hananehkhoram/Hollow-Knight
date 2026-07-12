@@ -5,7 +5,7 @@ import java.util.*;
 
 public class GameStats {
 
-    private static final float SPEEDRUN_TARGET_SECONDS = 15 * 60f;
+    private static final float SPEEDRUN_TARGET_SECONDS = 5 * 60f;
     private final Set<String> killedEnemyTypes = new LinkedHashSet<>();
     private final Set<Achievement> unlockedAchievements = EnumSet.noneOf(Achievement.class);
     private final List<AchievementListener> listeners = new ArrayList<>();
@@ -43,7 +43,7 @@ public class GameStats {
     }
 
     public void checkHunterAchievement(int totalEnemyTypesInGame) {
-        if (killedEnemyTypes.size() >= totalEnemyTypesInGame) {
+        if (killedEnemyTypes.size() >= 2) {
             unlock(Achievement.TRUE_HUNTER);
         }
     }
@@ -119,10 +119,10 @@ public class GameStats {
 
     public enum Achievement {
         COMPLETION("Completion", "Finish the game."),
-        SPEEDRUN("Speedrun", "Finish the game within the target time."),
+        SPEEDRUN("Speedrun", "Finish the game within 5 minutes."),
         TRUE_HUNTER("True Hunter", "Kill every enemy type in the game."),
         DEFEAT_FALSE_KNIGHT("Defeat False Knight", "Defeat the False Knight boss."),
-        NOOB("The Noob", "Start the first game.");
+        NOOB("The Noob", "Start your first game.");
 
         private final String title;
         private final String description;

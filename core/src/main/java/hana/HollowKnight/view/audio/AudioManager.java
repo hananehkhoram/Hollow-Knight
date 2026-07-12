@@ -26,6 +26,7 @@ public class AudioManager {
     private final Music GreenpathSound;
     private final Music bossFight;
     private final Music gameOver;
+    private final Sound bossDefeat;
 
     private float sfxVolume = 1.0f;
     private float bgmVolume = 0.5f;
@@ -55,7 +56,8 @@ public class AudioManager {
         moving = Gdx.audio.newSound(Gdx.files.internal("hero_run_footsteps_stone.wav"));
         sword = Gdx.audio.newSound(Gdx.files.internal("sword_4.wav"));
         GreenpathSound = Gdx.audio.newMusic(Gdx.files.internal("05. Greenpath.mp3"));
-        bossFight = Gdx.audio.newMusic(Gdx.files.internal("Boss Defeat.wav"));
+        bossDefeat = Gdx.audio.newSound(Gdx.files.internal("Boss Defeat.wav"));
+        bossFight = Gdx.audio.newMusic(Gdx.files.internal("04. False Knight.mp3"));
         gameOver = Gdx.audio.newMusic(Gdx.files.internal("PersianGameOfThrones.mp3"));
     }
 

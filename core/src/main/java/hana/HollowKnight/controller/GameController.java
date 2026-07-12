@@ -5,13 +5,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import hana.HollowKnight.model.GameModel;
 import hana.HollowKnight.model.data.GameData;
-import hana.HollowKnight.model.entities.BossModel;
-import hana.HollowKnight.model.entities.CrawlerModel;
-import hana.HollowKnight.model.entities.FlyModel;
-import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.entities.*;
 import hana.HollowKnight.model.items.CharmType;
 import hana.HollowKnight.model.map.BossArena;
 import hana.HollowKnight.model.map.PortalModel;
@@ -34,8 +32,7 @@ public class GameController {
     private GameModel model;
     private GameView activeGameView;
 
-    // ---------------- Gameplay / room state (moved out of GameView) ----------------
-    private final AIController aiController = new AIController();
+    private final AIController aiController = new AIController(this);
     private final BossAIController bossAIController = new BossAIController();
 
     private RoomModel currentRoom;
@@ -44,6 +41,7 @@ public class GameController {
     private ArrayList<CrawlerModel> tiktiks = new ArrayList<>();
     private ArrayList<FlyModel> flies = new ArrayList<>();
     private ArrayList<BossModel> bosses = new ArrayList<>();
+    private ZoteModel zote;
 
     private String currentMapPath;
     private String pendingMapPath;
@@ -57,19 +55,19 @@ public class GameController {
         this.model = new GameModel();
     }
 
-    // ==================== Room lifecycle ====================
     public void initRoom(String mapPath, TiledMap map, MapRenderer mapRenderer) {
         PlayerModel player = model.getPlayer();
 
         currentRoom = RoomLoader.load(map, mapPath);
         collision = new CollisionController(player, currentRoom.getHazards(),
-            currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer);
+            currentRoom.getBreakableWall(), currentRoom.getPortal(), mapRenderer, zote);
 
         mosscreeps = RoomLoader.spawnCrawlers(currentRoom, "mosscreep");
         tiktiks = RoomLoader.spawnCrawlers(currentRoom, "tiktik");
         currentRoom.setCrawlers(mosscreeps);
         flies = RoomLoader.spawnFlies(currentRoom, player);
         bosses = RoomLoader.spawnBoss(currentRoom);
+        zote = new ZoteModel(currentRoom.getZoteSpawn().x, currentRoom.getZoteSpawn().y);
 
         currentMapPath = mapPath;
 
@@ -78,7 +76,6 @@ public class GameController {
             if (arena != null && arena.getBounds() != null) {
                 player.setPosition(arena.getBounds().x, arena.getBounds().y);
             } else {
-                // Fallback map didn't have an arena either — don't drop the player off-map.
                 Vector2 spawn = currentRoom.getKnightSpawn();
                 player.setPosition(spawn.x, spawn.y);
             }
@@ -128,14 +125,33 @@ public class GameController {
 
 
     public void updateGameplay(float delta) {
-        InputHandler.getInstance().update(model.getPlayer());
-        InputHandler.getInstance().updateCheat(delta,this);
+        PlayerModel player = model.getPlayer();
+
+        if (player.isJustDead()) {
+            player.setHealth(player.getMaxHealth());
+            player.setSoul(0);
+            player.setAlive(true);
+            player.setJustDead(false);
+            model.getStats().recordDeath();
+            requestRoomChange(currentMapPath);
+            return;
+        }
+
+        if (!player.isAlive()) {
+            player.update(delta);
+            return;
+        }
+
+        InputHandler.getInstance().update(player);
+        InputHandler.getInstance().updateCheat(delta, this);
         if (collision == null || currentRoom == null) return;
+
         if (!bosses.isEmpty() && !bosses.getFirst().isAlive()) {
             model.getStats().defeatedBoss();
             model.getStats().onGameCompleted();
-            endGame(model.getPlayer());
+            endGame(player);
         }
+        model.getStats().checkHunterAchievement(3);
 
         PortalModel triggeredPortal = collision.checkPortalCollision();
         if (triggeredPortal != null) {
@@ -144,7 +160,6 @@ public class GameController {
             return;
         }
 
-        PlayerModel player = model.getPlayer();
         player.savePrevPosition();
         model.getStats().update(delta);
 
@@ -161,7 +176,6 @@ public class GameController {
         }
         for (FlyModel fly : flies) {
             aiController.updateFly(fly, delta, currentRoom.getSolidTiles(), player);
-            fly.update(delta);
         }
         for (BossModel boss : bosses) {
             bossAIController.updateBoss(boss, delta, player, currentRoom.getSolidTiles(), currentRoom.getBossArena());
@@ -174,14 +188,6 @@ public class GameController {
         }
 
         updateBossArena();
-
-        if (player.isJustDead()) {
-            player.setHealth(player.getMaxHealth());
-            player.setAlive(true);
-            player.setJustDead(false);
-            model.getStats().recordDeath();
-            requestRoomChange(currentMapPath);
-        }
     }
 
     private void updateBossArena() {
@@ -210,6 +216,11 @@ public class GameController {
         return true;
     }
 
+    public boolean isInZoteArea(){
+        PlayerModel player =  model.getPlayer();
+        return player.getBounds().overlaps(zote.getBounds());
+    }
+
 
     public RoomModel getCurrentRoom() {
         return currentRoom;
@@ -227,8 +238,6 @@ public class GameController {
         return bosses;
     }
 
-    // ==================== Screen navigation ====================
-
     public InputHandler getInputHandler() {
         return InputHandler.getInstance();
     }
@@ -239,10 +248,6 @@ public class GameController {
 
     public void openSettings() {
         game.setScreen(new SettingScreenView(this));
-    }
-
-    public void openDialogue() {
-        game.setScreen(new DialogueScreenView(this));
     }
 
     public void startGame() {
@@ -327,5 +332,13 @@ public class GameController {
 
     public ArrayList<CrawlerModel> getTiktiks() {
         return tiktiks;
+    }
+
+    public ZoteModel getZote() {
+        return zote;
+    }
+
+    public void setZote(ZoteModel zote) {
+        this.zote = zote;
     }
 }

@@ -28,7 +28,7 @@ public class PlayerModel extends Entity {
     public static float DASH_SPEED = 1000f;
     public static float DASH_DURATION = 0.8f;
     public static float DASH_COOLDOWN = 1f;
-    public static float ATTACK_DURATION = 0.5f;
+    public static float ATTACK_DURATION = 0.1f;
     public static float ATTACK_COOLDOWN = 0.5f;
     public static final float ATTACK_RANGE = 40f;
     public static final float INVULNERABILITY_DURATION = 0.9f;
@@ -61,6 +61,8 @@ public class PlayerModel extends Entity {
     private boolean isJustDead = false;
     private int damagePerHit = 1;
     private int soulAddition = SOUL_PER_HIT;
+    private float deathDuration = 1.0f;
+    private float deathCounterTime = 0f;
 
     private int usedNotches = 0;
 
@@ -250,7 +252,7 @@ public class PlayerModel extends Entity {
             invulnerabilityTimer = INVULNERABILITY_DURATION;
             if (health <= 0) {
                 alive = false;
-                isJustDead = true;
+                addPlayerDeathsCount();
                 AudioManager.getInstance().playHeroDeathSound();
             }}
     }
@@ -477,5 +479,21 @@ public class PlayerModel extends Entity {
 
     public void setGodeMode(boolean godeMode) {
         isGodeMode = godeMode;
+    }
+
+    public float getDeathCounterTime() {
+        return deathCounterTime;
+    }
+
+    public void setDeathCounterTime(float deathCounterTime) {
+        this.deathCounterTime = deathCounterTime;
+    }
+
+    public float getDeathDuration() {
+        return deathDuration;
+    }
+
+    public void setDeathDuration(float deathDuration) {
+        this.deathDuration = deathDuration;
     }
 }

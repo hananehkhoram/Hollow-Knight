@@ -44,13 +44,13 @@ public class FlyModel extends EnemyModel {
         super.update(delta);
 
         if (dead) {
-            if (state != State.DEATH) {
+        if (state != State.DEATH &&  state != State.DEATH2) {
                 state = State.DEATH;
                 if (!isBeingKnockedBack) {
                     velocityX = 0f;
                     return;
                 }
-            } else {
+            } else if (state == State.DEATH) {
                 state = State.DEATH2;
                 if (!isBeingKnockedBack){
                     velocityX = 0f;

@@ -5,24 +5,22 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hana.HollowKnight.controller.GameController;
-import hana.HollowKnight.model.entities.PlayerModel;
-import hana.HollowKnight.model.items.CharmType;
 import hana.HollowKnight.view.audio.AudioManager;
+import hana.HollowKnight.view.screens.MainMenuView;
 
 public class PauseMenu {
 
     private final GameController controller;
     private final Runnable onResume;
-
     private final Stage stage;
     private final Skin menuSkin;
     private final Texture dimTexture;
@@ -41,13 +39,8 @@ public class PauseMenu {
         dimTexture = new Texture(pixmap);
         pixmap.dispose();
 
-        Image dim = new Image(dimTexture);
-        dim.setFillParent(true);
-        stage.addActor(dim);
-
         root = new Table();
         root.setFillParent(true);
-        stage.addActor(root);
 
         showMainPanel();
     }
@@ -62,15 +55,31 @@ public class PauseMenu {
     }
 
     public void showMainPanel() {
+        stage.clear();
         root.clearChildren();
+
+        Image dim = new Image(dimTexture);
+        dim.setFillParent(true);
+        stage.addActor(dim);
+        stage.addActor(root);
+
+        Image bilbilakLeft = new Image(menuSkin.getDrawable("main_menu_pointer_anim0009"));
+        bilbilakLeft.setOrigin(Align.center);
+        bilbilakLeft.setVisible(false);
+
+        Image bilbilakRight = new Image(menuSkin.getDrawable("main_menu_pointer_anim0009"));
+        bilbilakRight.setOrigin(Align.center);
+        bilbilakRight.setRotation(180f);
+        bilbilakRight.setVisible(false);
 
         Label title = new Label("PAUSED", menuSkin);
         title.setFontScale(1.4f);
         root.add(title).padBottom(30f).row();
 
-        root.add(menuButton("RESUME", onResume)).width(320f).height(55f).padBottom(15f).row();
-        root.add(menuButton("SETTINGS", this::showSettingsPanel)).width(320f).height(55f).padBottom(15f).row();
-        root.add(menuButton("SAVE & QUIT", controller::saveCurrentAndExit)).width(320f).height(55f).padBottom(15f).row();
+        root.add(menuButton("RESUME", onResume, bilbilakRight, bilbilakLeft)).width(320f).height(55f).padBottom(15f).row();
+        root.add(menuButton("SETTINGS", this::showSettingsPanel, bilbilakRight, bilbilakLeft)).width(320f).height(55f).padBottom(15f).row();
+        root.add(menuButton("SAVE & QUIT", controller::saveCurrentAndExit, bilbilakRight, bilbilakLeft)).width(320f).height(55f).padBottom(15f).row();
+
         Label cheats = new Label("CHEAT CODES:", menuSkin, "settingmenu");
         root.add(cheats).padBottom(15f).row();
         root.add(new Label(" Boss Arena Teleport - \"BT\"", menuSkin, "settingmenu")).row();
@@ -80,46 +89,55 @@ public class PauseMenu {
         root.add(new Label(" God Mode - \"GM\"", menuSkin, "settingmenu")).row();
         root.add(new Label("Boss Kill - \"BK\"", menuSkin, "settingmenu")).row();
 
-
+        stage.addActor(bilbilakLeft);
+        stage.addActor(bilbilakRight);
     }
 
     private void showSettingsPanel() {
+        stage.clear();
         root.clearChildren();
+
+        Image dim = new Image(dimTexture);
+        dim.setFillParent(true);
+        stage.addActor(dim);
+        stage.addActor(root);
+
         AudioManager audio = AudioManager.getInstance();
+
+        Image bilbilakLeft = new Image(menuSkin.getDrawable("main_menu_pointer_anim0009"));
+        bilbilakLeft.setOrigin(Align.center);
+        bilbilakLeft.setVisible(false);
+
+        Image bilbilakRight = new Image(menuSkin.getDrawable("main_menu_pointer_anim0009"));
+        bilbilakRight.setOrigin(Align.center);
+        bilbilakRight.setRotation(180f);
+        bilbilakRight.setVisible(false);
 
         Label title = new Label("SETTINGS", menuSkin);
         title.setFontScale(1.2f);
         root.add(title).colspan(3).padBottom(25f).row();
 
-        ImageTextButton.ImageTextButtonStyle baseStyle =
-            menuSkin.get("default", ImageTextButton.ImageTextButtonStyle.class);
+        ImageTextButton.ImageTextButtonStyle baseStyle = menuSkin.get("default", ImageTextButton.ImageTextButtonStyle.class);
 
-        root.add(smallButton("-", baseStyle,
-                () -> audio.setBgmVolume(Math.max(0f, audio.getBgmVolume() - 0.1f))))
-            .width(80f).padRight(20f);
+        root.add(smallButton("-", baseStyle, () -> audio.setBgmVolume(Math.max(0f, audio.getBgmVolume() - 0.1f)), bilbilakRight, bilbilakLeft)).width(80f).padRight(20f);
         root.add(new Label("Music Volume", menuSkin, "settingmenu")).width(260f);
-        root.add(smallButton("+", baseStyle,
-                () -> audio.setBgmVolume(Math.min(1f, audio.getBgmVolume() + 0.1f))))
-            .width(80f).padLeft(20f).row();
+        root.add(smallButton("+", baseStyle, () -> audio.setBgmVolume(Math.min(1f, audio.getBgmVolume() + 0.1f)), bilbilakRight, bilbilakLeft)).width(80f).padLeft(20f).row();
 
-        root.add(smallButton("MUTE", baseStyle, () -> audio.setVolume(0f)))
-            .width(80f).padRight(20f).padTop(15f);
+        root.add(smallButton("MUTE", baseStyle, () -> audio.setVolume(0f), bilbilakRight, bilbilakLeft)).width(80f).padRight(20f).padTop(15f);
         root.add(new Label("Sound Volume", menuSkin, "settingmenu")).width(260f).padTop(15f);
-        root.add(smallButton("UNMUTE", baseStyle, () -> audio.setVolume(1f)))
-            .width(80f).padLeft(20f).padTop(15f).row();
+        root.add(smallButton("UNMUTE", baseStyle, () -> audio.setVolume(1f), bilbilakRight, bilbilakLeft)).width(80f).padLeft(20f).padTop(15f).row();
 
-        root.add(smallButton("-", baseStyle,
-                () -> GameController.brightness = Math.max(0.2f, GameController.brightness - 0.1f)))
-            .width(80f).padRight(20f).padTop(15f);
+        root.add(smallButton("-", baseStyle, () -> GameController.brightness = Math.max(0.2f, GameController.brightness - 0.1f), bilbilakRight, bilbilakLeft)).width(80f).padRight(20f).padTop(15f);
         root.add(new Label("Brightness", menuSkin, "settingmenu")).width(260f).padTop(15f);
-        root.add(smallButton("+", baseStyle,
-                () -> GameController.brightness = Math.min(1f, GameController.brightness + 0.1f)))
-            .width(80f).padLeft(20f).padTop(15f).row();
+        root.add(smallButton("+", baseStyle, () -> GameController.brightness = Math.min(1f, GameController.brightness + 0.1f), bilbilakRight, bilbilakLeft)).width(80f).padLeft(20f).padTop(15f).row();
 
-        root.add(menuButton("BACK", this::showMainPanel)).colspan(3).width(320f).height(55f).padTop(30f);
+        root.add(menuButton("BACK", this::showMainPanel, bilbilakRight, bilbilakLeft)).colspan(3).width(320f).height(55f).padTop(30f);
+
+        stage.addActor(bilbilakLeft);
+        stage.addActor(bilbilakRight);
     }
 
-    private ImageTextButton menuButton(String text, Runnable action) {
+    private ImageTextButton menuButton(String text, Runnable action, Image bilbilakRight, Image bilbilakLeft) {
         ImageTextButton btn = new ImageTextButton(text, menuSkin, "mute");
         btn.addListener(new ClickListener() {
             @Override
@@ -128,10 +146,11 @@ public class PauseMenu {
                 action.run();
             }
         });
+        MainMenuView.setupButtonAnimation(btn, bilbilakLeft, bilbilakRight);
         return btn;
     }
 
-    private ImageTextButton smallButton(String text, ImageTextButton.ImageTextButtonStyle style, Runnable action) {
+    private ImageTextButton smallButton(String text, ImageTextButton.ImageTextButtonStyle style, Runnable action, Image bilbilakRight, Image bilbilakLeft) {
         ImageTextButton btn = new ImageTextButton(text, style);
         btn.addListener(new ClickListener() {
             @Override
@@ -140,6 +159,7 @@ public class PauseMenu {
                 action.run();
             }
         });
+        MainMenuView.setupButtonAnimation(btn, bilbilakLeft, bilbilakRight);
         return btn;
     }
 

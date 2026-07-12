@@ -14,15 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * مدیpsریت ذخیره/بارگذاری بازی با پایگاه‌داده‌ی SQLite (به‌جای فایل JSON).
- * دیتابیس یک فایل تکی (saves/hollowknight.db) کنار بازی ذخیره می‌شود.
- *
- * جدول‌ها:
- *  - saves            : یک ردیف به‌ازای هر اسلات (وضعیت کلی بازیکن)
- *  - save_charms      : چارم‌های باز/سوارشده‌ی هر اسلات (رابطه‌ی یک‌به‌چند)
- *  - save_achievements: دستاوردهای بازشده‌ی هر اسلات (رابطه‌ی یک‌به‌چند)
- */
 public class SaveManager {
 
     public static final int SLOT_COUNT = 4;

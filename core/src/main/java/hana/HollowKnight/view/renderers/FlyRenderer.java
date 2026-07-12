@@ -61,7 +61,6 @@ public class FlyRenderer {
             case ATTACK:
                 region = flyAnimation.getKeyFrame(stateTime);
                 break;
-            case COOLDOWN:
             case IDLE:
             default:
                 region = idleAnimation.getKeyFrame(stateTime);

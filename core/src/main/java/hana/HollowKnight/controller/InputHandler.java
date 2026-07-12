@@ -54,8 +54,11 @@ public class InputHandler {
             PlayerModel.DASH_SPEED *= 5;
         }
 
-        if (currentInput.endsWith("BK")) { //Boss Kill (only in greenpath)
-            controller.getBosses().getFirst().setAlive(false);
+        if (currentInput.endsWith("BK")) {//Boss Kill (only in greenpath)
+            if (!controller.getBosses().isEmpty()) {
+                controller.getBosses().getFirst().setAlive(false);
+                player.addPlayerKillsCount();
+            }
         }
 
         if (currentInput.endsWith("BT")) { //Boss Arena Teleport

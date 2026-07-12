@@ -6,10 +6,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
-import hana.HollowKnight.model.entities.BossModel;
-import hana.HollowKnight.model.entities.CrawlerModel;
-import hana.HollowKnight.model.entities.FlyModel;
-import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.entities.*;
 import hana.HollowKnight.model.map.*;
 
 import java.util.ArrayList;
@@ -74,6 +71,8 @@ public class RoomLoader {
                 if (name == null) continue;
                 if ("knight".equals(name)) {
                     room.setKnightSpawn(x, y);
+                }else if("zote".equals(name)) {
+                    room.setZoteSpawn(x,y);
                 } else {
                     room.getEnemySpawns().add(new SpawnPointModel(name, x, y));
                 }

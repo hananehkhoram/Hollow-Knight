@@ -21,6 +21,7 @@ public class RoomModel {
     private PortalModel portal;
     private BossArena bossArena;
     private Vector2 knightSpawn = new Vector2(0, 0);
+    private Vector2 zoteSpawn = new Vector2(0, 0);
     private float minX, minY, maxX, maxY;
     private float targetX, targetY;
     private MapLayer voidHeart;
@@ -128,5 +129,13 @@ public class RoomModel {
 
     public void setVoidHeart(MapLayer voidHeart) {
         this.voidHeart = voidHeart;
+    }
+
+    public Vector2 getZoteSpawn() {
+        return zoteSpawn;
+    }
+
+    public void setZoteSpawn(float x, float y) {
+        this.zoteSpawn =  new Vector2(x , y);
     }
 }

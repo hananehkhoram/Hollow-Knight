@@ -1,11 +1,13 @@
 package hana.HollowKnight.controller;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.EnemyModel;
 import hana.HollowKnight.model.entities.FlyModel;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.stats.GameStats;
 import hana.HollowKnight.view.audio.AudioManager;
 
 public class AIController {
@@ -14,11 +16,17 @@ public class AIController {
     private static final float GRAVITY = -1400f;
     private static final float EDGE_PROBE_DEPTH = 6f;
     private static final float EDGE_PROBE_WIDTH = 2f;
+    private GameController controller;
+
+    public AIController(GameController controller) {
+        this.controller = controller;
+    }
 
     public void updateFly(FlyModel fly, float delta, Array<Rectangle> solidTiles, PlayerModel player) {
         delta = Math.min(delta, MAX_DELTA);
-
+        GameStats gameStats = controller.getModel().getStats();
         if (fly.isDead()) {
+            gameStats.recordEnemyKilled("fly");
             applyGravityEffect(fly, delta, solidTiles);
             fly.update(delta);
             return;
@@ -37,8 +45,10 @@ public class AIController {
 
     public void updateCrawler(CrawlerModel crawler, float delta, Array<Rectangle> solidTiles, PlayerModel player) {
         delta = Math.min(delta, MAX_DELTA);
+        GameStats gameStats = controller.getModel().getStats();
 
         if (crawler.isDead()) {
+            gameStats.recordEnemyKilled("crawler");
             applyGravityEffect(crawler, delta, solidTiles);
             crawler.update(delta);
             return;

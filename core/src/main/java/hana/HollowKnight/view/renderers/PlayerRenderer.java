@@ -73,7 +73,9 @@ public class PlayerRenderer {
         TextureRegion region = animations.get(currentStatus).getKeyFrame(stateTime);
 
         if (currentStatus == Status.DEATH) {
-            player.setJustDead(true);
+            if (animations.get(Status.DEATH).isAnimationFinished(stateTime)) {
+                player.setJustDead(true);
+            }
         }
 
         if (!player.isFacingRight() && region.isFlipX()) {

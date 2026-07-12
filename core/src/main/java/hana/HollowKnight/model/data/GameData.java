@@ -3,9 +3,6 @@ package hana.HollowKnight.model.data;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * for saving data to SQL
- **/
 public class GameData {
     public String saveDate;
     public String roomId;

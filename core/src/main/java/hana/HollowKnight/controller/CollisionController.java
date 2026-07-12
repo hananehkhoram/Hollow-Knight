@@ -3,6 +3,7 @@ package hana.HollowKnight.controller;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.entities.ZoteModel;
 import hana.HollowKnight.model.map.BreakableWallModel;
 import hana.HollowKnight.model.map.PortalModel;
 import hana.HollowKnight.view.audio.AudioManager;
@@ -18,17 +19,20 @@ public class CollisionController {
     private final BreakableWallModel breakableWall;
     private final PortalModel portal;
     private final MapRenderer mapRenderer;
+    private final ZoteModel zote;
 
     public CollisionController(PlayerModel player,
                                Array<Rectangle> hazards,
                                BreakableWallModel breakableWall,
                                PortalModel portal,
-                               MapRenderer mapRenderer) {
+                               MapRenderer mapRenderer,
+                                ZoteModel zote) {
         this.player = player;
         this.hazards = hazards;
         this.breakableWall = breakableWall;
         this.portal = portal;
         this.mapRenderer = mapRenderer;
+        this.zote = zote;
     }
 
     public void checkHazardCollisions(int damageAmount) {
@@ -42,6 +46,14 @@ public class CollisionController {
                 player.setPosition(player.getLastSafeX() - (hazard.x -  player.getX())/2, player.getLastSafeY());
                 return;
             }
+        }
+    }
+
+    public void checkZoteCollosions() {
+        Rectangle playerBounds = player.getBounds();
+        Rectangle zoteBounds = zote.getBounds();
+        if (playerBounds.overlaps(zoteBounds)){
+
         }
     }
 

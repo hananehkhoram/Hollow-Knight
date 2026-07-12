@@ -16,12 +16,8 @@ import hana.HollowKnight.view.hud.GameHUD;
 import hana.HollowKnight.view.overlays.InventoryMenu;
 import hana.HollowKnight.view.overlays.PauseMenu;
 import hana.HollowKnight.view.overlays.AchievementPopup;
-import hana.HollowKnight.view.renderers.BossRenderer;
-import hana.HollowKnight.view.renderers.CollisionDebugRenderer;
-import hana.HollowKnight.view.renderers.CrawlerRenderer;
-import hana.HollowKnight.view.renderers.FlyRenderer;
-import hana.HollowKnight.view.renderers.MapRenderer;
-import hana.HollowKnight.view.renderers.PlayerRenderer;
+import hana.HollowKnight.view.overlays.ZoteDialog;
+import hana.HollowKnight.view.renderers.*;
 import hana.HollowKnight.view.screens.BaseScreen;
 
 public class GameView extends BaseScreen {
@@ -32,12 +28,14 @@ public class GameView extends BaseScreen {
     private PlayerRenderer playerRenderer;
     private CollisionDebugRenderer debugRenderer;
     private PauseMenu pauseOverlay;
+    private ZoteDialog zoteOverlay;
     private InventoryMenu inventoryOverlay;
     private AchievementPopup achievementPopup;
     private boolean isPaused = false;
 
     private final CrawlerRenderer mosscreepRenderer = new CrawlerRenderer("mosscreep");
     private final CrawlerRenderer tiktikRenderer = new CrawlerRenderer("tiktik");
+    private final ZoteRenderer zoteRenderer = new  ZoteRenderer();
     private final FlyRenderer flyRenderer = new FlyRenderer();
     private final BossRenderer bossRenderer = new BossRenderer();
 
@@ -56,6 +54,7 @@ public class GameView extends BaseScreen {
         playerRenderer = new PlayerRenderer();
         pauseOverlay = new PauseMenu(controller, this::resumeFromPause);
         inventoryOverlay = new InventoryMenu(controller, this::resumeFromPause);
+        zoteOverlay = new ZoteDialog(controller, controller.getZote());
         achievementPopup = new AchievementPopup(batch);
         controller.getModel().getStats().addListener(achievementPopup);
         isPaused = false;
@@ -80,8 +79,6 @@ public class GameView extends BaseScreen {
             AudioManager.getInstance().playCityOfTearsSound();
         }
     }
-
-    // ==================== Pause ====================
 
     private void togglePause(boolean pauseMenu) {
         isPaused = !isPaused;
@@ -156,18 +153,22 @@ public class GameView extends BaseScreen {
         for (BossModel boss : controller.getBosses()) {
             bossRenderer.render(batch, boss);
         }
+        zoteRenderer.render(batch, controller.getZote());
         renderPlayer();
 
         batch.end();
 
         mapRenderer.renderLayer(camera, "for");
         mapRenderer.renderLayer(camera, "secret room");
-
         debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
             controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getBosses());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
         achievementPopup.render(delta);
+
+        if (controller.isInZoteArea()){
+            zoteOverlay.render(delta);
+        }
 
         if (isPaused) {
             if (currentOverlay == OverlayType.PAUSE) {

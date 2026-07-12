@@ -11,6 +11,9 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.stats.GameStats;
+import hana.HollowKnight.view.audio.AudioManager;
+import hana.HollowKnight.view.overlays.AchievementPopup;
 
 public class EndScreen extends BaseScreen {
 
@@ -19,10 +22,12 @@ public class EndScreen extends BaseScreen {
     private Skin menuSkin;
     private Image backGraoundImage;
     private Image logoImage;
+    private AchievementPopup achievementPopup;
 
     public EndScreen(GameController controller, PlayerModel player) {
         super(controller);
         this.player = player;
+        this.achievementPopup = new AchievementPopup(batch);
     }
 
     @Override
@@ -30,6 +35,20 @@ public class EndScreen extends BaseScreen {
         stage = new Stage(new ScreenViewport(), batch);
         this.activeStage = stage;
         Gdx.input.setInputProcessor(stage);
+        AudioManager.getInstance().stopMenuSound();
+        AudioManager.getInstance().stopBossFight();
+        AudioManager.getInstance().stopGreenpathSound();
+        AudioManager.getInstance().playGameOver();
+
+        GameStats stats = controller.getModel().getStats();
+
+        if (stats.isUnlocked(GameStats.Achievement.COMPLETION)) {
+            achievementPopup.onAchievementUnlocked(GameStats.Achievement.COMPLETION);
+        }
+
+        if (stats.isUnlocked(GameStats.Achievement.SPEEDRUN)) {
+            achievementPopup.onAchievementUnlocked(GameStats.Achievement.SPEEDRUN);
+        }
 
         menuSkin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
@@ -75,7 +94,7 @@ public class EndScreen extends BaseScreen {
         Label killsCountLabel = new Label("Kills Count", menuSkin, "settingmenu");
         Label killsCount = new Label(Integer.toString(player.getPlayerKillsCount()), menuSkin, "settingmenu");
         Label timeDurationLabel = new Label("Time Duration", menuSkin, "settingmenu");
-        Label timeDuration = new Label(Float.toString(player.getTimePassed()), menuSkin, "settingmenu");
+        Label timeDuration = new Label(Float.toString(player.getTimePassed()/60) + " minutes", menuSkin, "settingmenu");
 
         ImageTextButton reStart = new ImageTextButton("Restart", menuSkin);
         ImageTextButton mainMenu = new ImageTextButton("Main Menu", menuSkin);
@@ -103,11 +122,11 @@ public class EndScreen extends BaseScreen {
         MainMenuView.setupButtonAnimation(mainMenu, bilbilakLeft, bilbilakRight);
 
         table.add(deathCountLabel).width(200f).padRight(30f);
-        table.add(deathCount).width(200f).padLeft(30f).row();
+        table.add(deathCount).width(200f).padLeft(50f).row();
         table.add(killsCountLabel).width(200f).padRight(30f);
-        table.add(killsCount).width(200f).padLeft(30f).row();
+        table.add(killsCount).width(200f).padLeft(50f).row();
         table.add(timeDurationLabel).width(200f).padRight(30f);
-        table.add(timeDuration).width(200f).padLeft(30f).row();
+        table.add(timeDuration).width(200f).padLeft(50f).row();
         table.add(reStart).colspan(2).padTop(20f).row();
         table.add(mainMenu).colspan(2).padTop(10f).row();
 
@@ -115,7 +134,6 @@ public class EndScreen extends BaseScreen {
         stage.addActor(bilbilakLeft);
         stage.addActor(bilbilakRight);
     }
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -124,6 +142,8 @@ public class EndScreen extends BaseScreen {
         super.render(delta);
         stage.act(delta);
         stage.draw();
+        achievementPopup.render(delta);
+
         drawBrightnessOverlay();
     }
 
