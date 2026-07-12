@@ -60,7 +60,8 @@ public class PlayerModel extends Entity {
     private int soulAddition = SOUL_PER_HIT;
     private float deathDuration = 1.0f;
     private float deathCounterTime = 0f;
-
+    private boolean isPogo = false;
+    private boolean isVenegful = false;
     private int usedNotches = 0;
 
     private int playerDeathsCount = 0;
@@ -187,6 +188,18 @@ public class PlayerModel extends Entity {
         }
     }
 
+    public ProjectileModel pogo(){
+
+        this.isPogo = true;
+        this.velocityY = 100f;
+        return new ProjectileModel(this.x, this.y, isFacingRight(), ProjectileType.POGO);
+    }
+
+    public ProjectileModel venegful(){
+        this.isVenegful = true;
+        return new ProjectileModel(this.x, this.y,isFacingRight(), ProjectileType.VENEGFUL);
+    }
+
     public boolean isDoubleJumpUsed() {
         return doubleJumpUsed;
     }
@@ -286,24 +299,8 @@ public class PlayerModel extends Entity {
         return true;
     }
 
-    public void unequipCharm(CharmType type) {
-        equippedCharms.remove(type);
-    }
-
     public int getUsedNotches() {
         return usedNotches;
-    }
-
-    public int getMaxNotches() {
-        return MAX_NOTCHES;
-    }
-
-    public Set<CharmType> getEquippedCharms() {
-        return equippedCharms;
-    }
-
-    public Set<CharmType> getUnlockedCharms() {
-        return unlockedCharms;
     }
 
     @Override
@@ -334,6 +331,13 @@ public class PlayerModel extends Entity {
                 attacking = false;
                 attackCooldownTimer = ATTACK_COOLDOWN;
             }
+        }
+
+        if (isPogo){
+            doubleJumpUsed = false;
+        }
+        if (isVenegful){
+
         }
 
         if (isFocusing()) {
@@ -375,10 +379,6 @@ public class PlayerModel extends Entity {
 
     public int getMaxSoul() {
         return maxSoul;
-    }
-
-    public void setMaxSoul(int maxSoul) {
-        this.maxSoul = maxSoul;
     }
 
     public List<String> getUnlockedCharmNames() {
@@ -453,10 +453,6 @@ public class PlayerModel extends Entity {
         return playerKillsCount;
     }
 
-    public float getTimePassed() {
-        return timePassed;
-    }
-
     public int getDamagePerHit() {
         return damagePerHit;
     }
@@ -481,27 +477,27 @@ public class PlayerModel extends Entity {
         isGodeMode = godeMode;
     }
 
-    public float getDeathCounterTime() {
-        return deathCounterTime;
-    }
-
-    public void setDeathCounterTime(float deathCounterTime) {
-        this.deathCounterTime = deathCounterTime;
-    }
-
-    public float getDeathDuration() {
-        return deathDuration;
-    }
-
-    public void setDeathDuration(float deathDuration) {
-        this.deathDuration = deathDuration;
-    }
-
     public float getProjectileStateTime() {
         return projectileStateTime;
     }
 
     public void updateProjectileStateTime(float delta) {
         this.projectileStateTime += delta;
+    }
+
+    public boolean isVenegful() {
+        return isVenegful;
+    }
+
+    public void setVenegful(boolean venegful) {
+        isVenegful = venegful;
+    }
+
+    public boolean isPogo() {
+        return isPogo;
+    }
+
+    public void setPogo(boolean pogo) {
+        isPogo = pogo;
     }
 }

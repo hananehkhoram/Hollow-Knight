@@ -64,6 +64,13 @@ public class InputHandler {
             controller.teleportToBossArena("maps/Greenpath/Greenpath.tmx");
         }
 
+        if (currentInput.endsWith("SW")) {
+            controller.lunchPogo();
+        }
+        if (currentInput.endsWith("SD")) {
+            controller.lunchVenegful();
+        }
+
         if (inputBuffer.length() > 10) {
             inputBuffer.delete(0, 1);
         }
@@ -112,7 +119,7 @@ public class InputHandler {
         keyBindings.put(PlayerAction.PAUSE, Input.Keys.ESCAPE);
     }
 
-    public void update(PlayerModel player) {
+    public void update(PlayerModel player, GameController controller) {
         boolean left = isDown(PlayerAction.MOVE_LEFT);
         boolean right = isDown(PlayerAction.MOVE_RIGHT);
 
@@ -146,6 +153,9 @@ public class InputHandler {
             if (player.isFocusing()) {
                 AudioManager.getInstance().playFocusSound();
             }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) && !player.isPogo()) {
+            controller.lunchPogo();
         }
 
         boolean jumpDown = isDown(PlayerAction.JUMP);

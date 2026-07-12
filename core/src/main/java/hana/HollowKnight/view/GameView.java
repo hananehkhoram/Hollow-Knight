@@ -37,6 +37,9 @@ public class GameView extends BaseScreen {
     private final FlyRenderer flyRenderer = new FlyRenderer();
     private final BossRenderer bossRenderer = new BossRenderer();
     private final HuskHornheadRenderer huskRenderer = new  HuskHornheadRenderer();
+    private final ProjectileRenderer pogoRenderer = new ProjectileRenderer(ProjectileType.POGO);
+    private final ProjectileRenderer venegfulRenderer = new ProjectileRenderer(ProjectileType.VENEGFUL);
+
 
     private enum OverlayType { NONE, PAUSE, INVENTORY }
     private OverlayType currentOverlay = OverlayType.NONE;
@@ -161,6 +164,12 @@ public class GameView extends BaseScreen {
             bossRenderer.render(batch, boss);
         } for (HuskHornheadModel husk : controller.getHusks()){
             huskRenderer.render(batch, husk);
+        } for (ProjectileModel projectile : controller.getProjectiles()){
+            if (projectile.getType() == ProjectileType.POGO){
+                pogoRenderer.render(batch, projectile);}
+//            } else {
+//                venegfulRenderer.render(batch, projectile);
+//            }
         }
         zoteRenderer.render(batch, controller.getZote());
         renderPlayer();
@@ -169,8 +178,8 @@ public class GameView extends BaseScreen {
 
         mapRenderer.renderLayer(camera, "for");
         mapRenderer.renderLayer(camera, "secret room");
-//        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
-//            controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getBosses());
+        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
+            controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getProjectiles());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
         achievementPopup.render(delta);

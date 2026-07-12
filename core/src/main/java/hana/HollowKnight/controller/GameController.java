@@ -1,6 +1,7 @@
 package hana.HollowKnight.controller;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -16,6 +17,7 @@ import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.GameView;
 import hana.HollowKnight.view.audio.AudioManager;
 import hana.HollowKnight.view.renderers.MapRenderer;
+import hana.HollowKnight.view.renderers.ProjectileRenderer;
 import hana.HollowKnight.view.screens.*;
 
 import java.util.ArrayList;
@@ -49,11 +51,23 @@ public class GameController {
     private float pendingSpawnX, pendingSpawnY;
     private boolean pendingUseRoomSpawn = true;
     private boolean pendingSpawnAtBossArena = false;
+    private ArrayList<ProjectileModel> projectiles = new ArrayList<>();
 
     public GameController(Game game, SpriteBatch batch) {
         this.game = game;
         this.batch = batch;
         this.model = new GameModel();
+    }
+    public ArrayList<ProjectileModel> getProjectiles() {
+        return projectiles;
+    }
+    public void lunchPogo(){
+        if (!model.getPlayer().isOnGround()){
+        projectiles.add(model.getPlayer().pogo());}
+    }
+
+    public void lunchVenegful(){
+        projectiles.add(model.getPlayer().venegful());
     }
 
     public ArrayList<HuskHornheadModel> getHusks() {
@@ -161,7 +175,7 @@ public class GameController {
             collision.updateMovementZote(delta, currentRoom.getSolidTiles());
         }
 
-        InputHandler.getInstance().update(player);
+        InputHandler.getInstance().update(player, this);
         InputHandler.getInstance().updateCheat(delta, this);
         if (collision == null || currentRoom == null) return;
 
@@ -206,8 +220,12 @@ public class GameController {
             aiController.checkPlayerInteraction(boss, player, 1);
         } for (HuskHornheadModel husk : husks){
             aiController.updateHuskHornhead(husk, delta, currentRoom.getSolidTiles(), player);
+        } for (ProjectileModel projectile : projectiles){
+            if (projectile.isActive()){
+                projectile.update(delta);
+                collision.updateProjectile(delta,this,projectile);
+            }
         }
-
         if (player.checkVoidHeart()){
             currentRoom.getVoidHeart().setVisible(false);
             model.getCharms().get(CharmType.VOID_HEART).setUnlocked(true);
@@ -246,15 +264,6 @@ public class GameController {
         PlayerModel player =  model.getPlayer();
         return player.getBounds().overlaps(zote.getBounds());
     }
-
-    public ArrayList<hana.HollowKnight.model.projectiles.ProjectileModel> getActiveProjectiles() {
-        return activeProjectiles;
-    }
-
-    public void spawnProjectile(float x, float y, float vx, float vy, hana.HollowKnight.model.projectiles.ProjectileType type) {
-        activeProjectiles.add(new hana.HollowKnight.model.projectiles.ProjectileModel(x, y, 32, 32, vx, vy, type));
-    }
-
 
     public RoomModel getCurrentRoom() {
         return currentRoom;

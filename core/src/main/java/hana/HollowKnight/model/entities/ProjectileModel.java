@@ -3,26 +3,39 @@ package hana.HollowKnight.model.entities;
 import com.badlogic.gdx.math.Rectangle;
 
 public class ProjectileModel {
+    private final ProjectileType type;
     private float x, y;
+    private float x0, y0;
     private float width, height;
     private float velocityX, velocityY;
-    private final ProjectileType type;
     private boolean active;
 
-    public ProjectileModel(float x, float y, float width, float height, float velocityX, float velocityY, ProjectileType type) {
+    public ProjectileModel(float x, float y, boolean isFacingRight, ProjectileType type) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        this.velocityX = velocityX;
-        this.velocityY = velocityY;
+        this.x0 = isFacingRight ? x - 200 : x + 200;
+        this.y0 = y - 100;
+        if (type == ProjectileType.POGO) {
+            this.width = 182;
+            this.height = 209;
+            this.velocityX = 0;
+            this.velocityY = 200;
+        }else {
+            this.width = 100;
+            this.height = 100;
+            this.velocityX = isFacingRight ? 50 : -50;
+            this.velocityY = 0;
+        }
         this.type = type;
         this.active = true;
     }
 
     public void update(float delta) {
         if (type == ProjectileType.POGO) {
-            velocityY -= 500f * delta;
+            velocityY += PlayerModel.GRAVITY * 2 * delta;
+        } else if (type == ProjectileType.VENEGFUL) {
+            velocityY += 500f * delta;
+            velocityX -= 0;
         }
 
         this.x += velocityX * delta;
@@ -33,9 +46,31 @@ public class ProjectileModel {
         return new Rectangle(x, y, width, height);
     }
 
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public ProjectileType getType() { return type; }
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public ProjectileType getType() {
+        return type;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public float getY0() {
+        return y0;
+    }
+
+    public float getX0() {
+        return x0;
+    }
 }

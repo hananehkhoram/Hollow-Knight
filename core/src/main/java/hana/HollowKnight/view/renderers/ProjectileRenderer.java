@@ -6,9 +6,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.entities.ProjectileModel;
+import hana.HollowKnight.model.entities.ProjectileType;
 
 public class ProjectileRenderer {
+    private float requiredTime = 2f;
+    private float timePassed = 0f;
 
     private String baseDir = "";
     private final ShapeRenderer shapeRenderer;
@@ -16,51 +20,44 @@ public class ProjectileRenderer {
     private TextureAtlas simpleAtlas;
     private Animation<TextureAtlas.AtlasRegion> simpleAnimation;
 
-    public ProjectileRenderer(ProjectileModel projectile) {
+    public ProjectileRenderer(ProjectileType projectile) {
         shapeRenderer = new ShapeRenderer();
 
-        switch (projectile.getType()) {
+        switch (projectile) {
             case POGO:
                 baseDir = "Animations/pogo/";
                 break;
-            case ORB_ATTACK:
+            case VENEGFUL:
                 baseDir = "Animations/";
                 break;
         }
 
-        simpleAtlas = new TextureAtlas(Gdx.files.internal(baseDir + "pogo.atlas"));
+        simpleAtlas = new TextureAtlas(Gdx.files.internal( "Animations/pogo/pogo.atlas"));
         simpleAnimation = new Animation<>(0.05f, simpleAtlas.findRegions("DownSlashEffect"), Animation.PlayMode.LOOP);
     }
 
     public void render(SpriteBatch batch, ProjectileModel projectile) {
         if (!projectile.isActive()) return;
+        timePassed += Gdx.graphics.getDeltaTime();
+        if (timePassed > requiredTime) {
+            timePassed = 0;
+        }
 
-        TextureRegion currentFrame = null;
-        currentFrame = simpleAnimation.getKeyFrame(Gdx.graphics.getDeltaTime(), false);
-
-        if (currentFrame != null) {
+        TextureRegion region = simpleAnimation.getKeyFrame(Gdx.graphics.getDeltaTime());
+        if (simpleAnimation.isAnimationFinished(timePassed)){
             batch.draw(
-                currentFrame,
-                projectile.getX(),
-                projectile.getY(),
+                region,
+                projectile.getX0(),
+                projectile.getY0(),
                 projectile.getBounds().width,
                 projectile.getBounds().height
             );
-        }
+        System.out.println("i");}
     }
 
-    public void renderDebug(ProjectileModel projectile) {
-        if (!projectile.isActive()) return;
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(1, 0, 0, 1);
-        shapeRenderer.rect(projectile.getX(), projectile.getY(), projectile.getBounds().width, projectile.getBounds().height);
-        shapeRenderer.end();
-    }
 
     public void dispose() {
         shapeRenderer.dispose();
         if (simpleAtlas != null) simpleAtlas.dispose();
-        if (onStartAtlas != null) onStartAtlas.dispose();
-        if (onCollisionAtlas != null) onCollisionAtlas.dispose();
     }
 }

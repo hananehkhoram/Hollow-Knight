@@ -1,9 +1,9 @@
 package hana.HollowKnight.controller;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import hana.HollowKnight.model.entities.PlayerModel;
-import hana.HollowKnight.model.entities.ZoteModel;
+import hana.HollowKnight.model.entities.*;
 import hana.HollowKnight.model.map.BreakableWallModel;
 import hana.HollowKnight.model.map.PortalModel;
 import hana.HollowKnight.view.audio.AudioManager;
@@ -161,6 +161,56 @@ public class CollisionController {
         }
     }
 
+    public void resolveCollisionsForProjectile(GameController controller, ProjectileModel projectile) {
+        Rectangle projectileBounds = projectile.getBounds();
+
+        for (Rectangle tile : controller.getCurrentRoom().getSolidTiles()) {
+            if (projectileBounds.overlaps(tile)) {
+                projectile.setActive(false);
+            }
+        }
+        for (Rectangle x : controller.getCurrentRoom().getHazards()) {
+            if (projectileBounds.overlaps(x)) {
+                projectile.setActive(false);
+            }
+        }
+        for (FlyModel x : controller.getFlies()) {
+            if (projectileBounds.overlaps(x.getBounds())) {
+                x.takeDamage(1, player.isFacingRight());
+            }
+        }
+        for (CrawlerModel x : controller.getMosscreeps()) {
+            if (projectileBounds.overlaps(x.getBounds())) {
+                x.takeDamage(1, player.isFacingRight());
+            }
+        }
+        for (CrawlerModel x : controller.getTiktiks()) {
+            if (projectileBounds.overlaps(x.getBounds())) {
+                x.takeDamage(1, player.isFacingRight());
+            }
+        }
+        for (BossModel x : controller.getBosses()) {
+            if (projectileBounds.overlaps(x.getBounds())) {
+                x.takeDamage(1, player.isFacingRight());
+            }
+        }
+        for (HuskHornheadModel x : controller.getHusks()) {
+            if (projectileBounds.overlaps(x.getBounds())) {
+                x.takeDamage(1, player.isFacingRight());
+            }
+        }}
+
+    public void updateProjectile(float delta, GameController controller, ProjectileModel projectile) {
+        delta = Math.min(delta, MAX_DELTA);
+        System.out.println(projectile.getX() + " " + projectile.getY());
+        resolveCollisionsForProjectile(controller, projectile);
+        if (projectile.getType() == ProjectileType.POGO) {
+            player.setPogo(false);
+        } else {
+            player.setVenegful(false);
+        }
+    }
+
     public void resolveHorizontalCollisionsForZote(Array<Rectangle> solidTiles) {
         Rectangle playerBounds = zote.getBounds();
 
@@ -189,10 +239,10 @@ public class CollisionController {
                     zote.setOnGround(true);
                 } else {
                     zote.setState(ZoteModel.States.FALL);
-                    }
                 }
             }
         }
+    }
 
 
     public void checkZoteCollosions() {
@@ -216,5 +266,6 @@ public class CollisionController {
         resolveVerticalCollisionsForZote(solidTiles);
         checkZoteCollosions();
     }
+
 
 }
