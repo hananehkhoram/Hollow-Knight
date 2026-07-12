@@ -42,8 +42,8 @@ public class GameStats {
         deaths++;
     }
 
-    public void checkHunterAchievement(int totalEnemyTypesInGame) {
-        if (killedEnemyTypes.size() >= 2) {
+    public void checkHunterAchievement() {
+        if (killedEnemyTypes.size() >= 3) {
             unlock(Achievement.TRUE_HUNTER);
         }
     }

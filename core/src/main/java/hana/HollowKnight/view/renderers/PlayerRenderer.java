@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class PlayerRenderer {
 
-    private enum Status { IDLE, HURT, RUN, JUMP, DOUBLE_JUMP, FALL, ATTACK, FOCUS, DASH, MANTIS, DEATH, ATTACK2 }
+    private enum Status { IDLE, HURT, RUN, JUMP, DOUBLE_JUMP, FALL, ATTACK, FOCUS, DASH, MANTIS, DEATH, VENEGFUL }
 
     private final String baseDir = "Animations/knight/";
 
@@ -41,6 +41,7 @@ public class PlayerRenderer {
         load(Status.DASH, "dash.atlas", "Dash", 0.05f, Animation.PlayMode.NORMAL);
         load(Status.MANTIS, "wallSlide.atlas", "Wall Slide", 0.1f, Animation.PlayMode.NORMAL);
         load(Status.DEATH, "death.atlas", "Death", 0.1f, Animation.PlayMode.NORMAL);
+        load(Status.VENEGFUL, "venegful.atlas", "Fireball Cast", 0.1f, Animation.PlayMode.NORMAL);
 
         loadEffect(Status.ATTACK, "slashE.atlas", "SlashEffect", 0.02f, Animation.PlayMode.NORMAL);
         loadEffect(Status.DASH, "dashE.atlas", "Dash Effect", 0.1f, Animation.PlayMode.NORMAL);
@@ -80,6 +81,12 @@ public class PlayerRenderer {
             }
         }
 
+        if (currentStatus == Status.VENEGFUL) {
+            if (animations.get(Status.VENEGFUL).isAnimationFinished(stateTime)) {
+                player.setVenegful(false);
+            }
+        }
+
         float offsetX = (SPRITE_WIDTH - player.getWidth()) / 2f;
         float offsetY = 0f;
 
@@ -113,6 +120,9 @@ public class PlayerRenderer {
     private Status resolveStatus(PlayerModel player) {
         if (!player.isAlive()) {
             return Status.DEATH;
+        }
+        if (player.isVenegful()) {
+            return Status.VENEGFUL;
         }
         if (player.isMantis()) {
             return Status.MANTIS;

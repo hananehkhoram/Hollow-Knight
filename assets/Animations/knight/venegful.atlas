@@ -1,0 +1,69 @@
+
+venegful.png
+size: 4096, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Fireball Cast
+  rotate: false
+  xy: 2, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 0
+Fireball Cast
+  rotate: false
+  xy: 353, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 1
+Fireball Cast
+  rotate: false
+  xy: 704, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 2
+Fireball Cast
+  rotate: false
+  xy: 1055, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 3
+Fireball Cast
+  rotate: false
+  xy: 1406, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 4
+Fireball Cast
+  rotate: false
+  xy: 1757, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 5
+Fireball Cast
+  rotate: false
+  xy: 2108, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 6
+Fireball Cast
+  rotate: false
+  xy: 2459, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 7
+Fireball Cast
+  rotate: false
+  xy: 2810, 2
+  size: 349, 186
+  orig: 349, 186
+  offset: 0, 0
+  index: 8

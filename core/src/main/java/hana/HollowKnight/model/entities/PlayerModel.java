@@ -1,5 +1,6 @@
 package hana.HollowKnight.model.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.items.CharmType;
@@ -12,13 +13,14 @@ import java.util.Set;
 
 public class PlayerModel extends Entity {
 
+    public boolean isVoidHeart;
+
     public static final float DEFAULT_WIDTH = 50;
     public static final float DEFAULT_HEIGHT = 100;
     public static final float JUMP_VELOCITY = 900;
     public static final float DOUBLE_JUMP_VELOCITY = 500;
     public static final int DEFAULT_MAX_HEALTH = 5;
     public static final int DEFAULT_MAX_SOUL = 100;
-    public static final int MAX_NOTCHES = 3;
     public static final float ATTACK_RANGE = 40f;
     public static final float INVULNERABILITY_DURATION = 0.9f;
     public static final float KNOCKBACK_DURATION = 1f;
@@ -66,8 +68,6 @@ public class PlayerModel extends Entity {
 
     private int playerDeathsCount = 0;
     private int playerKillsCount = 0;
-    private float timePassed = 0f;
-    private float projectileStateTime = 0f;
 
     public PlayerModel() {
         this(100f, 100f);
@@ -197,6 +197,8 @@ public class PlayerModel extends Entity {
 
     public ProjectileModel venegful(){
         this.isVenegful = true;
+        this.soul -= 33;
+        this.velocityY = 0;
         return new ProjectileModel(this.x + this.width / 2f, this.y + this.height / 2f, isFacingRight(), ProjectileType.VENEGFUL);
     }
 
@@ -283,29 +285,12 @@ public class PlayerModel extends Entity {
         return true;
     }
 
-    public void unlockCharm(CharmType type) {
-        unlockedCharms.add(type);
-    }
-
-    public boolean isCharmUnlocked(CharmType type) {
-        return unlockedCharms.contains(type);
-    }
-
-    public boolean equipCharm(CharmType type) {
-        if (!unlockedCharms.contains(type)) return false;
-        if (equippedCharms.contains(type)) return true;
-        if (getUsedNotches() + 1 > MAX_NOTCHES) return false;
-        equippedCharms.add(type);
-        return true;
-    }
-
     public int getUsedNotches() {
         return usedNotches;
     }
 
     @Override
     public void update(float delta) {
-        timePassed += delta;
 
         if (isBeingKnockedBack) {
             knockbackTimer -= delta;
@@ -469,20 +454,8 @@ public class PlayerModel extends Entity {
         this.usedNotches++;
     }
 
-    public boolean isGodeMode() {
-        return isGodeMode;
-    }
-
     public void setGodeMode(boolean godeMode) {
         isGodeMode = godeMode;
-    }
-
-    public float getProjectileStateTime() {
-        return projectileStateTime;
-    }
-
-    public void updateProjectileStateTime(float delta) {
-        this.projectileStateTime += delta;
     }
 
     public boolean isVenegful() {
@@ -499,5 +472,15 @@ public class PlayerModel extends Entity {
 
     public void setPogo(boolean pogo) {
         isPogo = pogo;
+    }
+
+    private boolean isFlying = false;
+
+    public void setFlying(boolean isFlying){
+        this.isFlying = isFlying;
+    }
+
+    public boolean isFlying (){
+        return isFlying;
     }
 }

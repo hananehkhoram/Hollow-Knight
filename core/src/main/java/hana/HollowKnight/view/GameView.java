@@ -166,10 +166,10 @@ public class GameView extends BaseScreen {
             huskRenderer.render(batch, husk);
         } for (ProjectileModel projectile : controller.getProjectiles()){
             if (projectile.getType() == ProjectileType.POGO){
-                pogoRenderer.render(batch, projectile);}
-//            } else {
-//                venegfulRenderer.render(batch, projectile);
-//            }
+                pogoRenderer.render(batch, projectile, player.isFacingRight(), controller);
+            } else {
+                venegfulRenderer.render(batch, projectile, player.isFacingRight(), controller);
+            }
         }
         zoteRenderer.render(batch, controller.getZote());
         renderPlayer();
@@ -178,8 +178,8 @@ public class GameView extends BaseScreen {
 
         mapRenderer.renderLayer(camera, "for");
         mapRenderer.renderLayer(camera, "secret room");
-        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
-            controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getProjectiles());
+//        debugRenderer.render(camera, player, currentRoom.getSolidTiles(), currentRoom.getHazards(),
+//            controller.getMosscreeps(), controller.getFlies(), controller.getTiktiks(), controller.getProjectiles());
         hud.render(batch, player.getHealth(), player.getMaxHealth(), player.getSoul(), player.getMaxSoul());
         drawBrightnessOverlay();
         achievementPopup.render(delta);

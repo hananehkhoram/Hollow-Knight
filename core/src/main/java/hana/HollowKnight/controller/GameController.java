@@ -67,7 +67,8 @@ public class GameController {
     }
 
     public void lunchVenegful(){
-        projectiles.add(model.getPlayer().venegful());
+        if (model.getPlayer().getSoul() > 33){
+        projectiles.add(model.getPlayer().venegful());}
     }
 
     public ArrayList<HuskHornheadModel> getHusks() {
@@ -188,7 +189,7 @@ public class GameController {
             }
             endGame(player);
         }
-        model.getStats().checkHunterAchievement(3);
+        model.getStats().checkHunterAchievement();
 
         PortalModel triggeredPortal = collision.checkPortalCollision();
         if (triggeredPortal != null) {

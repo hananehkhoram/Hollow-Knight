@@ -1,6 +1,5 @@
 package hana.HollowKnight.controller;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.*;
@@ -75,7 +74,7 @@ public class CollisionController {
     public void updateMovement(float delta, Array<Rectangle> solidTiles, Array<Rectangle> walls) {
         delta = Math.min(delta, MAX_DELTA);
 
-        if (!player.isDashing() || !player.isMantis()) {
+        if (!player.isDashing() || !player.isMantis() || !player.isVenegful()) {
             player.setVelocityY(player.getVelocityY() + PlayerModel.GRAVITY * delta);
         }
 
@@ -163,6 +162,11 @@ public class CollisionController {
 
     public void resolveCollisionsForProjectile(GameController controller, ProjectileModel projectile) {
         Rectangle projectileBounds = projectile.getBounds();
+        int damage = (projectile.getType() == ProjectileType.VENEGFUL) ? 2 : 1;
+        if (player.isVoidHeart){
+            damage *= 1.5;
+        }
+
 
         for (Rectangle tile : controller.getCurrentRoom().getSolidTiles()) {
             if (projectileBounds.overlaps(tile)) {
@@ -175,39 +179,36 @@ public class CollisionController {
             }
         }
         for (FlyModel x : controller.getFlies()) {
-            if (projectileBounds.overlaps(x.getBounds())) {
-                x.takeDamage(1, player.isFacingRight());
+            if (projectileBounds.overlaps(x.getBounds()) && projectile.tryRegisterHit(x)) {
+                x.takeDamage(damage, player.isFacingRight());
             }
         }
         for (CrawlerModel x : controller.getMosscreeps()) {
-            if (projectileBounds.overlaps(x.getBounds())) {
-                x.takeDamage(1, player.isFacingRight());
+            if (projectileBounds.overlaps(x.getBounds()) && projectile.tryRegisterHit(x)) {
+                x.takeDamage(damage, player.isFacingRight());
             }
         }
         for (CrawlerModel x : controller.getTiktiks()) {
-            if (projectileBounds.overlaps(x.getBounds())) {
-                x.takeDamage(1, player.isFacingRight());
+            if (projectileBounds.overlaps(x.getBounds()) && projectile.tryRegisterHit(x)) {
+                x.takeDamage(damage, player.isFacingRight());
             }
         }
         for (BossModel x : controller.getBosses()) {
-            if (projectileBounds.overlaps(x.getBounds())) {
-                x.takeDamage(1, player.isFacingRight());
+            if (projectileBounds.overlaps(x.getBounds()) && projectile.tryRegisterHit(x)) {
+                x.takeDamage(damage, player.isFacingRight());
             }
         }
         for (HuskHornheadModel x : controller.getHusks()) {
-            if (projectileBounds.overlaps(x.getBounds())) {
-                x.takeDamage(1, player.isFacingRight());
+            if (projectileBounds.overlaps(x.getBounds()) && projectile.tryRegisterHit(x)) {
+                x.takeDamage(damage, player.isFacingRight());
             }
         }}
 
     public void updateProjectile(float delta, GameController controller, ProjectileModel projectile) {
         delta = Math.min(delta, MAX_DELTA);
-        System.out.println(projectile.getX() + " " + projectile.getY());
         resolveCollisionsForProjectile(controller, projectile);
         if (projectile.getType() == ProjectileType.POGO) {
             player.setPogo(false);
-        } else {
-            player.setVenegful(false);
         }
     }
 

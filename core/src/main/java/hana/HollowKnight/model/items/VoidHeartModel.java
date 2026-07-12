@@ -13,10 +13,13 @@ public class VoidHeartModel extends Charm {
     @Override
     public void applyCharm() {
         player.setDamagePerHit((player.getDamagePerHit() * 10));
+        player.isVoidHeart = true;
+        System.out.println(player.isVoidHeart);
     }
 
     @Override
     public void cancelCharm() {
         player.setDamagePerHit((player.getDamagePerHit() / 10));
+        player.isVoidHeart = false;
     }
 }

@@ -1,0 +1,48 @@
+
+venegful2.png
+size: 512, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+ShadowBall
+  rotate: false
+  xy: 2, 797
+  size: 504, 157
+  orig: 504, 157
+  offset: 0, 0
+  index: 0
+ShadowBall
+  rotate: false
+  xy: 2, 638
+  size: 504, 157
+  orig: 504, 157
+  offset: 0, 0
+  index: 1
+ShadowBall
+  rotate: false
+  xy: 2, 479
+  size: 504, 157
+  orig: 504, 157
+  offset: 0, 0
+  index: 2
+ShadowBall
+  rotate: false
+  xy: 2, 320
+  size: 504, 157
+  orig: 504, 157
+  offset: 0, 0
+  index: 3
+ShadowBall
+  rotate: false
+  xy: 2, 161
+  size: 504, 157
+  orig: 504, 157
+  offset: 0, 0
+  index: 4
+ShadowBall
+  rotate: false
+  xy: 2, 2
+  size: 504, 157
+  orig: 504, 157
+  offset: 0, 0
+  index: 5

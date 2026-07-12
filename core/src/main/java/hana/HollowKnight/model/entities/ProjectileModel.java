@@ -2,12 +2,17 @@ package hana.HollowKnight.model.entities;
 
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ProjectileModel {
     private final ProjectileType type;
     private float x, y;
     private float width, height;
     private float velocityX, velocityY;
     private boolean active;
+
+    private final Set<Object> hitTargets = new HashSet<>();
 
     public ProjectileModel(float spawnCenterX, float spawnCenterY, boolean isFacingRight, ProjectileType type) {
         if (type == ProjectileType.POGO) {
@@ -16,9 +21,9 @@ public class ProjectileModel {
             this.velocityX = 0;
             this.velocityY = -1000;
         }else {
-            this.width = 100;
+            this.width = 317;
             this.height = 100;
-            this.velocityX = isFacingRight ? 50 : -50;
+            this.velocityX = isFacingRight ? 2000 : -2000;
             this.velocityY = 0;
         }
         this.x = spawnCenterX - width / 2f;
@@ -30,13 +35,14 @@ public class ProjectileModel {
     public void update(float delta) {
         if (type == ProjectileType.POGO) {
             velocityY += PlayerModel.GRAVITY * 2 * delta;
-        } else if (type == ProjectileType.VENEGFUL) {
-//            velocityY += 500f * delta;
-            velocityX -= 0;
         }
 
         this.x += velocityX * delta;
         this.y += velocityY * delta;
+    }
+
+    public boolean tryRegisterHit(Object target) {
+        return hitTargets.add(target);
     }
 
     public Rectangle getBounds() {
