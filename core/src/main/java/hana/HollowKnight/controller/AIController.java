@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import hana.HollowKnight.model.entities.CrawlerModel;
 import hana.HollowKnight.model.entities.EnemyModel;
 import hana.HollowKnight.model.entities.FlyModel;
+import hana.HollowKnight.model.entities.HuskHornheadModel;
 import hana.HollowKnight.model.entities.PlayerModel;
 import hana.HollowKnight.model.stats.GameStats;
 import hana.HollowKnight.view.audio.AudioManager;
@@ -66,6 +67,55 @@ public class AIController {
         crawler.update(delta);
     }
 
+    public void updateHuskHornhead(HuskHornheadModel husk, float delta, Array<Rectangle> solidTiles, PlayerModel player) {
+        delta = Math.min(delta, MAX_DELTA);
+        GameStats gameStats = controller.getModel().getStats();
+
+        if (husk.isDead()) {
+            gameStats.recordEnemyKilled("huskHornhead");
+            applyGravityEffect(husk, delta, solidTiles);
+            husk.update(delta);
+            return;
+        }
+
+        husk.savePrevPosition();
+        husk.setVelocityY(husk.getVelocityY() + GRAVITY * delta);
+
+        moveAndResolveCollisions(husk, delta, solidTiles);
+        checkPlayerInteraction(husk, player, 1);
+
+        if (!husk.isBeingKnockedBack()) {
+            switch (husk.getState()) {
+                case WALK:
+                    if (husk.getVelocityX() == 0f || isAtLedge(husk, solidTiles)) {
+                        husk.turn();
+                    }
+                    if (husk.getVisionBounds().overlaps(player.getBounds())) {
+                        husk.beginAnticipate(player.getX() > husk.getX());
+                    }
+                    break;
+
+                case IDLE:
+                    if (husk.getVisionBounds().overlaps(player.getBounds())) {
+                        husk.beginAnticipate(player.getX() > husk.getX());
+                    }
+                    break;
+
+                case ATTACK_LUNGE:
+                    // Blind charge: doesn't re-aim or stop for anything except a wall or the player.
+                    if (husk.getVelocityX() == 0f || husk.getBounds().overlaps(player.getBounds())) {
+                        husk.endLunge();
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        husk.update(delta);
+    }
+
     private void applyGravityEffect(EnemyModel enemy, float delta, Array<Rectangle> solidTiles) {
         enemy.setVelocityY(enemy.getVelocityY() + GRAVITY * delta);
         enemy.setY(enemy.getY() + enemy.getVelocityY() * delta);
@@ -84,7 +134,7 @@ public class AIController {
     }
 
     private void resolveVerticalCollisions(EnemyModel enemy, Array<Rectangle> solidTiles) {
-        if (enemy instanceof CrawlerModel) {
+        if (needsOnGroundTracking(enemy)) {
             enemy.setOnGround(false);
         }
         Rectangle bounds = enemy.getBounds();
@@ -94,7 +144,7 @@ public class AIController {
                 if (enemy.getVelocityY() <= 0) {
                     enemy.setY(tile.y + tile.height);
                     enemy.setVelocityY(0f);
-                    if (enemy instanceof CrawlerModel) {
+                    if (needsOnGroundTracking(enemy)) {
                         enemy.setOnGround(true);
                     }
                 } else {
@@ -104,6 +154,10 @@ public class AIController {
                 bounds = enemy.getBounds();
             }
         }
+    }
+
+    private boolean needsOnGroundTracking(EnemyModel enemy) {
+        return enemy instanceof CrawlerModel || enemy instanceof HuskHornheadModel;
     }
 
     private void resolveHorizontalCollisions(EnemyModel enemy, Array<Rectangle> solidTiles) {
@@ -126,13 +180,13 @@ public class AIController {
         }
     }
 
-    private boolean isAtLedge(CrawlerModel crawler, Array<Rectangle> solidTiles) {
-        if (!crawler.isOnGround()) return false;
+    private boolean isAtLedge(EnemyModel enemy, Array<Rectangle> solidTiles) {
+        if (!enemy.isOnGround()) return false;
 
-        float probeX = crawler.isFacingRight()
-            ? crawler.getX() + crawler.getWidth()
-            : crawler.getX() - EDGE_PROBE_WIDTH;
-        float probeY = crawler.getY() - EDGE_PROBE_DEPTH;
+        float probeX = enemy.isFacingRight()
+            ? enemy.getX() + enemy.getWidth()
+            : enemy.getX() - EDGE_PROBE_WIDTH;
+        float probeY = enemy.getY() - EDGE_PROBE_DEPTH;
 
         Rectangle probe = new Rectangle(probeX, probeY, EDGE_PROBE_WIDTH, EDGE_PROBE_DEPTH);
 

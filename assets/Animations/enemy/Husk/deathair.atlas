@@ -1,0 +1,13 @@
+
+deathair.png
+size: 256, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Death Air
+  rotate: false
+  xy: 2, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: -1

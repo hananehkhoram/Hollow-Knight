@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="327" height="350" tilewidth="8" tileheight="8" infinite="0" nextlayerid="13" nextobjectid="72">
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="327" height="350" tilewidth="8" tileheight="8" infinite="0" nextlayerid="13" nextobjectid="74">
  <tileset firstgid="1" name="SpriteAtlasTexture-Ruin_Door_Rain_Glow-512x512-fmt12" tilewidth="128" tileheight="128" tilecount="16" columns="4">
   <image source="../City of Tears-20260707T215923Z-3-001/SpriteAtlasTexture-Ruin_Door_Rain_Glow-512x512-fmt12.png" width="512" height="512"/>
   <tile id="0">
@@ -2965,13 +2965,16 @@
   <object id="43" x="2041" y="412" width="242" height="28.5"/>
  </objectgroup>
  <objectgroup id="9" name="spawn_points">
-  <object id="24" name="knight" x="1704.52" y="1071.06">
-   <point/>
-  </object>
   <object id="30" name="mosscreep" x="1761" y="542">
    <point/>
   </object>
   <object id="62" name="falseknight" x="2056" y="1898.67">
+   <point/>
+  </object>
+  <object id="72" name="husk" x="2036" y="1085.33">
+   <point/>
+  </object>
+  <object id="73" name="knight" x="2064" y="362.667">
    <point/>
   </object>
  </objectgroup>

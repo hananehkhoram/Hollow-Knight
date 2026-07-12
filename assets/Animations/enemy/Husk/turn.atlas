@@ -1,0 +1,20 @@
+
+turn.png
+size: 512, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Turn
+  rotate: false
+  xy: 2, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 0
+Turn
+  rotate: false
+  xy: 243, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 1

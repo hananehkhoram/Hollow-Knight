@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
 import hana.HollowKnight.controller.GameController;
 import hana.HollowKnight.controller.InputHandler;
-import hana.HollowKnight.model.entities.BossModel;
-import hana.HollowKnight.model.entities.CrawlerModel;
-import hana.HollowKnight.model.entities.FlyModel;
-import hana.HollowKnight.model.entities.PlayerModel;
+import hana.HollowKnight.model.entities.*;
 import hana.HollowKnight.model.map.BossArena;
 import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.audio.AudioManager;
@@ -33,11 +30,13 @@ public class GameView extends BaseScreen {
     private AchievementPopup achievementPopup;
     private boolean isPaused = false;
 
+
     private final CrawlerRenderer mosscreepRenderer = new CrawlerRenderer("mosscreep");
     private final CrawlerRenderer tiktikRenderer = new CrawlerRenderer("tiktik");
     private final ZoteRenderer zoteRenderer = new  ZoteRenderer();
     private final FlyRenderer flyRenderer = new FlyRenderer();
     private final BossRenderer bossRenderer = new BossRenderer();
+    private final HuskHornheadRenderer huskRenderer = new  HuskHornheadRenderer();
 
     private enum OverlayType { NONE, PAUSE, INVENTORY }
     private OverlayType currentOverlay = OverlayType.NONE;
@@ -160,6 +159,8 @@ public class GameView extends BaseScreen {
         }
         for (BossModel boss : controller.getBosses()) {
             bossRenderer.render(batch, boss);
+        } for (HuskHornheadModel husk : controller.getHusks()){
+            huskRenderer.render(batch, husk);
         }
         zoteRenderer.render(batch, controller.getZote());
         renderPlayer();

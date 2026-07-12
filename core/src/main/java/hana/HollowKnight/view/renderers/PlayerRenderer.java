@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class PlayerRenderer {
 
-    private enum Status { IDLE, HURT, RUN, JUMP, DOUBLE_JUMP, FALL, ATTACK, FOCUS, DASH, MANTIS, DEATH }
+    private enum Status { IDLE, HURT, RUN, JUMP, DOUBLE_JUMP, FALL, ATTACK, FOCUS, DASH, MANTIS, DEATH, ATTACK2 }
 
     private final String baseDir = "Animations/knight/";
 
@@ -21,6 +21,7 @@ public class PlayerRenderer {
 
     private final Map<Status, TextureAtlas> effectAtlases = new EnumMap<>(Status.class);
     private final Map<Status, Animation<TextureAtlas.AtlasRegion>> effectAnimations = new EnumMap<>(Status.class);
+
 
     private final float SPRITE_WIDTH = 349f;
     private final float SPRITE_HEIGHT = 186f;
@@ -35,12 +36,13 @@ public class PlayerRenderer {
         load(Status.JUMP, "jumo.atlas", "Airborne", 0.1f, Animation.PlayMode.LOOP);
         load(Status.DOUBLE_JUMP, "doubljump.atlas", "Double Jump", 0.08f, Animation.PlayMode.NORMAL);
         load(Status.FALL, "fall.atlas", "Fall", 0.1f, Animation.PlayMode.LOOP);
-        load(Status.ATTACK, "slash.atlas", "SlashAlt", 0.05f, Animation.PlayMode.NORMAL);
+        load(Status.ATTACK, "slash.atlas", "SlashAlt", 0.08f, Animation.PlayMode.NORMAL);
         load(Status.FOCUS, "focus.atlas", "Focus", 0.1f, Animation.PlayMode.NORMAL);
         load(Status.DASH, "dash.atlas", "Dash", 0.05f, Animation.PlayMode.NORMAL);
         load(Status.MANTIS, "wallSlide.atlas", "Wall Slide", 0.1f, Animation.PlayMode.NORMAL);
         load(Status.DEATH, "death.atlas", "Death", 0.1f, Animation.PlayMode.NORMAL);
 
+        loadEffect(Status.ATTACK, "slashE.atlas", "SlashEffect", 0.02f, Animation.PlayMode.NORMAL);
         loadEffect(Status.DASH, "dashE.atlas", "Dash Effect", 0.1f, Animation.PlayMode.NORMAL);
         loadEffect(Status.DEATH, "soulScreaming.atlas", "SoulScream", 0.1f, Animation.PlayMode.NORMAL);
     }
@@ -78,23 +80,18 @@ public class PlayerRenderer {
             }
         }
 
+        float offsetX = (SPRITE_WIDTH - player.getWidth()) / 2f;
+        float offsetY = 0f;
+
         if (!player.isFacingRight() && region.isFlipX()) {
             region.flip(true, false);
         } else if (player.isFacingRight() && !region.isFlipX()) {
             region.flip(true, false);
         }
 
-        float offsetX = (SPRITE_WIDTH - player.getWidth()) / 2f;
-        float offsetY = 0f;
 
         float knightX = player.getX() - offsetX;
         float knightY = player.getY() - offsetY;
-
-        Animation<TextureAtlas.AtlasRegion> effectAnimation = effectAnimations.get(currentStatus);
-        if (effectAnimation != null) {
-            TextureRegion region2 = effectAnimation.getKeyFrame(stateTime);
-            renderEffect(batch, player, region2, knightX, knightY);
-        }
 
         batch.draw(
             region,
@@ -103,6 +100,14 @@ public class PlayerRenderer {
             SPRITE_WIDTH,
             SPRITE_HEIGHT
         );
+
+        Animation<TextureAtlas.AtlasRegion> effectAnimation = effectAnimations.get(currentStatus);
+        if (effectAnimation != null) {
+            TextureRegion region2 = effectAnimation.getKeyFrame(stateTime);
+
+            renderEffect(batch, player, region2, knightX, knightY);
+        }
+
     }
 
     private Status resolveStatus(PlayerModel player) {
@@ -150,6 +155,11 @@ public class PlayerRenderer {
                 effectX -= 200f;
             }
             effectY -= 80f;
+        }
+
+        if (currentStatus == Status.ATTACK) {
+            effectX = player.isFacingRight() ? effectX + player.getWidth() : effectX - player.getWidth();
+            region2.flip(true, false);
         }
 
         batch.draw(region2, effectX, effectY);

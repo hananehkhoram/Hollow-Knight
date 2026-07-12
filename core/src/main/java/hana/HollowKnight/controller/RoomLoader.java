@@ -136,6 +136,16 @@ public class RoomLoader {
         return fly;
     }
 
+    public static ArrayList<HuskHornheadModel> spawnHusk(RoomModel currentRoom) {
+        ArrayList<HuskHornheadModel> husks = new ArrayList<>();
+        for (SpawnPointModel spawn : currentRoom.getEnemySpawns()) {
+            if ("husk".equals(spawn.getName())) {
+                husks.add(new HuskHornheadModel(spawn.getX(), spawn.getY()));
+            }
+        }
+        return husks;
+    }
+
 
 
 }

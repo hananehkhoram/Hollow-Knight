@@ -1,0 +1,90 @@
+
+attacklunge.png
+size: 1024, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Attack Lunge
+  rotate: false
+  xy: 2, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 0
+Attack Lunge
+  rotate: false
+  xy: 2, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 4
+Attack Lunge
+  rotate: false
+  xy: 2, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 8
+Attack Lunge
+  rotate: false
+  xy: 243, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 1
+Attack Lunge
+  rotate: false
+  xy: 243, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 9
+Attack Lunge
+  rotate: false
+  xy: 243, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 5
+Attack Lunge
+  rotate: false
+  xy: 484, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 2
+Attack Lunge
+  rotate: false
+  xy: 484, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 10
+Attack Lunge
+  rotate: false
+  xy: 484, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 6
+Attack Lunge
+  rotate: false
+  xy: 725, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 3
+Attack Lunge
+  rotate: false
+  xy: 725, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 11
+Attack Lunge
+  rotate: false
+  xy: 725, 2
+  size: 239, 219
+  orig: 239, 219
+  offset: 0, 0
+  index: 7

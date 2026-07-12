@@ -3,7 +3,6 @@ package hana.HollowKnight.model.entities;
 import com.badlogic.gdx.math.Rectangle;
 import hana.HollowKnight.controller.InputHandler;
 import hana.HollowKnight.model.items.CharmType;
-import hana.HollowKnight.model.map.RoomModel;
 import hana.HollowKnight.view.audio.AudioManager;
 
 import java.util.ArrayList;
@@ -15,25 +14,23 @@ public class PlayerModel extends Entity {
 
     public static final float DEFAULT_WIDTH = 50;
     public static final float DEFAULT_HEIGHT = 100;
-
-    public static float MOVE_SPEED = 500;
-    public static float GRAVITY = -1400;
     public static final float JUMP_VELOCITY = 900;
     public static final float DOUBLE_JUMP_VELOCITY = 500;
-    public static float FOCUS_DURATION = 1.5f;
     public static final int DEFAULT_MAX_HEALTH = 5;
     public static final int DEFAULT_MAX_SOUL = 100;
-    public static int SOUL_PER_HIT = 11;
     public static final int MAX_NOTCHES = 3;
-    public static float DASH_SPEED = 1000f;
-    public static float DASH_DURATION = 0.8f;
-    public static float DASH_COOLDOWN = 1f;
-    public static float ATTACK_DURATION = 0.1f;
-    public static float ATTACK_COOLDOWN = 0.5f;
     public static final float ATTACK_RANGE = 40f;
     public static final float INVULNERABILITY_DURATION = 0.9f;
     public static final float KNOCKBACK_DURATION = 1f;
-
+    public static float MOVE_SPEED = 500;
+    public static float GRAVITY = -1400;
+    public static float FOCUS_DURATION = 1.5f;
+    public static int SOUL_PER_HIT = 11;
+    public static float DASH_SPEED = 1000f;
+    public static float DASH_DURATION = 0.8f;
+    public static float DASH_COOLDOWN = 1f;
+    public static float ATTACK_DURATION = 0.4f;
+    public static float ATTACK_COOLDOWN = 0.5f;
     private final Set<CharmType> unlockedCharms = EnumSet.noneOf(CharmType.class);
     private final Set<CharmType> equippedCharms = EnumSet.noneOf(CharmType.class);
     private float actionTimer = 0f;
@@ -69,23 +66,11 @@ public class PlayerModel extends Entity {
     private int playerDeathsCount = 0;
     private int playerKillsCount = 0;
     private float timePassed = 0f;
-
-    public void setSoulAddition(int soulAddition) {
-        this.soulAddition = soulAddition;
-    }
-    public void addPlayerDeathsCount (){
-        this.playerDeathsCount ++;
-    }
-
-    public void addPlayerKillsCount (){
-        this.playerKillsCount = playerKillsCount + 1;
-    }
-
+    private float projectileStateTime = 0f;
 
     public PlayerModel() {
         this(100f, 100f);
     }
-
 
     public PlayerModel(float startX, float startY) {
         super(startX, startY, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -93,6 +78,18 @@ public class PlayerModel extends Entity {
         this.health = maxHealth;
         this.maxSoul = DEFAULT_MAX_SOUL;
         this.soul = 0;
+    }
+
+    public void setSoulAddition(int soulAddition) {
+        this.soulAddition = soulAddition;
+    }
+
+    public void addPlayerDeathsCount() {
+        this.playerDeathsCount++;
+    }
+
+    public void addPlayerKillsCount() {
+        this.playerKillsCount = playerKillsCount + 1;
     }
 
     public void mantis() {
@@ -123,7 +120,7 @@ public class PlayerModel extends Entity {
 
             if (actionTimer >= FOCUS_DURATION) {
                 setHealth(Math.min(maxHealth, health + 1));
-                setSoul((int) Math.max(0 , soul - soulAccumulator));
+                setSoul((int) Math.max(0, soul - soulAccumulator));
                 AudioManager.getInstance().playFocusHealSound();
 
                 actionTimer = 0f;
@@ -152,9 +149,9 @@ public class PlayerModel extends Entity {
         facingRight = true;
     }
 
-    public boolean checkVoidHeart () {
-        if (x > 398 &&  x < 493) {
-            if (y > 872 && y < 1470){
+    public boolean checkVoidHeart() {
+        if (x > 398 && x < 493) {
+            if (y > 872 && y < 1470) {
                 return true;
             }
         }
@@ -209,7 +206,7 @@ public class PlayerModel extends Entity {
     }
 
     public void applyKnockBack() {
-        if (!isGodeMode){
+        if (!isGodeMode) {
             this.isBeingKnockedBack = true;
             this.knockbackTimer = KNOCKBACK_DURATION;
             float knockbackForceX = 350f;
@@ -217,7 +214,8 @@ public class PlayerModel extends Entity {
             this.velocityX = facingRight ? -knockbackForceX : knockbackForceX;
             this.velocityY = knockbackForceY;
             this.onGround = false;
-        }}
+        }
+    }
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
@@ -245,7 +243,7 @@ public class PlayerModel extends Entity {
     }
 
     public void takeDamage(int amount) {
-        if (!isGodeMode){
+        if (!isGodeMode) {
             if (invulnerabilityTimer > 0f || !alive) return;
             health = Math.max(0, health - amount);
             AudioManager.getInstance().playGetDamageSound();
@@ -254,7 +252,8 @@ public class PlayerModel extends Entity {
                 alive = false;
                 addPlayerDeathsCount();
                 AudioManager.getInstance().playHeroDeathSound();
-            }}
+            }
+        }
     }
 
     public void gainSoulOnHit() {
@@ -309,7 +308,7 @@ public class PlayerModel extends Entity {
 
     @Override
     public void update(float delta) {
-        timePassed  += delta;
+        timePassed += delta;
 
         if (isBeingKnockedBack) {
             knockbackTimer -= delta;
@@ -337,7 +336,7 @@ public class PlayerModel extends Entity {
             }
         }
 
-        if (isFocusing()){
+        if (isFocusing()) {
             setVelocityX(0);
             setVelocityY(0);
             setMantis(false);
@@ -467,10 +466,11 @@ public class PlayerModel extends Entity {
     }
 
     public void decreaseUsedNotches() {
-        this.usedNotches --;
+        this.usedNotches--;
     }
+
     public void increaseUsedNotches() {
-        this.usedNotches ++;
+        this.usedNotches++;
     }
 
     public boolean isGodeMode() {
@@ -495,5 +495,13 @@ public class PlayerModel extends Entity {
 
     public void setDeathDuration(float deathDuration) {
         this.deathDuration = deathDuration;
+    }
+
+    public float getProjectileStateTime() {
+        return projectileStateTime;
+    }
+
+    public void updateProjectileStateTime(float delta) {
+        this.projectileStateTime += delta;
     }
 }

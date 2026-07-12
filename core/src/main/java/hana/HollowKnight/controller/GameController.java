@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import hana.HollowKnight.model.GameModel;
 import hana.HollowKnight.model.data.GameData;
@@ -39,6 +40,7 @@ public class GameController {
     private ArrayList<CrawlerModel> tiktiks = new ArrayList<>();
     private ArrayList<FlyModel> flies = new ArrayList<>();
     private ArrayList<BossModel> bosses = new ArrayList<>();
+    private ArrayList<HuskHornheadModel> husks = new ArrayList<>();
     private ZoteModel zote;
     private String zoteMapPath;
 
@@ -52,6 +54,10 @@ public class GameController {
         this.game = game;
         this.batch = batch;
         this.model = new GameModel();
+    }
+
+    public ArrayList<HuskHornheadModel> getHusks() {
+        return husks;
     }
 
     public void initRoom(String mapPath, TiledMap map, MapRenderer mapRenderer) {
@@ -72,6 +78,7 @@ public class GameController {
         currentRoom.setCrawlers(mosscreeps);
         flies = RoomLoader.spawnFlies(currentRoom, player);
         bosses = RoomLoader.spawnBoss(currentRoom);
+        husks = RoomLoader.spawnHusk(currentRoom);
         if (model.isBossDefeated()) {
             bosses.clear();
         }
@@ -197,6 +204,8 @@ public class GameController {
         for (BossModel boss : bosses) {
             bossAIController.updateBoss(boss, delta, player, currentRoom.getSolidTiles(), currentRoom.getBossArena());
             aiController.checkPlayerInteraction(boss, player, 1);
+        } for (HuskHornheadModel husk : husks){
+            aiController.updateHuskHornhead(husk, delta, currentRoom.getSolidTiles(), player);
         }
 
         if (player.checkVoidHeart()){
@@ -236,6 +245,14 @@ public class GameController {
     public boolean isInZoteArea(){
         PlayerModel player =  model.getPlayer();
         return player.getBounds().overlaps(zote.getBounds());
+    }
+
+    public ArrayList<hana.HollowKnight.model.projectiles.ProjectileModel> getActiveProjectiles() {
+        return activeProjectiles;
+    }
+
+    public void spawnProjectile(float x, float y, float vx, float vy, hana.HollowKnight.model.projectiles.ProjectileType type) {
+        activeProjectiles.add(new hana.HollowKnight.model.projectiles.ProjectileModel(x, y, 32, 32, vx, vy, type));
     }
 
 
