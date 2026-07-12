@@ -1,33 +1,88 @@
-# Hananeh
+# Hollow Knight — Java Recreation
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+A recreation of parts of **Hollow Knight** built with **Java** and the **LibGDX** framework, developed as a project for an Advanced Programming course. The project follows a strict **MVC** architecture and implements core gameplay mechanics, an enemy system, a boss fight, a HUD, save/load functionality, achievements, and visual effects.
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## Features
 
-## Platforms
+### Gameplay & AI
+- Character movement, jumping, and combat with AABB-based physics for wall/floor collision resolution
+- Multi-room navigation through portals
+- Enemies with independent AI:
+  - **Mosscreep** (`CrawlerModel`) — patrol movement and physics
+  - **Tiktik** (`CrawlerModel`) 
+  - **Winged Sentry** (`FlyModel`)
+  - **Zote** — multi-stage dialogue, knockdown, and vulnerability logic (actually not an enemy.)
+  - **Husk HorneHead** (`HuskModel`)
+  - **False Knight** boss fight (`BossModel`) with a granular state machine and a two-phase AI
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+### Maps
+- City of Tears
+- Green Path
 
-## Gradle
+### UI & Rendering
+- HUD (`GameHUD`) including a health bar (static mask + glow animation on heal), soul vessel (FrameBuffer-based masking), and Geo counter
+- Pause menu (`PauseMenu`) with Resume / Settings / Charms / Save & Quit panels
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+### Persistence
+- Save/load via **SQLite** (JDBC) with a normalized schema (`saves`, `save_charms`, `save_achievements`, `save_defeated_bosses`)
+- Achievement system built on `GameStats`
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+## Architecture
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+The project follows a strict **MVC** structure:
+
+```
+hana.HollowKnight
+├── model        // Game logic, entity state, physics (no rendering dependencies)
+├── view         // Pure rendering layer (GameView, GameHUD, ...)
+└── controller   // Room lifecycle, portal transitions, AI updates, boss fight logic
+```
+
+Key principles enforced throughout the codebase:
+- `GameView` is render-only; it contains no game logic.
+- `GameController` owns room lifecycle, `initRoom` ordering, AI updates, and death/respawn logic.
+- `CollisionController` is always constructed **after** all models it references have been created.
+- An `EnumMap`-based rendering pattern keeps the view in sync with model state.
+
+## Requirements
+
+- JDK 17 or later
+- Gradle (via the included Gradle Wrapper)
+- `org.xerial:sqlite-jdbc:3.46.1.3` (fetched automatically by Gradle)
+
+## Running the Project
+
+```bash
+git clone https://github.com/hananehkhoram/Hollow-Knight.git
+cd Hollow-Knight
+./gradlew lwjgl3:run
+```
+
+## Tools & Asset Pipeline
+
+- **Maps:** authored in Tiled Editor (`.tmx`), with dedicated object layers for `collisions`, `spawn_points`, `boss_arena`, etc.
+- **Sprites:** packed with TexturePacker into `.atlas` + `.png`; animation folders live under `core/assets/Animations/`
+- **UI:** styled via `uiskin.json` under `assets/ui/`
+
+## Save Database Schema
+
+Main SQLite tables:
+| Table | Description |
+|---|---|
+| `saves` | General save data (position, health, soul, etc.) |
+| `save_charms` | Charms equipped in each save |
+| `save_achievements` | Unlocked achievements |
+| `save_defeated_bosses` | Defeated bosses |
+
+## Technical Notes / Lessons Learned
+
+- Tiled spawn point coordinates come from the object's custom `x`/`y` properties, not its geometric position.
+- LibGDX's TMX loader already flips the Y-axis from Tiled's top-left origin to LibGDX's bottom-left origin automatically — do not apply a manual flip on top of it.
+- To prevent physics tunneling on the first frame (caused by a delta-time spike after asset loading), delta time is clamped to a maximum of `1/30f`.
+- Wall (horizontal) vs. floor (vertical) collisions are distinguished using minimum-overlap AABB resolution — resolving on the axis with the least overlap.
+- `ZoteModel` must not be recreated on every `initRoom` call (including respawns), or dialogue progress will be lost.
+
+## Author
+
+**Hananeh Khoramdashti** — Advanced Programming 
+- Department of Computer Engineering, Sharif University of Technology — Spring 2026

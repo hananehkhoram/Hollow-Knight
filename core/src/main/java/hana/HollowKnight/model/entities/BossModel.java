@@ -13,21 +13,21 @@ public class BossModel extends EnemyModel {
 
     public enum Move { MACE_SLAM, CHARGE, LEAP_OFFENSIVE, LEAP_DEFENSIVE, MACE_SLAM_POWER }
 
-    private static final float WIDTH = 200;
-    private static final float HEIGHT = 200;
+    private static final float WIDTH = 100;
+    private static final float HEIGHT = 100;
 
-    private static final int MAX_HEALTH = 30;
+    private static final int MAX_HEALTH = 16;
     private static final int CONTACT_DAMAGE = 2;
 
     private static final float BODY_DURATION = 0.4f;
     private static final float BODY_STUN_DURATION = 3f;
-    private static final float STUN_RECOVER_DURATION = 0.5f;
+    private static final float STUN_RECOVER_DURATION = 1f;
     private static final float STUN_DAMAGE_MULTIPLIER = 2f;
 
     private static final float DEATH_FALL_DURATION = 0.4f;
     private static final float DEATH_HIT_DURATION = 0.2f;
 
-    public static final float PHASE2_SPEED_MULTIPLIER = 1.4f;
+    public static final float PHASE2_SPEED_MULTIPLIER = 1.5f;
 
     private static final float DAMAGE_WINDOW = 1f;
     private static final int DAMAGE_WINDOW_HIT_THRESHOLD = 3;
